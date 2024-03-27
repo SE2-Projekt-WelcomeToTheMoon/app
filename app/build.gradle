@@ -71,6 +71,7 @@ dependencies {
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout
+    implementation libs.okhttp
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
