@@ -1,4 +1,5 @@
 package com.example.se2_projekt_app.networking;
 
-public class WebSocketMessageHandler {
+public interface WebSocketMessageHandler<T> {
+    void onMessageReceived(T message);
 }
