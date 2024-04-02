@@ -3,36 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@drawable/background"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WELCOME\nto the Moon"
+        android:textSize="36sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:shadowColor="#B0B0B0"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:layout_marginBottom="32dp"/>
 
     <Button
         android:id="@+id/startSP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MainMenuButton"
         android:text="Singleplayer" />
 
     <Button
         android:id="@+id/startMP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MainMenuButton"
         android:text="Multiplayer" />
 
     <Button
         android:id="@+id/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MainMenuButton"
         android:text="Settings" />
 
     <Button
         android:id="@+id/highscore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MainMenuButton"
         android:text="Highscores" />
 
     <Button
         android:id="@+id/exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MainMenuButton"
         android:text="Exit" />
 
 </LinearLayout>
