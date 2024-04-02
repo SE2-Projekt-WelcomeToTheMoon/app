@@ -1,9 +1,12 @@
-package com.example.se2_projekt_app;
+package com.example.se2_projekt_app.screens;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.app.Activity;
 import android.widget.Button;
+
+import com.example.se2_projekt_app.R;
 
 public class MainMenu extends Activity{
 
@@ -54,17 +57,28 @@ public class MainMenu extends Activity{
 
     public void startSP(View view) {
         // Start the game in Singleplayer
+        Intent intent = new Intent(this, Singleplayer.class);
+        startActivity(intent);
+
     }
 
     public void startMP(View view) {
         // Start the game in Multiplayer
+
+        //Intent intent = new Intent(this, Multiplayer.class);
+        //startActivity(intent);
     }
 
     public void openSettings(View view) {
         // Open the settings
+        Intent intent = new Intent(this, Settings.class);
+        startActivity(intent);
+
     }
 
     public void openHighscore(View view) {
+        Intent intent = new Intent(this, Highscore.class);
+        startActivity(intent);
         // Open the highscore
     }
 

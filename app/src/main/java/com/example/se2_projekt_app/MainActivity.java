@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import com.example.se2_projekt_app.screens.MainMenu;
+
 // still let this be the "main one" to maybe start more than just the MainMenu.
 // maybe a server connection?
 public class MainActivity extends Activity {
