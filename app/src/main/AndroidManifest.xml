@@ -28,7 +28,7 @@
         <activity android:name=".screens.Settings" />
         <activity android:name=".screens.Highscore" />
         <activity android:name=".screens.Singleplayer" />
-        <activity android:name=".screens.Lobby"/>
+        <activity android:name=".screens.Multiplayer"/>
         <activity android:name=".screens.User"/>
         <activity android:name=".screens.UserListAdapter"/>
     </application>

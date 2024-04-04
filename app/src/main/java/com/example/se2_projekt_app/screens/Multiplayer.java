@@ -10,7 +10,7 @@ import com.example.se2_projekt_app.networking.WebSocketClient;
 import java.util.ArrayList;
 
 
-public class Lobby extends Activity {
+public class Multiplayer extends Activity {
 
     private RecyclerView userListView;
     private Button startGameButton;
@@ -20,7 +20,7 @@ public class Lobby extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lobby);
+        setContentView(R.layout.activity_multiplayer);
 
         userListView = findViewById(R.id.lobbyUserList);
         startGameButton = findViewById(R.id.startGameButton);
