@@ -37,7 +37,7 @@ public class Multiplayer extends Activity {
                 finish();
             }
         });
-
+/*
         // Assuming WebSocketClient has methods to handle lobby logic
         webSocketClient = new WebSocketClient();
         webSocketClient.connectToServer(message -> {
@@ -48,8 +48,13 @@ public class Multiplayer extends Activity {
             });
         });
 
-        startGameButton.setOnClickListener(v -> {
-            // Send message to server to start game if conditions are met (e.g., minimum number of players)
+
+ */
+        startGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            } //placeholder
         });
     }
 
