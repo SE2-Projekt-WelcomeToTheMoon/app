@@ -63,10 +63,8 @@ public class MainMenu extends Activity{
     }
 
     public void startMP(View view) {
-        // Start the game in Multiplayer
-
-        //Intent intent = new Intent(this, Multiplayer.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, Multiplayer.class);
+        startActivity(intent);
     }
 
     public void openSettings(View view) {

@@ -28,5 +28,6 @@
         <activity android:name=".screens.Settings" />
         <activity android:name=".screens.Highscore" />
         <activity android:name=".screens.Singleplayer" />
+        <activity android:name=".screens.Multiplayer"/>
     </application>
 </manifest>
