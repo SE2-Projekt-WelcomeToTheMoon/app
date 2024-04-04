@@ -4,11 +4,11 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
+import android.view.View;
 import android.widget.Button;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.WebSocketClient;
 import java.util.ArrayList;
-
 
 public class Multiplayer extends Activity {
 
@@ -28,6 +28,15 @@ public class Multiplayer extends Activity {
         userListAdapter = new UserListAdapter(new ArrayList<>());
         userListView.setAdapter(userListAdapter);
         userListView.setLayoutManager(new LinearLayoutManager(this));
+
+        Button back = findViewById(R.id.multiplayer_back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Assuming WebSocketClient has methods to handle lobby logic
         webSocketClient = new WebSocketClient();
