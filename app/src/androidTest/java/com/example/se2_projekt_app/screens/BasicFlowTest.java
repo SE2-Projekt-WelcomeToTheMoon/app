@@ -4,7 +4,6 @@ import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.se2_projekt_app.R;
 
@@ -12,7 +11,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 
@@ -20,8 +18,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 
-@RunWith(AndroidJUnit4.class)
-public class MainMenuTest {
+public class BasicFlowTest {
 
     @Rule
     public ActivityScenarioRule<MainMenu> activityRule =
@@ -38,68 +35,33 @@ public class MainMenuTest {
     }
 
     @Test
-    public void testStartSPButtonIsDisplayed() {
-        onView(ViewMatchers.withId(R.id.startSP))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testStartMPButtonIsDisplayed() {
-        onView(ViewMatchers.withId(R.id.startMP))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testSettingsButtonIsDisplayed() {
-        onView(ViewMatchers.withId(R.id.settings))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testHighscoreButtonIsDisplayed() {
-        onView(ViewMatchers.withId(R.id.highscore))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testExitButtonIsDisplayed() {
-        onView(ViewMatchers.withId(R.id.exit))
-                .check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testStartSPButtonLaunchesSingleplayer() {
+    public void testSingleplayerFlow() {
         onView(ViewMatchers.withId(R.id.startSP)).perform(click());
         Intents.intended(IntentMatchers.hasComponent(Singleplayer.class.getName()));
+        onView(ViewMatchers.withId(R.id.singleplayer_back)).perform(click());
+        onView(ViewMatchers.withId(R.id.startSP)).check(matches(isDisplayed()));
     }
-
     @Test
-    public void testStartMPButtonLaunchesMultiplayer() {
+    public void testMultiplayerFlow() {
         onView(ViewMatchers.withId(R.id.startMP)).perform(click());
         Intents.intended(IntentMatchers.hasComponent(Multiplayer.class.getName()));
+        onView(ViewMatchers.withId(R.id.backButton)).perform(click());
+        onView(ViewMatchers.withId(R.id.startMP)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void testSettingsButtonLaunchesSettings() {
+    public void testSettingsFlow() {
         onView(ViewMatchers.withId(R.id.settings)).perform(click());
         Intents.intended(IntentMatchers.hasComponent(Settings.class.getName()));
+        onView(ViewMatchers.withId(R.id.settings_back)).perform(click());
+        onView(ViewMatchers.withId(R.id.settings)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void testHighscoreButtonLaunchesHighscore() {
+    public void testHighscoreFlow() {
         onView(ViewMatchers.withId(R.id.highscore)).perform(click());
         Intents.intended(IntentMatchers.hasComponent(Highscore.class.getName()));
+        onView(ViewMatchers.withId(R.id.highscore_back)).perform(click());
+        onView(ViewMatchers.withId(R.id.highscore)).check(matches(isDisplayed()));
     }
-
-
-    // it takes 30~ seconds but i can't find a better resolution
-//    @Test
-//    public void testBackButtonClosesView() {
-//        onView(ViewMatchers.withId(R.id.exit)).perform(click());
-//        try {
-//            Espresso.pressBackUnconditionally();
-//            fail("Should have thrown NoActivityResumedException");
-//        } catch (NoActivityResumedException expected) {
-//        }
-//    }
 }
