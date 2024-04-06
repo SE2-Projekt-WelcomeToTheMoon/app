@@ -6,8 +6,6 @@ import org.json.JSONObject;
 public class GenerateJSONObject {
 
     public static JSONObject generateJSONObject() throws JSONException {
-        return new JSONObject(
-                "{\"Username\":\\null,\"Action\":\\null,\"Message\":\\null}"
-        );
+        return new JSONObject("{\"Username\":\"\",\"Action\":\"\",\"Message\":\"\"}");
     }
 }

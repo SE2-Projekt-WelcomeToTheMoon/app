@@ -1,13 +1,17 @@
 package com.example.se2_projekt_app.networking;
 
 import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-public class WebSocketClient{
+public class WebSocketClient extends Thread{
     /**
      * Client für die Kommunikation mit dem Backend.
      */
@@ -19,14 +23,14 @@ public class WebSocketClient{
      * Stellt eine Verbindung zum Server her.
      * @param messageHandler
      */
-    public void connectToServer(WebSocketMessageHandler<String> messageHandler){
+    public void connectToServer(WebSocketMessageHandler<JSONObject> messageHandler){
         if (messageHandler == null)
             throw new IllegalArgumentException("Ein messageHandler wird benötigt");
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(this.websocket_url).build();
 
-        webSocket = client.newWebSocket(request, new WebSocketListener() {
+        this.webSocket = client.newWebSocket(request, new WebSocketListener() {
             /**
              * Logik die bei bestehender Verbindung mit dem Server ausgeführt wird.
              * @param webSocket
@@ -40,12 +44,11 @@ public class WebSocketClient{
             /**
              *
              * @param webSocket
-             * @param text
+             * @param json
              */
 
-            @Override
-            public void onMessage(WebSocket webSocket, String text){
-                messageHandler.onMessageReceived(text);
+            public void onMessage(WebSocket webSocket, JSONObject json) throws JSONException {
+                messageHandler.onMessageReceived(json);
             }
 
             /**
@@ -56,8 +59,13 @@ public class WebSocketClient{
              */
 
             @Override
-            public void onFailure(WebSocket webSocket, Throwable tw, Response response){
+            public void onFailure(WebSocket webSocket, Throwable tw, Response response) {
                 Log.d("Network", "Verbindung fehlgeschlagen: " + tw.getMessage() + response.message());
+                try {
+                    JSONObject responseJson = new JSONObject(response.message());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -66,22 +74,22 @@ public class WebSocketClient{
      * Schickt einen String an den Server.
      * @param msg
      */
-    public void sendMessageToServer(String msg){
-        webSocket.send(msg);
+    public void sendMessageToServer(JSONObject msg){
+        this.webSocket.send(String.valueOf(msg));
     }
 
     /**
      * Schließt die Serververbindung.
      * @throws Throwable
      */
-    @Override
-    protected void finalize() throws Throwable{
-        try{
-            webSocket.close(1000, "Closing");
-        } finally{
-            super.finalize();
-        }
-    }
+    //@Override
+    //protected void finalize() throws Throwable{
+      //  try{
+        //    webSocket.close(1000, "Closing");
+        //} finally{
+          //  super.finalize();
+        //}
+    //}
 
     /**
      * Für Testzwecke benötigt.
@@ -92,5 +100,10 @@ public class WebSocketClient{
     // Simple method to demonstrate unit testing and test coverage with sonarcloud
     public static String concatenateStrings(String first, String second){
         return first + second;
+    }
+
+    @Override
+    public void run() {
+
     }
 }
