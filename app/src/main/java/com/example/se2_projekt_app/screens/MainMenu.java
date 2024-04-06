@@ -2,13 +2,25 @@ package com.example.se2_projekt_app.screens;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.app.Activity;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.networking.ConnectionHandler;
+import com.example.se2_projekt_app.networking.JSON.ActionValues;
+import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.WebSocketClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 public class MainMenu extends Activity{
+
+    public static ConnectionHandler connectionHandler = new ConnectionHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +33,16 @@ public class MainMenu extends Activity{
         Button highscore = findViewById(R.id.highscore);
         Button exit = findViewById(R.id.exit);
 
+        connectionHandler.connectToWebSocketServer();
+        JSONObject msg;
+        try {
+            msg = GenerateJSONObject.generateJSONObject();
+            msg.put("Username", "Dummy");
+            msg.put("Action", ActionValues.REGISTERUSER.getValue());
+            connectionHandler.sendMessage(msg);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         startSP.setOnClickListener(new View.OnClickListener() {
             @Override

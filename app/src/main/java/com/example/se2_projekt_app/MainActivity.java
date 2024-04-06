@@ -16,6 +16,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.screens.MainMenu;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends Activity {
 
     TextView textViewServerResponse;
@@ -35,10 +38,10 @@ public class MainActivity extends Activity {
         });
 
         Button buttonConnect = findViewById(R.id.buttonConnect);
-        buttonConnect.setOnClickListener(v -> connectToWebSocketServer());
+        //buttonConnect.setOnClickListener(v -> connectToWebSocketServer());
 
         Button buttonSendMsg = findViewById(R.id.buttonSendMsg);
-        buttonSendMsg.setOnClickListener(v -> sendMessage());
+        //buttonSendMsg.setOnClickListener(v -> sendMessage());
 
         textViewServerResponse = findViewById(R.id.textViewResponse);
 
@@ -50,20 +53,5 @@ public class MainActivity extends Activity {
 
         //stop this activity, cause it just starts the MainMenu
         finish();
-    }
-
-    private void connectToWebSocketServer() {
-        // register a handler for received messages when setting up the connection
-        networkHandler.connectToServer(this::messageReceivedFromServer);
-    }
-
-    private void sendMessage() {
-        networkHandler.sendMessageToServer("test message");
-    }
-
-    private void messageReceivedFromServer(String message) {
-        // TODO handle received messages
-        Log.d("Network", message);
-        textViewServerResponse.setText(message);
     }
 }

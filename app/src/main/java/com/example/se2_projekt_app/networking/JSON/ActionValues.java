@@ -1,5 +1,7 @@
 package com.example.se2_projekt_app.networking.JSON;
 
+import lombok.Getter;
+@Getter
 public enum ActionValues {
     REGISTERUSER("registerUser"),
     JOINLOBBY("joinLobby");

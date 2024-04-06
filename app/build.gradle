@@ -75,6 +75,8 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
