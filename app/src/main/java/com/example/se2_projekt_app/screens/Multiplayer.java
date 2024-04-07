@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.widget.Button;
+import android.widget.Toast;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.JSON.ActionValues;
 import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
@@ -38,14 +39,18 @@ public class Multiplayer extends Activity {
 
                 JSONObject response = MainMenu.connectionHandler.getResponse();
                 if(response.getString("action").equals("joinedLobby") && response.getString("success").equals("true")){
-                    //TODO add user to UserListAdapter view
+                    // Assuming response contains a "username" to add
+                    String newUsername = response.getString("username"); // Adjust according to actual JSON structure
+                    User newUser = new User(newUsername);
+                    userListAdapter.addUser(newUser);
                 }
                 else {
-                    //TODO implement error output to user screen
-                    System.out.println("An error occurred when joining the lobby, please try again.");
+                    // Displaying Toast message
+                    Toast.makeText(Multiplayer.this, "Failed to join lobby. Please try again.", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                Toast.makeText(Multiplayer.this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -66,11 +66,14 @@ public class WebSocketClient extends Thread{
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable tw, Response response) {
-                Log.d("Network", "Verbindung fehlgeschlagen: " + tw.getMessage() + response.message());
-                try {
-                    JSONObject responseJson = new JSONObject(response.message());
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                Log.d("Network", "Verbindung fehlgeschlagen: " + tw.getMessage());
+
+                // It's not safe to assume the response message is always JSON formatted or that it's even present.
+                // In case of a failure, it's more important to log or handle the error rather than parsing the response message.
+                if (response != null) {
+                    Log.d("Network", "Response message: " + response.message());
+                } else {
+                    Log.d("Network", "Response object ist null, Nachricht kann nicht abgerufen werden.");
                 }
             }
         });
@@ -111,5 +114,11 @@ public class WebSocketClient extends Thread{
     @Override
     public void run() {
 
+    }
+
+    public void closeConnection() {
+        if (webSocket != null) {
+            webSocket.close(1000, "ActivityDestroyed"); // Use proper close code and reason
+        }
     }
 }
