@@ -4,23 +4,15 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
-
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.ConnectionHandler;
 import com.example.se2_projekt_app.networking.JSON.ActionValues;
 import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
-import com.example.se2_projekt_app.networking.WebSocketClient;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 public class Multiplayer extends Activity {
-    //ConnectionHandler connectionHandler = new ConnectionHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +31,22 @@ public class Multiplayer extends Activity {
         backButton.setOnClickListener(v -> finish());
         startGameButton.setOnClickListener(v -> {
             try {
-                joinLobby();
+                JSONObject msg = GenerateJSONObject.generateJSONObject();
+                msg.put("username", "Dummy");
+                msg.put("action", ActionValues.JOINLOBBY.getValue());
+                MainMenu.connectionHandler.sendMessage(msg);
+
+                JSONObject response = MainMenu.connectionHandler.getResponse();
+                if(response.getString("action").equals("joinedLobby") && response.getString("success").equals("true")){
+                    //TODO add user to UserListAdapter view
+                }
+                else {
+                    //TODO implement error output to user screen
+                    System.out.println("An error occurred when joining the lobby, please try again.");
+                }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    public void joinLobby() throws JSONException {
-        JSONObject msg = GenerateJSONObject.generateJSONObject();
-        msg.put("Username", "Dummy");
-        msg.put("Action", ActionValues.JOINLOBBY.getValue());
-        MainMenu.connectionHandler.sendMessage(msg);
     }
 }

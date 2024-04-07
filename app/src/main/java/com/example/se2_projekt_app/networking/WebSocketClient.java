@@ -2,6 +2,8 @@ package com.example.se2_projekt_app.networking;
 
 import android.util.Log;
 
+import com.example.se2_projekt_app.screens.MainMenu;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,8 +49,12 @@ public class WebSocketClient extends Thread{
              * @param json
              */
 
-            public void onMessage(WebSocket webSocket, JSONObject json) throws JSONException {
-                messageHandler.onMessageReceived(json);
+            public void onMessage(WebSocket webSocket, JSONObject json) {
+                try {
+                    messageHandler.onMessageReceived(json);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             /**
@@ -75,21 +81,21 @@ public class WebSocketClient extends Thread{
      * @param msg
      */
     public void sendMessageToServer(JSONObject msg){
-        this.webSocket.send(String.valueOf(msg));
+        this.webSocket.send(msg.toString());
     }
 
     /**
      * Schließt die Serververbindung.
      * @throws Throwable
      */
-    //@Override
-    //protected void finalize() throws Throwable{
-      //  try{
-        //    webSocket.close(1000, "Closing");
-        //} finally{
-          //  super.finalize();
-        //}
-    //}
+    @Override
+    protected void finalize() throws Throwable{
+        try{
+            MainMenu.connectionHandler.networkHandler.webSocket.close(1000, "Closing");
+        } finally{
+            super.finalize();
+        }
+    }
 
     /**
      * Für Testzwecke benötigt.
