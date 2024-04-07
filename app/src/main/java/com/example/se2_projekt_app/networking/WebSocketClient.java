@@ -25,7 +25,7 @@ public class WebSocketClient extends Thread{
      * Stellt eine Verbindung zum Server her.
      * @param messageHandler
      */
-    public void connectToServer(WebSocketMessageHandler<String> messageHandler){
+    public void connectToServer(WebSocketMessageHandler<JSONObject> messageHandler){
         if (messageHandler == null)
             throw new IllegalArgumentException("Ein messageHandler wird benötigt");
 
@@ -49,7 +49,7 @@ public class WebSocketClient extends Thread{
              * @param json
              */
 
-            public void onMessage(WebSocket webSocket, String json) {
+            public void onMessage(WebSocket webSocket, JSONObject json) {
                 try {
                     messageHandler.onMessageReceived(json);
                 } catch (JSONException e) {
@@ -66,12 +66,12 @@ public class WebSocketClient extends Thread{
 
             @Override
             public void onFailure(WebSocket webSocket, Throwable tw, Response response) {
-//                Log.d("Network", "Verbindung fehlgeschlagen: " + tw.getMessage() + response.message());
-//                try {
-//                    JSONObject responseJson = new JSONObject(response.message());
-//                } catch (JSONException e) {
-//                    throw new RuntimeException(e);
-//                }
+                Log.d("Network", "Verbindung fehlgeschlagen: " + tw.getMessage() + response.message());
+                try {
+                    JSONObject responseJson = new JSONObject(response.message());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

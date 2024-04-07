@@ -32,41 +32,21 @@ public class Multiplayer extends Activity {
         startGameButton.setOnClickListener(v -> {
             try {
                 JSONObject msg = GenerateJSONObject.generateJSONObject();
-                msg.put("Username", "Dummy");
-                msg.put("Action", ActionValues.JOINLOBBY.getValue());
+                msg.put("username", "Dummy");
+                msg.put("action", ActionValues.JOINLOBBY.getValue());
                 MainMenu.connectionHandler.sendMessage(msg);
 
                 JSONObject response = MainMenu.connectionHandler.getResponse();
-//                if(response.getString("Action").equals("joinedLobby") && response.getString("Success").equals("true")){
-//
-//                }
-//                else {
-//
-//                }
+                if(response.getString("action").equals("joinedLobby") && response.getString("success").equals("true")){
+                    //TODO add user to UserListAdapter view
+                }
+                else {
+                    //TODO implement error output to user screen
+                    System.out.println("An error occurred when joining the lobby, please try again.");
+                }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-
-//            try {
-//                joinLobby();
-//            } catch (JSONException e) {
-//                throw new RuntimeException(e);
-//            }
         });
     }
-
-//    public void joinLobby() throws JSONException {
-//        JSONObject msg = GenerateJSONObject.generateJSONObject();
-//        msg.put("Username", "Dummy");
-//        msg.put("Action", ActionValues.JOINLOBBY.getValue());
-//        MainMenu.connectionHandler.sendMessage(msg);
-//
-//        JSONObject response = MainMenu.connectionHandler.getResponse();
-//        if(response.getString("Action").equals("joinedLobby") && response.getString("Success").equals("true")){
-//            this.userListAdapter
-//        }
-//        else {
-//
-//        }
-//    }
 }
