@@ -2,15 +2,14 @@ package com.example.se2_projekt_app.networking;
 
 import android.util.Log;
 import android.widget.TextView;
-
-import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+import lombok.Getter;
 
 public class ConnectionHandler {
     TextView textViewServerResponse;
-    JSONObject message;
+    @Getter
+    JSONObject message, response;
     WebSocketClient networkHandler = new WebSocketClient();
 
     public void connectToWebSocketServer() {
@@ -23,8 +22,9 @@ public class ConnectionHandler {
 
     }
 
-    public void messageReceivedFromServer(JSONObject message) throws JSONException {
-        Log.d("Network", message.get("Message").toString());
-        this.textViewServerResponse.setText(message.get("Message").toString());
+    public void messageReceivedFromServer(String message) throws JSONException {
+        this.response = new JSONObject(message);
+        Log.d("Network", this.response.getString("Action"));
+        this.textViewServerResponse.setText(this.response.getString("Action"));
     }
 }
