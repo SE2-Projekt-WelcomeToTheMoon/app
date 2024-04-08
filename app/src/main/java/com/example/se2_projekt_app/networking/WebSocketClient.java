@@ -25,7 +25,7 @@ public class WebSocketClient extends Thread{
      * Stellt eine Verbindung zum Server her.
      * @param messageHandler
      */
-    public void connectToServer(WebSocketMessageHandler<JSONObject> messageHandler){
+    public void connectToServer(WebSocketMessageHandler<String> messageHandler){
         if (messageHandler == null)
             throw new IllegalArgumentException("Ein messageHandler wird benötigt");
 
@@ -49,7 +49,7 @@ public class WebSocketClient extends Thread{
              * @param json
              */
 
-            public void onMessage(WebSocket webSocket, JSONObject json) {
+            public void onMessage(WebSocket webSocket, String json) {
                 try {
                     messageHandler.onMessageReceived(json);
                 } catch (JSONException e) {

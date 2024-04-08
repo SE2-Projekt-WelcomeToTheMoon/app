@@ -34,6 +34,13 @@ public class MainMenu extends Activity{
             msg.put("username", "Dummy");
             msg.put("action", ActionValues.REGISTERUSER.getValue());
             connectionHandler.sendMessage(msg);
+            JSONObject response = connectionHandler.getResponse();
+//            if(response.getBoolean("success")){
+//                System.out.println("Username set to: "+ response.getString("username"));
+//            }
+//            else{
+//                System.out.println("Username couldn't be set: " + response.getString("message"));
+//            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

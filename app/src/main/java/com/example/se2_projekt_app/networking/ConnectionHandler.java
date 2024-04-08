@@ -22,9 +22,13 @@ public class ConnectionHandler {
 
     }
 
-    public void messageReceivedFromServer(JSONObject message) throws JSONException {
-        this.response = message;
-        Log.d("Network", this.response.getString("action"));
-        this.textViewServerResponse.setText(this.response.getString("action"));
+    public void messageReceivedFromServer(String message) throws JSONException {
+        if(message == null){
+            System.out.println("No message from server.");
+        }
+        else this.response = new JSONObject(message);
+
+//        Log.d("Network", this.response.getString("action"));
+//        this.textViewServerResponse.setText(this.response.getString("action"));
     }
 }

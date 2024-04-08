@@ -38,11 +38,16 @@ public class Multiplayer extends Activity {
                 MainMenu.connectionHandler.sendMessage(msg);
 
                 JSONObject response = MainMenu.connectionHandler.getResponse();
-                if(response.getString("action").equals("joinedLobby") && response.getString("success").equals("true")){
+                if(response.getString("action").equals("joinedLobby") && response.getBoolean("success")){
                     // Assuming response contains a "username" to add
                     String newUsername = response.getString("username"); // Adjust according to actual JSON structure
                     User newUser = new User(newUsername);
-                    userListAdapter.addUser(newUser);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            userListAdapter.addUser(newUser);
+                        }
+                    });
                 }
                 else {
                     // Displaying Toast message
