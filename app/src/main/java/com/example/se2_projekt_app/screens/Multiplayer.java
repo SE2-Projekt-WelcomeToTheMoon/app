@@ -54,7 +54,6 @@ public class Multiplayer extends Activity {
                     Toast.makeText(Multiplayer.this, "Failed to join lobby. Please try again.", Toast.LENGTH_LONG).show();
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
                 Toast.makeText(Multiplayer.this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
