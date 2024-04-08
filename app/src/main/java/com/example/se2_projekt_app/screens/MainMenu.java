@@ -9,10 +9,11 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.ConnectionHandler;
 import com.example.se2_projekt_app.networking.JSON.ActionValues;
 import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.ServerResponseListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainMenu extends Activity{
+public class MainMenu extends Activity implements ServerResponseListener {
 
     public static ConnectionHandler connectionHandler = new ConnectionHandler();
 
@@ -27,12 +28,17 @@ public class MainMenu extends Activity{
         Button highscore = findViewById(R.id.highscore);
         Button exit = findViewById(R.id.exit);
 
+        // Creating Listener for Activity
+        connectionHandler.setServerResponseListener(this);
+
+        // Establishing connection to server
         connectionHandler.connectToWebSocketServer();
         JSONObject msg;
         try {
             msg = GenerateJSONObject.generateJSONObject();
             msg.put("username", "Dummy");
             msg.put("action", ActionValues.REGISTERUSER.getValue());
+            // Sending message to server to register dummy user
             connectionHandler.sendMessage(msg);
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -99,5 +105,24 @@ public class MainMenu extends Activity{
     public void exit(View view) {
         // Exit the game
         finish();
+    }
+
+    /**
+     * Method to handle message received form server.
+     * @param response Message from server to handle.
+     */
+    @Override
+    public void onResponseReceived(JSONObject response) {
+        try {
+            if(response.getString("action").equals("registeredUser") && response.getBoolean("success")){
+                System.out.println("Username set to: "+ response.getString("username"));
+            }
+            else{
+                System.out.println("Username couldn't be set: " + response.getString("message"));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

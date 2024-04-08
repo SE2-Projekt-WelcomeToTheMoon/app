@@ -54,4 +54,11 @@ public class MainActivity extends Activity {
         //stop this activity, cause it just starts the MainMenu
         finish();
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkHandler != null) {
+            networkHandler.closeConnection(); // Ensure WebSocket is closed
+        }
+    }
 }
