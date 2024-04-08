@@ -43,7 +43,6 @@ public class Multiplayer extends Activity implements ServerResponseListener {
                 // Sending message to server to join a lobby as dummy user
                 MainMenu.connectionHandler.sendMessage(msg);
             } catch (JSONException e) {
-                e.printStackTrace();
                 Toast.makeText(Multiplayer.this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -67,7 +66,6 @@ public class Multiplayer extends Activity implements ServerResponseListener {
                 runOnUiThread(() -> Toast.makeText(Multiplayer.this, "Failed to join lobby. Please try again.", Toast.LENGTH_LONG).show());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
             runOnUiThread(() -> Toast.makeText(Multiplayer.this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show());
         }
     }
