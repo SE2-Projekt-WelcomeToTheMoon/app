@@ -42,10 +42,20 @@ public class BasicFlowTest {
         onView(ViewMatchers.withId(R.id.startSP)).check(matches(isDisplayed()));
     }
     @Test
-    public void testMultiplayerFlow() {
+    public void testMultiplayerFlow1() {
         onView(ViewMatchers.withId(R.id.startMP)).perform(click());
         Intents.intended(IntentMatchers.hasComponent(Multiplayer.class.getName()));
         onView(ViewMatchers.withId(R.id.backButton)).perform(click());
+        onView(ViewMatchers.withId(R.id.startMP)).check(matches(isDisplayed()));
+    }
+
+    // This is very Temporary
+    // TODO Remove later
+    @Test
+    public void testMultiplayerFlow2() {
+        onView(ViewMatchers.withId(R.id.startMP)).perform(click());
+        Intents.intended(IntentMatchers.hasComponent(Multiplayer.class.getName()));
+        onView(ViewMatchers.withId(R.id.startGameButton)).perform(click());
         onView(ViewMatchers.withId(R.id.startMP)).check(matches(isDisplayed()));
     }
 
