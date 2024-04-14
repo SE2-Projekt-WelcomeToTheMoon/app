@@ -9,18 +9,27 @@ import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides a view that supports scaling and touch interactions to manage and display game elements.
+ */
 public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback, ScaleGestureDetector.OnScaleGestureListener {
     private float scaleFactor = 1.0f;
     private float translateX = 0f, translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
-    private List<GameBox> gameBoxes = new ArrayList<>();
+    private final List<Section> sections = new ArrayList<>();
     private ScaleGestureDetector scaleGestureDetector;
-    private List<Section> sections = new ArrayList<>();
 
+    /**
+     * Constructs the game board view with necessary context and attributes.
+     * @param context The context of the application.
+     * @param attrs The set of attributes from XML.
+     */
     public GameBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
@@ -28,15 +37,26 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
         init(context);
     }
 
+    /**
+     * Initializes the scale gesture detector and sections of the game.
+     * @param context The application context.
+     */
     private void init(Context context) {
         scaleGestureDetector = new ScaleGestureDetector(context, this);
         createSection(0, 0, 3, Element.ROBOT);
         createSection(0, 200, 3, Element.WATER);
         createSection(0, 400, 3, Element.WILDCARD);
-        createSection(300, 0, 3, Element.PLANNING);
+        createSection(300, 0, 5, Element.PLANNING);
     }
 
-    public void createSection(int x, int y, int boxCount, Element element) {
+    /**
+     * Creates a game section with boxes at specified positions.
+     * @param x The x-coordinate for the section.
+     * @param y The y-coordinate for the section.
+     * @param boxCount The number of boxes to create.
+     * @param element The type of elements each box should represent.
+     */
+    private void createSection(int x, int y, int boxCount, Element element) {
         Section section = new Section(x, y);
         int boxSize = 200;
         int color = element.getColor();
@@ -45,20 +65,23 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             GameBox box = new GameBox(x + i * boxSize, y, boxSize, color, 0);
             section.addBox(box);
         }
-
         sections.add(section);
     }
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        redraw();
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {}
+
+    @Override
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        drawGameBoard();
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {}
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
 
+    /**
+     * Redraws the game board on the canvas, applying translation and scaling transformations.
+     */
     public void drawGameBoard() {
         final Canvas canvas = getHolder().lockCanvas();
         if (canvas != null) {
@@ -66,12 +89,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
                 synchronized (getHolder()) {
                     canvas.save();
                     canvas.drawColor(Color.WHITE); // Clear with white background
-                    canvas.translate(translateX, translateY); // Apply translation
-                    canvas.scale(scaleFactor, scaleFactor); // Apply scaling
+                    canvas.translate(translateX, translateY);
+                    canvas.scale(scaleFactor, scaleFactor);
 
-                    for (GameBox box : gameBoxes) {
-                        box.draw(canvas);
-                    }
                     for (Section section : sections) {
                         section.draw(canvas);
                     }
@@ -88,72 +108,45 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
 
-        final int action = event.getAction();
-        switch (action & MotionEvent.ACTION_MASK) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                float adjustedX = (event.getX() - translateX) / scaleFactor;
+                float adjustedY = (event.getY() - translateY) / scaleFactor;
+                sections.forEach(section -> section.handleClick(adjustedX, adjustedY, this));
                 lastTouchX = event.getX();
                 lastTouchY = event.getY();
-                checkClick(lastTouchX, lastTouchY);
                 return true;
 
             case MotionEvent.ACTION_MOVE:
                 if (!scaleGestureDetector.isInProgress()) {
-                    final float x = event.getX();
-                    final float y = event.getY();
-
-                    final float dx = (x - lastTouchX) * (1 / scaleFactor);
-                    final float dy = (y - lastTouchY) * (1 / scaleFactor);
+                    final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
+                    final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
 
                     translateX += dx;
                     translateY += dy;
-
-                    lastTouchX = x;
-                    lastTouchY = y;
-
-                    redraw();
+                    lastTouchX = event.getX();
+                    lastTouchY = event.getY();
+                    drawGameBoard();
                 }
-                return true;
-
-
-            case MotionEvent.ACTION_UP:
-
                 return true;
         }
         return true;
     }
-
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
-        try {
-            scaleFactor *= detector.getScaleFactor();
-            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f)); // Limit zooming
-            redraw();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void checkClick(float x, float y) {
-        float scaledX = (x - translateX) / scaleFactor;
-        float scaledY = (y - translateY) / scaleFactor;
-
-        for (Section section : sections) {
-            section.handleClick(scaledX, scaledY, this);
-        }
-    }
-
-    public void redraw() {
+        scaleFactor *= detector.getScaleFactor();
+        scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f)); // Limit zooming
         drawGameBoard();
-    }
-    @Override
-    public boolean onScaleBegin(ScaleGestureDetector detector) {
         return true;
     }
 
     @Override
-    public void onScaleEnd(ScaleGestureDetector detector) {
+    public boolean onScaleBegin(@NonNull ScaleGestureDetector detector) {
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
     }
 }
