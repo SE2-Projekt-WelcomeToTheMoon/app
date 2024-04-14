@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.app.Activity;
-import android.widget.Button;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.ConnectionHandler;
 import com.example.se2_projekt_app.networking.JSON.ActionValues;
@@ -22,12 +21,13 @@ public class MainMenu extends Activity implements ServerResponseListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_menu);
 
-        Button startSP = findViewById(R.id.startSP);
-        Button startMP = findViewById(R.id.startMP);
-        Button settings = findViewById(R.id.settings);
-        Button highscore = findViewById(R.id.highscore);
-        Button exit = findViewById(R.id.exit);
-        Button debug = findViewById(R.id.debug);
+        // simplified buttons and listeners
+        findViewById(R.id.startSP).setOnClickListener(this::startSP);
+        findViewById(R.id.startMP).setOnClickListener(this::startMP);
+        findViewById(R.id.settings).setOnClickListener(this::openSettings);
+        findViewById(R.id.highscore).setOnClickListener(this::openHighscore);
+        findViewById(R.id.exit).setOnClickListener(this::exit);
+        findViewById(R.id.debug).setOnClickListener(this::openDebug);
 
         // Creating Listener for Activity
         connectionHandler.setServerResponseListener(this);
@@ -45,12 +45,6 @@ public class MainMenu extends Activity implements ServerResponseListener {
             throw new RuntimeException(e);
         }
 
-        startSP.setOnClickListener(v -> startSP(v));
-        startMP.setOnClickListener(v -> startMP(v));
-        settings.setOnClickListener(v -> openSettings(v));
-        highscore.setOnClickListener(v -> openHighscore(v));
-        exit.setOnClickListener(v -> exit(v));
-        debug.setOnClickListener(v -> openDebug(v));
     }
 
     public void startSP(View view) {

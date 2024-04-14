@@ -21,7 +21,8 @@ import java.util.List;
  */
 public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback, ScaleGestureDetector.OnScaleGestureListener {
     private float scaleFactor = 1.0f;
-    private float translateX = 0f, translateY = 0f;
+    private float translateX = 0f;
+    private float translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
     private final List<Section> sections = new ArrayList<>();
@@ -71,7 +72,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override
-    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {}
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+        // empty because I had to implement it and don't need it yet
+    }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
@@ -79,7 +82,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        // empty because I had to implement it and don't need it yet
+    }
 
     /**
      * Redraws the game board on the canvas, applying translation and scaling transformations.
@@ -110,27 +115,24 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
 
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                float adjustedX = (event.getX() - translateX) / scaleFactor;
-                float adjustedY = (event.getY() - translateY) / scaleFactor;
-                sections.forEach(section -> section.handleClick(adjustedX, adjustedY, this));
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN) {
+            float adjustedX = (event.getX() - translateX) / scaleFactor;
+            float adjustedY = (event.getY() - translateY) / scaleFactor;
+            sections.forEach(section -> section.handleClick(adjustedX, adjustedY, this));
+            lastTouchX = event.getX();
+            lastTouchY = event.getY();
+        } else if (action == MotionEvent.ACTION_MOVE) {
+            if (!scaleGestureDetector.isInProgress()) {
+                final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
+                final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
+
+                translateX += dx;
+                translateY += dy;
                 lastTouchX = event.getX();
                 lastTouchY = event.getY();
-                return true;
-
-            case MotionEvent.ACTION_MOVE:
-                if (!scaleGestureDetector.isInProgress()) {
-                    final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
-                    final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
-
-                    translateX += dx;
-                    translateY += dy;
-                    lastTouchX = event.getX();
-                    lastTouchY = event.getY();
-                    drawGameBoard();
-                }
-                return true;
+                drawGameBoard();
+            }
         }
         return true;
     }
@@ -150,5 +152,6 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
+        // empty because I had to implement it and don't need it yet
     }
 }

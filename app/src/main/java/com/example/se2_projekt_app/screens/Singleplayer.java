@@ -14,13 +14,6 @@ public class Singleplayer extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.singleplayer);
 
-        Button back = findViewById(R.id.singleplayer_back);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        findViewById(R.id.singleplayer_back).setOnClickListener(v -> finish());
     }
 }

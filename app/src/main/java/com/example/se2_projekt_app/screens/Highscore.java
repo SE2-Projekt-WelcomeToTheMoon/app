@@ -13,8 +13,6 @@ public class Highscore extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.highscore);
 
-        Button back = findViewById(R.id.highscore_back);
-
-        back.setOnClickListener(v -> finish());
+        findViewById(R.id.highscore_back).setOnClickListener(v -> finish());
     }
 }

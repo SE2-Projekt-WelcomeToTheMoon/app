@@ -80,8 +80,8 @@ public class GameBox {
      * @param offsetY The vertical offset for the y-coordinate.
      */
     private void drawNumber(Canvas canvas, int offsetX, int offsetY) {
-        float centerX = offsetX + size / 2;
-        float centerY = offsetY + size / 2 - ((textPaint.descent() + textPaint.ascent()) / 2);
+        float centerX = offsetX + (float) size / 2;
+        float centerY = offsetY + (float) size / 2 - ((textPaint.descent() + textPaint.ascent()) / 2);
         canvas.drawText(String.valueOf(number), centerX, centerY, textPaint);
     }
 

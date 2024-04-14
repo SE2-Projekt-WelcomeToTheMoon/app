@@ -13,8 +13,7 @@ public class Debug extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.debug);
 
-        Button back = findViewById(R.id.debug_back);
-        back.setOnClickListener(v -> finish());
+        findViewById(R.id.debug_back).setOnClickListener(v -> finish());
 
 
     }
