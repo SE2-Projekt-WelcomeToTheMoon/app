@@ -14,7 +14,8 @@ public class Debug extends Activity {
         setContentView(R.layout.debug);
 
         Button back = findViewById(R.id.debug_back);
-
         back.setOnClickListener(v -> finish());
+
+
     }
 }
