@@ -122,17 +122,15 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             sections.forEach(section -> section.handleClick(adjustedX, adjustedY, this));
             lastTouchX = event.getX();
             lastTouchY = event.getY();
-        } else if (action == MotionEvent.ACTION_MOVE) {
-            if (!scaleGestureDetector.isInProgress()) {
-                final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
-                final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
+        } else if (action == MotionEvent.ACTION_MOVE && !scaleGestureDetector.isInProgress()) {
+            final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
+            final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
 
-                translateX += dx;
-                translateY += dy;
-                lastTouchX = event.getX();
-                lastTouchY = event.getY();
-                drawGameBoard();
-            }
+            translateX += dx;
+            translateY += dy;
+            lastTouchX = event.getX();
+            lastTouchY = event.getY();
+            drawGameBoard();
         }
         return true;
     }
