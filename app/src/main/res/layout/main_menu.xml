@@ -46,4 +46,8 @@
         style="@style/MainMenuButton"
         android:text="Exit" />
 
+    <Button
+        android:id="@+id/debug"
+        style="@style/MainMenuButton"
+        android:text="Debug" />
 </LinearLayout>
