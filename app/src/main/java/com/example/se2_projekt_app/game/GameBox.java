@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app;
+package com.example.se2_projekt_app.game;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,7 +11,7 @@ public class GameBox {
     private final int y;
     private final int size;
     private int number;
-    private final Paint paint;
+    public final Paint paint;
     private final Paint textPaint;
 
     /**

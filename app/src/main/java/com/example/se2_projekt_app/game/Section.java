@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app;
+package com.example.se2_projekt_app.game;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

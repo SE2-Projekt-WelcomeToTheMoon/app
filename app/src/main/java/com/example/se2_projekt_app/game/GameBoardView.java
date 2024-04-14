@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app;
+package com.example.se2_projekt_app.game;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,6 +10,8 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
+
+import com.example.se2_projekt_app.enums.Element;
 
 import java.util.ArrayList;
 import java.util.List;
