@@ -1,7 +1,5 @@
 package com.example.se2_projekt_app.networking.JSON;
 
-import lombok.Getter;
-@Getter
 public enum ActionValues {
     REGISTERUSER("registerUser"),
     JOINLOBBY("joinLobby");
@@ -9,5 +7,9 @@ public enum ActionValues {
     private final String value;
     ActionValues(String action){
         this.value = action;
+    }
+
+    public String getValue() {
+        return this.value;
     }
 }

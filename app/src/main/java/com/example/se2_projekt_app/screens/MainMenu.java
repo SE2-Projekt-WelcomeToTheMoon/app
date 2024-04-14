@@ -27,6 +27,7 @@ public class MainMenu extends Activity implements ServerResponseListener {
         Button settings = findViewById(R.id.settings);
         Button highscore = findViewById(R.id.highscore);
         Button exit = findViewById(R.id.exit);
+        Button debug = findViewById(R.id.debug);
 
         // Creating Listener for Activity
         connectionHandler.setServerResponseListener(this);
@@ -44,37 +45,12 @@ public class MainMenu extends Activity implements ServerResponseListener {
             throw new RuntimeException(e);
         }
 
-        startSP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSP(v);
-            }
-        });
-        startMP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startMP(v);
-            }
-        });
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSettings(v);
-            }
-        });
-        highscore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openHighscore(v);
-            }
-        });
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exit(v);
-            }
-        });
-
+        startSP.setOnClickListener(v -> startSP(v));
+        startMP.setOnClickListener(v -> startMP(v));
+        settings.setOnClickListener(v -> openSettings(v));
+        highscore.setOnClickListener(v -> openHighscore(v));
+        exit.setOnClickListener(v -> exit(v));
+        debug.setOnClickListener(v -> openDebug(v));
     }
 
     public void startSP(View view) {
@@ -105,6 +81,11 @@ public class MainMenu extends Activity implements ServerResponseListener {
     public void exit(View view) {
         // Exit the game
         finish();
+    }
+
+    public void openDebug(View view) {
+        Intent intent = new Intent(this, Debug.class);
+        startActivity(intent);
     }
 
     /**

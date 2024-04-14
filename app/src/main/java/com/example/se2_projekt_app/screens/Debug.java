@@ -1,19 +1,19 @@
 package com.example.se2_projekt_app.screens;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.se2_projekt_app.R;
 
-public class Highscore extends Activity{
+public class Debug extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.highscore);
+        setContentView(R.layout.debug);
 
-        Button back = findViewById(R.id.highscore_back);
+        Button back = findViewById(R.id.debug_back);
 
         back.setOnClickListener(v -> finish());
     }
