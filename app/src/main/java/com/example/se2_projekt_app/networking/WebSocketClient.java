@@ -2,7 +2,6 @@ package com.example.se2_projekt_app.networking;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.example.se2_projekt_app.screens.MainMenu;
 import org.json.JSONException;
 import org.json.JSONObject;
 import okhttp3.OkHttpClient;
@@ -85,12 +84,11 @@ public class WebSocketClient {
 
     /**
      * Closes webSocket connection to server.
-     * @throws Throwable
      */
     @Override
     protected void finalize() throws Throwable{
         try{
-            MainMenu.connectionHandler.networkHandler.webSocket.close(1000, "Closing");
+            webSocket.close(1000, "Closing");
         } finally{
             super.finalize();
         }
