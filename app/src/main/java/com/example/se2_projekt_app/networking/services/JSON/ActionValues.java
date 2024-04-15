@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app.networking.JSON;
+package com.example.se2_projekt_app.networking.services.JSON;
 
 public enum ActionValues {
     REGISTERUSER("registerUser"),
