@@ -1,21 +1,19 @@
 package com.example.se2_projekt_app.networking.services.JSON;
 
 import org.json.JSONObject;
+
 import lombok.SneakyThrows;
 
-/**
- * Class to generate a generic JSON object for proper communication with server.
- */
-public class GenerateJSONObjectService {
-
+public class GenerateJSONObject {
     /**
-     * Returns a JSON object with a fixed pattern.
-     * @param action    Action that should be run by backend
-     * @param username  Name of the client
-     * @param success   Boolean if the action requested succeeded or not
-     * @param message   Any message
+     *Method to generate a JSON O
+     * object
+     * @param action    Action to be run by backend
+     * @param username  Username of client
+     * @param success   If action was successfully run or not
+     * @param message   Every possible message
      * @param error     Error message
-     * @return initialised JSON object.
+     * @return         JSONObject
      */
     @SneakyThrows
     public static JSONObject generateJSONObject(String action, String username, Boolean success, String message, String error) {

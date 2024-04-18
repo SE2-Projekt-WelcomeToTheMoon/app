@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObjectService;
 import com.example.se2_projekt_app.networking.ServerResponseListener;
+import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class Multiplayer extends Activity implements ServerResponseListener {
 
         backButton.setOnClickListener(v -> finish());
         startGameButton.setOnClickListener(v -> {
-                JSONObject msg = GenerateJSONObjectService.generateJSONObject(
+                JSONObject msg = GenerateJSONObject.generateJSONObject(
                         ActionValues.JOINLOBBY.getValue(), "Dummy", null,
                         "", "");
                 // Sending message to server to join a lobby as dummy user
