@@ -65,15 +65,12 @@ sonar {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
         property "sonar.coverage.exclusions", "src/main/java/com/example/se2_projekt_app/screens/**"
-//                "**/ConnectionHandler.java" +
-//                "**/ServerResponseListener.java" +
-//                "**/WebSocketClient.java" +
-//                "**/WebSocketMessageHandler.java" +
-//                "**/screens/**.java" +
-//                "**/MainActivity.java" +
-//                "**/MainMenu.java"+
-//                "**/Multiplayer.java" +
-//                "**/ActionValues.java"
+            + "src/main/java/com/example/se2_projekt_app/networking/services/JSON/ActionValues.java" +
+            "src/main/java/com/example/se2_projekt_app/networking/ConnectionHandler.java" +
+            "src/main/java/com/example/se2_projekt_app/networking/ServerResponseListener.java" +
+            "src/main/java/com/example/se2_projekt_app/networking/WebSocketClient.java" +
+            "src/main/java/com/example/se2_projekt_app/networking/WebSocketMessageHandler.java" +
+            "src/main/java/com/example/se2_projekt_app/MainActivity.java"
     }
 }
 
