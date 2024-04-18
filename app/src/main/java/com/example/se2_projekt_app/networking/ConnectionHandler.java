@@ -25,9 +25,8 @@ public class ConnectionHandler {
     /**
      * Sends a message via the webSocket to the server.
      * @param message Message to send to server.
-     * @throws JSONException
      */
-    public void sendMessage(JSONObject message) throws JSONException {
+    public void sendMessage(JSONObject message){
         this.networkHandler.sendMessageToServer(message);
 
     }
