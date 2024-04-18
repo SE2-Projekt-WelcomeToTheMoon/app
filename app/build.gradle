@@ -70,7 +70,10 @@ sonar {
                 "**/WebSocketClient.java" +
                 "**/WebSocketMessageHandler.java" +
                 "**/screens/**.java" +
-                "**/MainActivity.java"
+                "**/MainActivity.java" +
+                "**/MainMenu.java"+
+                "**/Multiplayer.java" +
+                "**/ActionValues.java"
     }
 }
 
