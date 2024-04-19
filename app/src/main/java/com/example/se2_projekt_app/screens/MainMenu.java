@@ -6,9 +6,9 @@ import android.view.View;
 import android.app.Activity;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.ConnectionHandler;
-import com.example.se2_projekt_app.networking.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.JSON.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
 import com.example.se2_projekt_app.networking.ServerResponseListener;
+import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,17 +34,11 @@ public class MainMenu extends Activity implements ServerResponseListener {
 
         // Establishing connection to server
         connectionHandler.connectToWebSocketServer();
-        JSONObject msg;
-        try {
-            msg = GenerateJSONObject.generateJSONObject();
-            msg.put("username", "Dummy");
-            msg.put("action", ActionValues.REGISTERUSER.getValue());
+            JSONObject msg = GenerateJSONObject.generateJSONObject(
+                    ActionValues.REGISTERUSER.getValue(), "Dummy", null,
+                    "", "");
             // Sending message to server to register dummy user
             connectionHandler.sendMessage(msg);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     public void startSP(View view) {
