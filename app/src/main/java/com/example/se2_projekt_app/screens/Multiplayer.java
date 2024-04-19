@@ -1,22 +1,25 @@
 package com.example.se2_projekt_app.screens;
 
-import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
+import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.networking.ResponseHandler;
 import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.ServerResponseListener;
 import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
-import org.json.JSONException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class Multiplayer extends Activity implements ServerResponseListener {
+public class Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter;
+    private final Logger logger = LogManager.getLogger(Multiplayer.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,39 +34,44 @@ public class Multiplayer extends Activity implements ServerResponseListener {
         userListView.setAdapter(userListAdapter);
         userListView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Creating Listener for Activity
-        MainMenu.connectionHandler.setServerResponseListener(this);
+
 
         backButton.setOnClickListener(v -> finish());
+
         startGameButton.setOnClickListener(v -> {
-                JSONObject msg = GenerateJSONObject.generateJSONObject(
-                        ActionValues.JOINLOBBY.getValue(), "Dummy", null,
-                        "", "");
-                // Sending message to server to join a lobby as dummy user
-                MainMenu.connectionHandler.sendMessage(msg);
 
+            // Generating JSONObject to send message to server
+            JSONObject msg = GenerateJSONObject.generateJSONObject(
+                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
+                    "");
+
+            // Sending message to server to join a lobby as dummy user
+
+
+            // Handling response from server
+            ResponseHandler responseHandler = message -> {
+                String action = message.getString("action");
+                boolean success = message.getBoolean("success");
+
+                if(action.equals("joinLobby") && success){
+                    String newUsername = message.getString("username");
+                    User newUser = new User(newUsername);
+                    runOnUiThread(() -> {
+                        userListAdapter.addUser(newUser);
+                        userListAdapter.notifyDataSetChanged();
+                    });
+                    logger.info("User " + newUsername + " added to lobby.");
+                }else{
+                    runOnUiThread(() -> Toast.makeText(Multiplayer.this,
+                            "Failed to join lobby. Please try again.",
+                            Toast.LENGTH_LONG).show());
+
+                    logger.warn("Failed to join lobby. Please try again.");
+                }
+            };
+            MainMenu.webSocket.connectToServer(responseHandler);
+
+            MainMenu.webSocket.sendMessageToServer(msg);
         });
-    }
-
-    /**
-     * Method to handle message received from server.
-     * @param response Message from server to handle.
-     */
-    @Override
-    public void onResponseReceived(JSONObject response) {
-        try {
-            if (response.getString("action").equals("joinedLobby") && response.getBoolean("success")) {
-                String newUsername = response.getString("username");
-                User newUser = new User(newUsername);
-                runOnUiThread(() -> {
-                    userListAdapter.addUser(newUser);
-                    userListAdapter.notifyDataSetChanged();
-                });
-            } else {
-                runOnUiThread(() -> Toast.makeText(Multiplayer.this, "Failed to join lobby. Please try again.", Toast.LENGTH_LONG).show());
-            }
-        } catch (JSONException e) {
-            runOnUiThread(() -> Toast.makeText(Multiplayer.this, "An error occurred: " + e.getMessage(), Toast.LENGTH_LONG).show());
-        }
     }
 }

@@ -1,29 +1,22 @@
 package com.example.se2_projekt_app;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
-import android.content.Intent;
-import android.app.Activity;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.screens.MainMenu;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends Activity {
 
     TextView textViewServerResponse;
 
-    WebSocketClient networkHandler;
+//    WebSocketClient networkHandler;
 
     // currently network stuff is ignored to forward this all to main menu
     // this is done because of the merge conflicts
@@ -45,7 +38,7 @@ public class MainActivity extends Activity {
 
         textViewServerResponse = findViewById(R.id.textViewResponse);
 
-        networkHandler = new WebSocketClient();
+//        networkHandler = new WebSocketClient();
 
 
         Intent intent = new Intent(this, MainMenu.class);
@@ -54,11 +47,11 @@ public class MainActivity extends Activity {
         //stop this activity, cause it just starts the MainMenu
         finish();
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (networkHandler != null) {
-            networkHandler.closeConnection(); // Ensure WebSocket is closed
-        }
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if (networkHandler != null) {
+//            networkHandler.closeConnection(); // Ensure WebSocket is closed
+//        }
+//    }
 }
