@@ -1,13 +1,25 @@
-package com.example.se2_projekt_app.networking.responsehandler;
+package com.example.se2_projekt_app.networking;
 
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
-public class test {
+public class JSONService {
+
+    /**
+     * Method to generate a JSON O
+     * object
+     *
+     * @param action   Action to be run by backend
+     * @param username Username of client
+     * @param success  If action was successfully run or not
+     * @param message  Every possible message
+     * @param error    Error message
+     * @return JSONObject
+     */
 
     @SneakyThrows
-    public static JSONObject generateJSON(String action, String username, Boolean success, String message, String error) {
+    public static JSONObject generateJSONObject(String action, String username, Boolean success, String message, String error) {
         JSONObject response = new JSONObject();
         if (action != null) {
             response.put("action", action);
