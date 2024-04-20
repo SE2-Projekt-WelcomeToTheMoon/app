@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
 
-<!--        <activity android:name=".screens.MainMenu" />-->
         <activity android:name=".screens.Settings" />
         <activity android:name=".screens.Highscore" />
         <activity android:name=".screens.Singleplayer" />

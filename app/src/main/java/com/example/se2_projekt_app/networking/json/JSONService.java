@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 
 public class JSONService {
 
+    private JSONService(){}
+
     /**
      * Method to generate a JSON O
      * object

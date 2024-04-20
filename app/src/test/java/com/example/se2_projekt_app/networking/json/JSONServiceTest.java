@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-public class GenerateJSONObjectServiceTest {
+public class JSONServiceTest {
 
     @Test
     void testGenerateJSONObject() throws JSONException {
