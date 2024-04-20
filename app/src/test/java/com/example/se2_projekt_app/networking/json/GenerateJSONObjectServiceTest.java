@@ -1,8 +1,9 @@
-package com.example.se2_projekt_app.networking.services.JSON;
+package com.example.se2_projekt_app.networking.json;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
