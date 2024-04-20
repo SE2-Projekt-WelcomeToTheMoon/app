@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.ResponseHandler;
-import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.json.GenerateJSONObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -19,6 +22,10 @@ import java.util.ArrayList;
 public class Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter;
+
+    //Object implements method to handle response received from server
+    public static ResponseReceiver responseReceiver;
+
     private final Logger logger = LogManager.getLogger(Multiplayer.class);
 
     @Override
@@ -45,16 +52,15 @@ public class Multiplayer extends Activity {
                     ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
                     "");
 
-            // Sending message to server to join a lobby as dummy user
-
+            // Sending message to server to join a lobby as dummy user via websocket object
+            // instantiated in MainMenu view
+            MainMenu.webSocket.sendMessageToServer(msg);
 
             // Handling response from server
-            ResponseHandler responseHandler = message -> {
-                String action = message.getString("action");
-                boolean success = message.getBoolean("success");
-
-                if(action.equals("joinLobby") && success){
-                    String newUsername = message.getString("username");
+            responseReceiver = response -> {
+                boolean success = response.getBoolean("success");
+                if(success){
+                    String newUsername = response.getString("username");
                     User newUser = new User(newUsername);
                     runOnUiThread(() -> {
                         userListAdapter.addUser(newUser);
@@ -69,9 +75,6 @@ public class Multiplayer extends Activity {
                     logger.warn("Failed to join lobby. Please try again.");
                 }
             };
-            MainMenu.webSocket.connectToServer(responseHandler);
-
-            MainMenu.webSocket.sendMessageToServer(msg);
         });
     }
 }

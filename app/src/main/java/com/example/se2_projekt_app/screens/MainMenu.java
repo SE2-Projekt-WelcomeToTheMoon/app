@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.ResponseHandler;
+import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.WebSocketClient;
-import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.json.GenerateJSONObject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +20,18 @@ import lombok.SneakyThrows;
 
 public class MainMenu extends Activity{
 
+    // Object to establish connection to server
     public static WebSocketClient webSocket;
+
+    //ResponseHandler passed when connection to server is being established
+    public PostOffice responseHandler = new PostOffice();
+
+    //Object implements method to handle response received from server
+    public static ResponseReceiver responseReceiver;
+
+    //Logger for verbose output
     private final Logger logger = LogManager.getLogger(MainMenu.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +48,15 @@ public class MainMenu extends Activity{
 
         // Establishing connection to server
         webSocket = new WebSocketClient();
+        webSocket.connectToServer(responseHandler);
 
         // Handle response from server
-        ResponseHandler responseHandler = message -> {
-            String action = message.getString("action");
-            boolean success = message.getBoolean("success");
-            if(action.equals("registerUser") && success){
-                logger.info("Username set to: "+ message.getString("username"));
-            }else{logger.warn("Username couldn't be set: " + message.getString("message"));}
+        responseReceiver = response -> {
+            boolean success = response.getBoolean("success");
+            if(success){
+                logger.info("Username set to: "+ response.getString("username"));
+            }else{logger.warn("Username couldn't be set: " + response.getString("message"));}
         };
-        webSocket.connectToServer(responseHandler);
 
         // Generating JSONObject to send message to server
         JSONObject msg = GenerateJSONObject.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
@@ -84,6 +94,7 @@ public class MainMenu extends Activity{
     @SneakyThrows
     public void exit(View view) {
         // Exit the game
+        // Closing connection to server
         webSocket.disconnectFromServer();
         finish();
     }
