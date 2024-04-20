@@ -1,107 +1,153 @@
 package com.example.se2_projekt_app.networking;
 
 import android.util.Log;
+
 import androidx.annotation.NonNull;
-import com.example.se2_projekt_app.screens.MainMenu;
+import androidx.annotation.Nullable;
+
+
+import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import lombok.SneakyThrows;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
+/**
+ * Establishes and manages connection to the backend server.
+ */
 public class WebSocketClient {
-    /**
-     * Client for communication with backend.
-     */
 
-    private final String websocket_url= "ws://10.0.2.2:8080/welcome-to-the-moon"; //IP vom localhost
-    private WebSocket webSocket;
+    private static final String TAG = "WebSocketClient";
+
+    private WebSocket websocket;
 
     /**
-     * Creates connection to the server.
-     * @param messageHandler Handles message received from server.
+     * Establishes connection to server and provides methods to handle it.
+     * @param messageHandler Handles received messages from server.
      */
-    public void connectToServer(WebSocketMessageHandler<String> messageHandler){
-        if (messageHandler == null)
-            throw new IllegalArgumentException("A messageHandler is needed");
+    public void connectToServer(PostOffice messageHandler) {
+        if (messageHandler == null) {
+            throw new IllegalArgumentException("A message handler is required.");
+        }
+
+        final String WEBSOCKET_URL = "ws://10.0.2.2:8080/welcome-to-the-moon";
 
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(this.websocket_url).build();
 
-        this.webSocket = client.newWebSocket(request, new WebSocketListener() {
+        Request request = new Request.Builder().url(WEBSOCKET_URL).build();
+        websocket = client.newWebSocket(request, new WebSocketListener() {
             /**
-             * Logic that gets executed on connection to server.
-             * @param webSocket WebSocket connection to server.
+             * Contains logic that is being executed when connection has been established.
+             * @param webSocket WebSocket that established connection to server.
              * @param response Response from server.
              */
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
-                Log.d("Network", "Connected");
+                super.onOpen(webSocket, response);
+                Log.i(TAG, "Connection to server established.");
             }
 
             /**
-             * Passes received message from server to message Handler.
-             * @param webSocket WebSocket connection to server.
-             * @param message Message received from server.
+             * Receives messages from server and passes them to the PostOffice class.
+             * @param webSocket WebSocket that established connection to server.
+             * @param text Response from server.
              */
-
-            public void onMessage(@NonNull WebSocket webSocket, @NonNull String message) {
+            @SneakyThrows
+            @Override
+            public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
+                super.onMessage(webSocket, text);
+                JSONObject message;
                 try {
-                    messageHandler.onMessageReceived(message);
+                    message = new JSONObject(text);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
+                messageHandler.routeResponse(message);
+                Log.i(TAG, "Message received from server.\n" + text);
             }
 
             /**
-             * LOgic that gets executes if connection to server failes.
-             * @param webSocket WebSocket connection to server.
-             * @param tw Exception that gets thrown.
+             * Contains logic that is being executed when connection is closing.
+             * @param webSocket WebSocket that established connection to server.
+             * @param code Status code of connection.
+             * @param reason Reason why connection is being closed.
+             */
+            @Override
+            public void onClosing(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
+                super.onClosing(webSocket, code, reason);
+                Log.i(TAG, "Connection to server is closing... Status: " + code);
+            }
+
+            /**
+             * Contains logic that is being executed after connection has been closed.
+             * @param webSocket WebSocket that established connection to server.
+             * @param code Status code of connection.
+             * @param reason Reason why connection has been closed.
+             */
+            @Override
+            public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
+                super.onClosed(webSocket, code, reason);
+                Log.i(TAG,"Connection to server closed. Status: " + code);
+            }
+
+            /**
+             * Contains logic that is being executed when connection has been terminated unexpectedly.
+             * @param webSocket WebSocket that established connection to server.
+             * @param t Exception why connection terminated.
              * @param response Response from server.
              */
-
             @Override
-            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable tw, Response response) {
-                Log.d("Network", "Connection failure: " + tw.getMessage());
-
-                if (response != null) {
-                    Log.d("Network", "Response message: " + response.message());
-                } else {
-                    Log.d("Network", "Response object ist null.");
-                }
+            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
+                super.onFailure(webSocket, t, response);
+                if(checkResponse(response)) Log.w(TAG,"Connection termination unexpected. Error: "
+                        + t.getMessage());
             }
         });
     }
 
     /**
-     * Sends message to server.
-     * @param msg Message to send.
+     * Method to send a message to the server, receives a JSON Object as parameter and casts it
+     * to string to be able to send to server.
+     * @param msg JSON Object to be send to server.
      */
-    public void sendMessageToServer(JSONObject msg){
-        this.webSocket.send(msg.toString());
+    public void sendMessageToServer(JSONObject msg) {
+        String messageToSend = msg.toString();
+        websocket.send(messageToSend);
+        Log.i(TAG, "Message sent to server.");
     }
 
     /**
-     * Closes webSocket connection to server.
-     * @throws Throwable
+     * Method to gracefully disconnect from server.
+     * @throws Throwable Exception during closure of server connection.
      */
-    @Override
-    protected void finalize() throws Throwable{
-        try{
-            MainMenu.connectionHandler.networkHandler.webSocket.close(1000, "Closing");
-        } finally{
+    public void disconnectFromServer() throws Throwable {
+        try {
+            websocket.close(1000, "Closing");
+            Log.i(TAG, "Begin closing connection to server...");
+        } finally {
             super.finalize();
         }
     }
 
     /**
-     * Method to manually close webSocket connection to server.
+     * Helper method to check the if server sent a response or not.
+     * @param response Response to check.
+     * @return Boolean value if response contains (true) a message or not (false).
      */
-    public void closeConnection() {
-        if (webSocket != null) {
-            webSocket.close(1000, "ActivityDestroyed"); // Use proper close code and reason
+    private boolean checkResponse(Response response) {
+        if (response == null) {
+            Log.w(TAG,"No response received.");
+            return false;
+        } else {
+            Log.i(TAG,"Response received.");
+            return true;
         }
     }
 }

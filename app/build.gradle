@@ -34,6 +34,7 @@ android {
             useJUnitPlatform()
             finalizedBy jacocoTestReport
         }
+        unitTests.returnDefaultValues = true
     }
 }
 // --Hinzufügen-- + Überprüfen, ob xml.destination Path korrekt ist
@@ -63,6 +64,9 @@ sonar {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+        property "sonar.coverage.exclusions", "**/enums/*.java, **/ActionValues.java," +
+                "**/responsehandler/*.java, **/WebSocketClient.java, **/screens/*.java," +
+                "**/MainActivity.java"
     }
 }
 
@@ -75,6 +79,7 @@ dependencies {
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
+    testImplementation libs.json
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
     androidTestImplementation libs.ext.junit
