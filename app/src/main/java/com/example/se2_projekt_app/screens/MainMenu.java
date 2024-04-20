@@ -1,20 +1,35 @@
 package com.example.se2_projekt_app.screens;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.app.Activity;
+
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.ConnectionHandler;
-import com.example.se2_projekt_app.networking.services.JSON.ActionValues;
-import com.example.se2_projekt_app.networking.ServerResponseListener;
-import com.example.se2_projekt_app.networking.services.JSON.GenerateJSONObject;
-import org.json.JSONException;
+import com.example.se2_projekt_app.networking.WebSocketClient;
+import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.json.JSONService;
+import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+
 import org.json.JSONObject;
 
-public class MainMenu extends Activity implements ServerResponseListener {
+import lombok.SneakyThrows;
 
-    public static ConnectionHandler connectionHandler = new ConnectionHandler();
+public class MainMenu extends Activity{
+
+    // Object to establish connection to server
+    public static WebSocketClient webSocket;
+
+    //ResponseHandler passed when connection to server is being established
+    public PostOffice responseHandler = new PostOffice();
+
+    //Object implements method to handle response received from server
+    public static ResponseReceiver responseReceiver;
+
+    //Tag needed for logger
+    private static final String TAG = "MainMenu";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +44,25 @@ public class MainMenu extends Activity implements ServerResponseListener {
         findViewById(R.id.exit).setOnClickListener(this::exit);
         findViewById(R.id.debug).setOnClickListener(this::openDebug);
 
-        // Creating Listener for Activity
-        connectionHandler.setServerResponseListener(this);
 
         // Establishing connection to server
-        connectionHandler.connectToWebSocketServer();
-            JSONObject msg = GenerateJSONObject.generateJSONObject(
-                    ActionValues.REGISTERUSER.getValue(), "Dummy", null,
-                    "", "");
-            // Sending message to server to register dummy user
-            connectionHandler.sendMessage(msg);
+        webSocket = new WebSocketClient();
+        webSocket.connectToServer(responseHandler);
+
+        // Handle response from server
+        responseReceiver = response -> {
+            boolean success = response.getBoolean("success");
+            if(success){
+                Log.i(TAG, "Username set to: "+ response.getString("username"));
+            }else{Log.w(TAG, "Username couldn't be set: " + response.getString("message"));}
+        };
+
+        // Generating JSONObject to send message to server
+        JSONObject msg = JSONService.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
+                "Dummy", null,"", "");
+
+        // Sending message to server to register dummy user
+        webSocket.sendMessageToServer(msg);
     }
 
     public void startSP(View view) {
@@ -66,32 +90,16 @@ public class MainMenu extends Activity implements ServerResponseListener {
         // Open the highscore
     }
 
+    @SneakyThrows
     public void exit(View view) {
         // Exit the game
+        // Closing connection to server
+        webSocket.disconnectFromServer();
         finish();
     }
 
     public void openDebug(View view) {
         Intent intent = new Intent(this, Debug.class);
         startActivity(intent);
-    }
-
-    /**
-     * Method to handle message received form server.
-     * @param response Message from server to handle.
-     */
-    @Override
-    public void onResponseReceived(JSONObject response) {
-        try {
-            if(response.getString("action").equals("registeredUser") && response.getBoolean("success")){
-                System.out.println("Username set to: "+ response.getString("username"));
-            }
-            else{
-                System.out.println("Username couldn't be set: " + response.getString("message"));
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }

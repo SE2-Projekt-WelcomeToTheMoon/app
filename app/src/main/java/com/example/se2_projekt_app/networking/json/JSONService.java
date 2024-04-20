@@ -1,20 +1,25 @@
-package com.example.se2_projekt_app.networking.services.JSON;
+package com.example.se2_projekt_app.networking.json;
 
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
-public class GenerateJSONObject {
+public class JSONService {
+
+    private JSONService(){}
+
     /**
-     *Method to generate a JSON O
+     * Method to generate a JSON O
      * object
-     * @param action    Action to be run by backend
-     * @param username  Username of client
-     * @param success   If action was successfully run or not
-     * @param message   Every possible message
-     * @param error     Error message
-     * @return         JSONObject
+     *
+     * @param action   Action to be run by backend
+     * @param username Username of client
+     * @param success  If action was successfully run or not
+     * @param message  Every possible message
+     * @param error    Error message
+     * @return JSONObject
      */
+
     @SneakyThrows
     public static JSONObject generateJSONObject(String action, String username, Boolean success, String message, String error) {
         JSONObject response = new JSONObject();
@@ -34,7 +39,6 @@ public class GenerateJSONObject {
         if (error != null && !error.isEmpty()) {
             response.put("error", error);
         }
-
         return response;
     }
 }

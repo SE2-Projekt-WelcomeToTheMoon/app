@@ -1,13 +1,14 @@
-package com.example.se2_projekt_app.networking.services.JSON;
+package com.example.se2_projekt_app.networking.json;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
-public class GenerateJSONObjectServiceTest {
+public class JSONServiceTest {
 
     @Test
     void testGenerateJSONObject() throws JSONException {
@@ -17,7 +18,7 @@ public class GenerateJSONObjectServiceTest {
         String message = "testMessage";
         String error = "testError";
 
-        JSONObject result = GenerateJSONObject.generateJSONObject(action, username, success,
+        JSONObject result = JSONService.generateJSONObject(action, username, success,
                 message, error);
 
         assertEquals(action, result.get("action"));
@@ -29,7 +30,7 @@ public class GenerateJSONObjectServiceTest {
 
     @Test
     void testGenerateJSONObjectWithNullValues() {
-        JSONObject result = GenerateJSONObject.generateJSONObject(null, null,
+        JSONObject result = JSONService.generateJSONObject(null, null,
                 null, null, null);
 
         assertFalse(result.has("action"));
@@ -41,7 +42,7 @@ public class GenerateJSONObjectServiceTest {
 
     @Test
     void testGenerateJSONObjectWithEmptyStrings() {
-        JSONObject result = GenerateJSONObject.generateJSONObject("", "",
+        JSONObject result = JSONService.generateJSONObject("", "",
                 null, "", "");
 
         assertTrue(result.has("action"));
