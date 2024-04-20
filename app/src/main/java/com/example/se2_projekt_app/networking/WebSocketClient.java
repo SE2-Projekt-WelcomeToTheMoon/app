@@ -1,12 +1,12 @@
 package com.example.se2_projekt_app.networking;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +24,7 @@ import okhttp3.WebSocketListener;
  */
 public class WebSocketClient {
 
-    private final Logger logger = LogManager.getLogger(WebSocketClient.class);
+    private static final String TAG = "WebSocketClient";
 
     private WebSocket websocket;
 
@@ -51,7 +51,7 @@ public class WebSocketClient {
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
-                logger.info("Connection to server established.");
+                Log.i(TAG, "Connection to server established.");
             }
 
             /**
@@ -70,7 +70,7 @@ public class WebSocketClient {
                     throw new RuntimeException(e);
                 }
                 messageHandler.routeResponse(message);
-                logger.info("Message received from server.\n" + text);
+                Log.i(TAG, "Message received from server.\n" + text);
             }
 
             /**
@@ -82,7 +82,7 @@ public class WebSocketClient {
             @Override
             public void onClosing(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
                 super.onClosing(webSocket, code, reason);
-                logger.info("Connection to server is closing... Status: " + code);
+                Log.i(TAG, "Connection to server is closing... Status: " + code);
             }
 
             /**
@@ -94,7 +94,7 @@ public class WebSocketClient {
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
                 super.onClosed(webSocket, code, reason);
-                logger.info("Connection to server closed. Status: " + code);
+                Log.i(TAG,"Connection to server closed. Status: " + code);
             }
 
             /**
@@ -106,7 +106,7 @@ public class WebSocketClient {
             @Override
             public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
-                if(checkResponse(response)) logger.warn("Connection termination unexpected. Error: "
+                if(checkResponse(response)) Log.w(TAG,"Connection termination unexpected. Error: "
                         + t.getMessage());
             }
         });
@@ -120,6 +120,7 @@ public class WebSocketClient {
     public void sendMessageToServer(JSONObject msg) {
         String messageToSend = msg.toString();
         websocket.send(messageToSend);
+        Log.i(TAG, "Message sent to server.");
     }
 
     /**
@@ -129,7 +130,7 @@ public class WebSocketClient {
     public void disconnectFromServer() throws Throwable {
         try {
             websocket.close(1000, "Closing");
-            logger.info("Begin closing connection to server...");
+            Log.i(TAG, "Begin closing connection to server...");
         } finally {
             super.finalize();
         }
@@ -142,10 +143,10 @@ public class WebSocketClient {
      */
     private boolean checkResponse(Response response) {
         if (response == null) {
-            logger.warn("No response received.");
+            Log.w(TAG,"No response received.");
             return false;
         } else {
-            logger.info("Response received.");
+            Log.i(TAG,"Response received.");
             return true;
         }
     }

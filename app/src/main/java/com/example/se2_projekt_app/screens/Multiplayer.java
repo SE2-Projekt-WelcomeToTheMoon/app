@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.screens;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -9,12 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -26,7 +25,10 @@ public class Multiplayer extends Activity {
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
 
-    private final Logger logger = LogManager.getLogger(Multiplayer.class);
+    //Tag needed for logger
+    private static final String TAG = "Multiplayer";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +68,13 @@ public class Multiplayer extends Activity {
                         userListAdapter.addUser(newUser);
                         userListAdapter.notifyDataSetChanged();
                     });
-                    logger.info("User " + newUsername + " added to lobby.");
+                    Log.i(TAG,"User " + newUsername + " added to lobby.");
                 }else{
                     runOnUiThread(() -> Toast.makeText(Multiplayer.this,
                             "Failed to join lobby. Please try again.",
                             Toast.LENGTH_LONG).show());
 
-                    logger.warn("Failed to join lobby. Please try again.");
+                    Log.w(TAG,"Failed to join lobby. Please try again.");
                 }
             };
         });

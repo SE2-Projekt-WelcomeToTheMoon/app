@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.util.Log;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
@@ -12,8 +13,6 @@ import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.GenerateJSONObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -29,8 +28,8 @@ public class MainMenu extends Activity{
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
 
-    //Logger for verbose output
-    private final Logger logger = LogManager.getLogger(MainMenu.class);
+    //Tag needed for logger
+    private static final String TAG = "MainMenu";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +53,8 @@ public class MainMenu extends Activity{
         responseReceiver = response -> {
             boolean success = response.getBoolean("success");
             if(success){
-                logger.info("Username set to: "+ response.getString("username"));
-            }else{logger.warn("Username couldn't be set: " + response.getString("message"));}
+                Log.i(TAG, "Username set to: "+ response.getString("username"));
+            }else{Log.w(TAG, "Username couldn't be set: " + response.getString("message"));}
         };
 
         // Generating JSONObject to send message to server

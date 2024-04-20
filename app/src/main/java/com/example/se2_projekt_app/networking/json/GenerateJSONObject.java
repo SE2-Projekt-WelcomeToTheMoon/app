@@ -34,7 +34,6 @@ public class GenerateJSONObject {
         if (error != null && !error.isEmpty()) {
             response.put("error", error);
         }
-
         return response;
     }
 }
