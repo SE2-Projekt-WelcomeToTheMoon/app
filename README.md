@@ -37,7 +37,7 @@ Methoden:
 
 
 ### `ResponseReceiver`
-Interface das eine Methode enthält welche in der view in der eine Nachricht zum Server geschickt
+Interface das eine Methode enthält welche in der View in der eine Nachricht zum Server geschickt
 wird und ein Response erwartet wird implementiert werden muss. Diese Methode beinhaltet die Logik
 die die Nachricht vom Server verarbeitet.
 
