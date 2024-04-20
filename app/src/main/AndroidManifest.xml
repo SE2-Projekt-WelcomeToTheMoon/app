@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".screens.MainMenu"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".screens.MainMenu" />
+<!--        <activity android:name=".screens.MainMenu" />-->
         <activity android:name=".screens.Settings" />
         <activity android:name=".screens.Highscore" />
         <activity android:name=".screens.Singleplayer" />
