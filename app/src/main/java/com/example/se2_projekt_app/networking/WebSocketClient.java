@@ -2,12 +2,17 @@ package com.example.se2_projekt_app.networking;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import lombok.SneakyThrows;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,12 +24,9 @@ import okhttp3.WebSocketListener;
  */
 public class WebSocketClient {
 
-    private final String WEBSOCKET_URL = "ws://10.0.2.2:8080/welcome-to-the-moon";
-
     private final Logger logger = LogManager.getLogger(WebSocketClient.class);
 
     private WebSocket websocket;
-
 
     /**
      * Establishes connection to server and provides methods to handle it.
@@ -34,6 +36,8 @@ public class WebSocketClient {
         if (messageHandler == null) {
             throw new IllegalArgumentException("A message handler is required.");
         }
+
+        final String WEBSOCKET_URL = "ws://10.0.2.2:8080/welcome-to-the-moon";
 
         OkHttpClient client = new OkHttpClient();
 
@@ -59,7 +63,7 @@ public class WebSocketClient {
             @Override
             public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
                 super.onMessage(webSocket, text);
-                JSONObject message = null;
+                JSONObject message;
                 try {
                     message = new JSONObject(text);
                 } catch (JSONException e) {
@@ -143,5 +147,6 @@ public class WebSocketClient {
         } else {
             logger.info("Response received.");
             return true;
-        }}
+        }
+    }
 }
