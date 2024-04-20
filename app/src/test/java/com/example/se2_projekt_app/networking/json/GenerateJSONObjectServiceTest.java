@@ -18,7 +18,7 @@ public class GenerateJSONObjectServiceTest {
         String message = "testMessage";
         String error = "testError";
 
-        JSONObject result = GenerateJSONObject.generateJSONObject(action, username, success,
+        JSONObject result = GenerateJSONObjectService.generateJSONObject(action, username, success,
                 message, error);
 
         assertEquals(action, result.get("action"));
@@ -30,7 +30,7 @@ public class GenerateJSONObjectServiceTest {
 
     @Test
     void testGenerateJSONObjectWithNullValues() {
-        JSONObject result = GenerateJSONObject.generateJSONObject(null, null,
+        JSONObject result = GenerateJSONObjectService.generateJSONObject(null, null,
                 null, null, null);
 
         assertFalse(result.has("action"));
@@ -42,7 +42,7 @@ public class GenerateJSONObjectServiceTest {
 
     @Test
     void testGenerateJSONObjectWithEmptyStrings() {
-        JSONObject result = GenerateJSONObject.generateJSONObject("", "",
+        JSONObject result = GenerateJSONObjectService.generateJSONObject("", "",
                 null, "", "");
 
         assertTrue(result.has("action"));

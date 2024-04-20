@@ -16,8 +16,6 @@ public class MainActivity extends Activity {
 
     TextView textViewServerResponse;
 
-//    WebSocketClient networkHandler;
-
     // currently network stuff is ignored to forward this all to main menu
     // this is done because of the merge conflicts
     @Override
@@ -31,15 +29,10 @@ public class MainActivity extends Activity {
         });
 
         Button buttonConnect = findViewById(R.id.buttonConnect);
-        //buttonConnect.setOnClickListener(v -> connectToWebSocketServer());
 
         Button buttonSendMsg = findViewById(R.id.buttonSendMsg);
-        //buttonSendMsg.setOnClickListener(v -> sendMessage());
 
         textViewServerResponse = findViewById(R.id.textViewResponse);
-
-//        networkHandler = new WebSocketClient();
-
 
         Intent intent = new Intent(this, MainMenu.class);
         startActivity(intent);
@@ -47,11 +40,5 @@ public class MainActivity extends Activity {
         //stop this activity, cause it just starts the MainMenu
         finish();
     }
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        if (networkHandler != null) {
-//            networkHandler.closeConnection(); // Ensure WebSocket is closed
-//        }
-//    }
+
 }

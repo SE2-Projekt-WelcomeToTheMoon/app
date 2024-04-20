@@ -3,15 +3,15 @@ package com.example.se2_projekt_app.screens;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.util.Log;
+import android.view.View;
 
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
-import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.networking.json.ActionValues;
-import com.example.se2_projekt_app.networking.json.GenerateJSONObject;
+import com.example.se2_projekt_app.networking.json.GenerateJSONObjectService;
+import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
 import org.json.JSONObject;
 
@@ -58,7 +58,7 @@ public class MainMenu extends Activity{
         };
 
         // Generating JSONObject to send message to server
-        JSONObject msg = GenerateJSONObject.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
+        JSONObject msg = GenerateJSONObjectService.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
                 "Dummy", null,"", "");
 
         // Sending message to server to register dummy user

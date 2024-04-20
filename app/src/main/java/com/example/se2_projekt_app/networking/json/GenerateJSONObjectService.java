@@ -4,7 +4,9 @@ import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
-public class GenerateJSONObject {
+public class GenerateJSONObjectService {
+
+    private GenerateJSONObjectService(){}
     /**
      *Method to generate a JSON O
      * object

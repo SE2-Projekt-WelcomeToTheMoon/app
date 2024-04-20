@@ -34,6 +34,8 @@ public class PostOffice {
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
 
+            default:
+                Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
         }
     }
 }
