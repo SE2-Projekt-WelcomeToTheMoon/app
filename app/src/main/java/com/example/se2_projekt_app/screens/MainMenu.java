@@ -9,7 +9,7 @@ import android.view.View;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.networking.json.ActionValues;
-import com.example.se2_projekt_app.networking.json.GenerateJSONObjectService;
+import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
@@ -58,7 +58,7 @@ public class MainMenu extends Activity{
         };
 
         // Generating JSONObject to send message to server
-        JSONObject msg = GenerateJSONObjectService.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
+        JSONObject msg = JSONService.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
                 "Dummy", null,"", "");
 
         // Sending message to server to register dummy user

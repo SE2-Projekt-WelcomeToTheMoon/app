@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.json.ActionValues;
-import com.example.se2_projekt_app.networking.json.GenerateJSONObjectService;
+import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
 import org.json.JSONObject;
@@ -50,7 +50,7 @@ public class Multiplayer extends Activity {
         startGameButton.setOnClickListener(v -> {
 
             // Generating JSONObject to send message to server
-            JSONObject msg = GenerateJSONObjectService.generateJSONObject(
+            JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
                     "");
 

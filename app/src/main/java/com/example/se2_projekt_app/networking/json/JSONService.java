@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app.networking;
+package com.example.se2_projekt_app.networking.json;
 
 import org.json.JSONObject;
 
