@@ -64,10 +64,9 @@ sonar {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions", "**/screens/*.java, **/ActionValues.java," +
-                "**/ConnectionHandler.java, **/ServerResponseListener.java," +
-                "**/ServerResponseListener.java, **/WebSocketClient.java," +
-                "**/WebSocketMessageHandler.java,**/MainActivity.java, **/enums/*.java"
+        property "sonar.coverage.exclusions", "**/enums/*.java, **/ActionValues.java," +
+                "**/responsehandler/*.java, **/WebSocketClient.java, **/screens/*.java," +
+                "**/MainActivity.java"
     }
 }
 
@@ -77,12 +76,15 @@ dependencies {
     implementation libs.material
     implementation libs.constraintlayout
     implementation libs.okhttp
+    implementation libs.room.compiler
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
     testImplementation libs.json
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation libs.lombok
+    implementation libs.log4j.api
+    implementation libs.log4j.core
+    annotationProcessor libs.lombok
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 }
