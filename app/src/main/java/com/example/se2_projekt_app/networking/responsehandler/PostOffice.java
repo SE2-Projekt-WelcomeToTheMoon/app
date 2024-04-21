@@ -28,8 +28,11 @@ public class PostOffice {
                 Log.i(TAG, "Rerouted message to MainMenu.");
                 break;
 
-
             case "joinLobby":
+                Multiplayer.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to Multiplayer.");
+                break;
+            case "leaveLobby":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;

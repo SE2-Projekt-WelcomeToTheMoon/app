@@ -45,6 +45,13 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
             notifyItemInserted(userList.size() - 1); // Notify the adapter that an item was added to the end of the list
         }
     }
+    public void removeUser(User user) {
+        if(user != null && userList.contains(user)){
+            int index = userList.indexOf(user);
+            userList.remove(user);
+            notifyItemRemoved(index);
+        }
+    }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
         private final TextView usernameTextView; // Marked member as final since it's not expected to change
