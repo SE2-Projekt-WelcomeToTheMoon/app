@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app.game;
+package com.example.se2_projekt_app.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,10 +11,8 @@ import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
 
-import com.example.se2_projekt_app.enums.Element;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.se2_projekt_app.game.Floor;
+import com.example.se2_projekt_app.game.GameBoard;
 
 /**
  * Provides a view that supports scaling and touch interactions to manage and display game elements.
@@ -25,13 +23,14 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private float translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
-    private final List<Section> sections = new ArrayList<>();
+    private final GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
 
     /**
      * Constructs the game board view with necessary context and attributes.
+     *
      * @param context The context of the application.
-     * @param attrs The set of attributes from XML.
+     * @param attrs   The set of attributes from XML.
      */
     public GameBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,33 +41,11 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
     /**
      * Initializes the scale gesture detector and sections of the game.
+     *
      * @param context The application context.
      */
     private void init(Context context) {
         scaleGestureDetector = new ScaleGestureDetector(context, this);
-        createSection(0, 0, 3, Element.ROBOT);
-        createSection(0, 200, 3, Element.WATER);
-        createSection(0, 400, 3, Element.WILDCARD);
-        createSection(300, 0, 5, Element.PLANNING);
-    }
-
-    /**
-     * Creates a game section with boxes at specified positions.
-     * @param x The x-coordinate for the section.
-     * @param y The y-coordinate for the section.
-     * @param boxCount The number of boxes to create.
-     * @param element The type of elements each box should represent.
-     */
-    private void createSection(int x, int y, int boxCount, Element element) {
-        Section section = new Section(x, y);
-        int boxSize = 200;
-        int color = element.getColor();
-
-        for (int i = 0; i < boxCount; i++) {
-            GameBox box = new GameBox(x + i * boxSize, y, boxSize, color, 0);
-            section.addBox(box);
-        }
-        sections.add(section);
     }
 
     @Override
@@ -99,8 +76,8 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
                     canvas.translate(translateX, translateY);
                     canvas.scale(scaleFactor, scaleFactor);
 
-                    for (Section section : sections) {
-                        section.draw(canvas);
+                    for (Floor floor : gameboard.getFloors()) {
+                        floor.draw(canvas);
                     }
 
                     canvas.restore();
@@ -119,7 +96,11 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
         if (action == MotionEvent.ACTION_DOWN) {
             float adjustedX = (event.getX() - translateX) / scaleFactor;
             float adjustedY = (event.getY() - translateY) / scaleFactor;
-            sections.forEach(section -> section.handleClick(adjustedX, adjustedY, this));
+            for (Floor floor : gameboard.getFloors()) {
+                if (floor.handleClick(adjustedX, adjustedY, this)) {
+                    break;
+                }
+            }
             lastTouchX = event.getX();
             lastTouchY = event.getY();
         } else if (action == MotionEvent.ACTION_MOVE && !scaleGestureDetector.isInProgress()) {

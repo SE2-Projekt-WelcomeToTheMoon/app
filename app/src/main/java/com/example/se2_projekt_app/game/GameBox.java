@@ -1,27 +1,33 @@
 package com.example.se2_projekt_app.game;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
+
+import com.example.se2_projekt_app.game_interface.Clickable;
+import com.example.se2_projekt_app.views.GameBoardView;
 
 /**
  * Represents a drawable box used in a game that can display a number.
  */
-public class GameBox {
+public class GameBox implements Clickable {
     private final int x;
     private final int y;
     private final int size;
     private int number;
     public final Paint paint;
     private final Paint textPaint;
+    private final Paint outlinePaint;
 
     /**
      * Constructs a GameBox with specified location, size, color, and number.
      *
-     * @param x The x-coordinate of the top-left corner.
-     * @param y The y-coordinate of the top-left corner.
-     * @param size The size of each side of the square box.
-     * @param color The fill color of the box.
-     * @param number The number to display in the box.
+     * @param x            The x-coordinate of the top-left corner.
+     * @param y            The y-coordinate of the top-left corner.
+     * @param size         The size of each side of the square box.
+     * @param color        The fill color of the box.
+     * @param number       The number to display in the box.
      */
     public GameBox(int x, int y, int size, int color, int number) {
         this.x = x;
@@ -37,28 +43,13 @@ public class GameBox {
         textPaint.setColor(0xFFFFFFFF);
         textPaint.setTextSize(40);
         textPaint.setTextAlign(Paint.Align.CENTER);
+
+        outlinePaint = new Paint();
+        outlinePaint.setColor(0xFF000000);
+        outlinePaint.setStyle(Paint.Style.STROKE);
+        outlinePaint.setStrokeWidth(5);
     }
 
-    /**
-     * Draws the box and its number at its current location.
-     *
-     * @param canvas The canvas on which to draw the box.
-     */
-    public void draw(Canvas canvas) {
-        canvas.drawRect(x, y, x + size, y + size, paint);
-        drawNumber(canvas, x, y);
-    }
-
-    /**
-     * Checks if the specified coordinates are inside the bounds of this box.
-     *
-     * @param x The x-coordinate to check.
-     * @param y The y-coordinate to check.
-     * @return true if the coordinates are within the box, false otherwise.
-     */
-    public boolean contains(float x, float y) {
-        return x >= this.x && x < this.x + size && y >= this.y && y < this.y + size;
-    }
 
     /**
      * Draws the box and its number translated by the specified offsets.
@@ -67,8 +58,9 @@ public class GameBox {
      * @param offsetX The horizontal offset.
      * @param offsetY The vertical offset.
      */
-    public void drawTranslated(Canvas canvas, int offsetX, int offsetY) {
-        canvas.drawRect(x + offsetX, y + offsetY, x + offsetX + size, y + offsetY + size, paint);
+    public void draw(Canvas canvas, int offsetX, int offsetY) {
+        canvas.drawRect((float)x + offsetX, (float)y + offsetY, (float)x + offsetX + size, (float)y + offsetY + size, paint);
+        canvas.drawRect((float)x + offsetX, (float)y + offsetY, (float)x + offsetX + size, (float)y + offsetY + size, outlinePaint);
         drawNumber(canvas, x + offsetX, y + offsetY);
     }
 
@@ -85,14 +77,24 @@ public class GameBox {
         canvas.drawText(String.valueOf(number), centerX, centerY, textPaint);
     }
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
-    public int getNumber() {
-        return number;
-    }
-
     public void setColor(int color) {
         paint.setColor(color);
+    }
+
+    @Override
+    public boolean handleClick(float x, float y, GameBoardView boardView) {
+        Log.d("GameBox", "Checking box at " + x + ", " + y);
+        if (isPointInsideBox(x, y)) {
+            Log.d("GameBox", "Box clicked at " + this.x + ", " + this.y);
+            this.number++;
+            this.paint.setColor(Color.GREEN);
+            boardView.drawGameBoard();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPointInsideBox(float x, float y) {
+        return x >= this.x && x < this.x + size && y >= this.y && y < this.y + size;
     }
 }

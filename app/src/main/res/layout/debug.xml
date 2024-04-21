@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.se2_projekt_app.game.GameBoardView
+    <com.example.se2_projekt_app.views.GameBoardView
         android:id="@+id/gameBoard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -10,9 +10,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/player1_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Player 1"/>
+        <Button
+            android:id="@+id/player2_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Player 2"/>
+        <Button
+            android:id="@+id/player3_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Player 3"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="horizontal">
-        <!-- Overlay UI elements here -->
         <Button
             android:id="@+id/debug_back"
             android:layout_width="wrap_content"
