@@ -1,15 +1,0 @@
-
-
-java:S1104"UMake webSocket a static final constant or non-public and provide accessors if needed.(âáÊßûÿÿÿÿ8À€İŒğ1J$c98cc17e-4fc9-4105-9a31-9bbc3b61ea4e
-
-java:S1104"[Make responseHandler a static final constant or non-public and provide accessors if needed.(§çõÖ8Á€İŒğ1J$54e676d1-79df-4099-b718-327016dc7f6d
-¤
-java:S1104"\Make responseReceiver a static final constant or non-public and provide accessors if needed.(ìœœ€şÿÿÿÿ8Á€İŒğ1J$fc734119-1fe1-450c-9bc3-e71c551964a8
-w
-java:S1444"/Make this "public static webSocket" field final(âáÊßûÿÿÿÿ8Á€İŒğ1J$6563f6f3-090e-4e15-967d-547581d773d4
-~
-java:S1444"6Make this "public static responseReceiver" field final(ìœœ€şÿÿÿÿ8Á€İŒğ1J$8ab5b49a-3165-40d7-86a9-c0f72e7355a6
-~
-java:S26961"6Make the enclosing method "static" or remove this set.(ß½ï„øÿÿÿÿ8Ñ€İŒğ1J$9fa7296a-5cae-48da-833a-d20055393427
-~
-java:S26965"6Make the enclosing method "static" or remove this set.(÷Û“’ùÿÿÿÿ8Ò€İŒğ1J$b1d724d6-a5d3-4bb8-a549-cb7e87b58ed7
