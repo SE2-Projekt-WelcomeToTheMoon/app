@@ -1,22 +1,23 @@
 package com.example.se2_projekt_app.game;
 
-import com.example.se2_projekt_app.enums.FieldCategory;
+import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldValue;
 
 public class PlayingCard{
 
-    private FieldCategory symbol;
-    private int number;
+    private Element symbol;
+    private FieldValue number;
 
-    public PlayingCard(FieldCategory symbol, int number) {
+    public PlayingCard(Element symbol, FieldValue number) {
         this.symbol = symbol;
         this.number = number;
     }
 
-    public FieldCategory getSymbol() {
+    public Element getSymbol() {
         return symbol;
     }
 
-    public int getNumber() {
+    public FieldValue getNumber() {
         return number;
     }
 }

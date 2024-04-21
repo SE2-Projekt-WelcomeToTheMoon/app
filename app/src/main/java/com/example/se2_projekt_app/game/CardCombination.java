@@ -1,32 +1,30 @@
 package com.example.se2_projekt_app.game;
 
 
-import com.example.se2_projekt_app.enums.FieldCategory;
+import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldValue;
 
 public class CardCombination {
-    public PlayingCard card1;
-    public PlayingCard card2;
-    public FieldCategory currentSymbol;
-    public FieldCategory nextSymbol;
-    public int currentNumber;
-    public CardCombination(PlayingCard card1, PlayingCard card2){
-        this.card1=card1;
-        this.card2=card2;
-        this.currentSymbol= card1.getSymbol();
-        this.nextSymbol= card2.getSymbol();
-        this.currentNumber= card2.getNumber();
+    private Element currentSymbol;
+    private Element nextSymbol;
+    private FieldValue currentNumber;
+    public CardCombination(Element currentSymbol, Element nextSymbol, FieldValue currentNumber){
+
+        this.currentSymbol= currentSymbol;
+        this.nextSymbol= nextSymbol;
+        this.currentNumber= currentNumber;
 
     }
 
-    public FieldCategory getCurrentSymbol() {
+    public Element getCurrentSymbol() {
         return currentSymbol;
     }
 
-    public FieldCategory getNextSymbol() {
+    public Element getNextSymbol() {
         return nextSymbol;
     }
 
-    public int getCurrentNumber() {
+    public FieldValue getCurrentNumber() {
         return currentNumber;
     }
 
