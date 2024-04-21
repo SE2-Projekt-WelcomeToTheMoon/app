@@ -4,19 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.networking.lobby.LobbyManager;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
-
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 
 public class Multiplayer extends Activity {
 
@@ -38,27 +34,23 @@ public class Multiplayer extends Activity {
         RecyclerView userListView = findViewById(R.id.lobbyUserList);
         Button startGameButton = findViewById(R.id.startGameButton);
         Button backButton = findViewById(R.id.backButton);
+        Button joinLobbyButton = findViewById(R.id.btn_joinLobby);
+        Button leaveLobbyButton = findViewById(R.id.btn_leaveLobby);
 
-        userListAdapter = new UserListAdapter(new ArrayList<>());
+        userListAdapter = new UserListAdapter(LobbyManager.getInstance().getUsers());
         userListView.setAdapter(userListAdapter);
         userListView.setLayoutManager(new LinearLayoutManager(this));
-
-
 
         backButton.setOnClickListener(v -> finish());
 
         startGameButton.setOnClickListener(v -> {
 
-            // Generating JSONObject to send message to server
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
                     "");
 
-            // Sending message to server to join a lobby as dummy user via websocket object
-            // instantiated in MainMenu view
             MainMenu.webSocket.sendMessageToServer(msg);
 
-            // Handling response from server
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
@@ -68,15 +60,57 @@ public class Multiplayer extends Activity {
                         userListAdapter.addUser(newUser);
                         userListAdapter.notifyDataSetChanged();
                     });
-                    Log.i(TAG,"User " + newUsername + " added to lobby.");
-                }else{
-                    runOnUiThread(() -> Toast.makeText(Multiplayer.this,
-                            "Failed to join lobby. Please try again.",
-                            Toast.LENGTH_LONG).show());
+                    Log.i(TAG, "User " + newUsername + " added to lobby.");
 
-                    Log.w(TAG,"Failed to join lobby. Please try again.");
                 }
             };
         });
+        joinLobbyButton.setOnClickListener(v -> {
+            JSONObject msg = JSONService.generateJSONObject(
+                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
+                    "");
+            MainMenu.webSocket.sendMessageToServer(msg);
+
+            responseReceiver = response -> {
+                boolean success = response.getBoolean("success");
+                if(success){
+                    String username = response.getString("username");
+                    User user = new User(username);
+                    runOnUiThread(() -> {
+                        userListAdapter.addUser(user);
+                        userListAdapter.notifyDataSetChanged();
+                    });
+                    Log.i(TAG, "User " + username + " added to lobby.");
+
+                }
+            };
+        });
+
+
+        leaveLobbyButton.setOnClickListener(v -> {
+            JSONObject msg = JSONService.generateJSONObject(
+                    ActionValues.LEAVELOBBY.getValue(), "Dummy", null,"",
+                    "");
+            MainMenu.webSocket.sendMessageToServer(msg);
+
+            responseReceiver = response -> {
+                boolean success = response.getBoolean("success");
+                if(success){
+                    String username = response.getString("username");
+                    User user = new User(username);
+                    runOnUiThread(() -> {
+                        userListAdapter.removeUser(user);
+                        userListAdapter.notifyDataSetChanged();
+                    });
+                    Log.i(TAG, "User " + username + " removed from lobby.");
+
+                }
+            };
+        });
+
+        startGameButton.setOnClickListener(v -> {
+            finish();
+        });
+
     }
 }
