@@ -33,7 +33,11 @@ public class PostOffice {
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
+            case "getNextCard":
+                Multiplayer.responseReceiver.receiveResponse(response);
+                Log.i(TAG,"Rerouted message to Multiplayer");
 
+                break;
             default:
                 Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
         }
