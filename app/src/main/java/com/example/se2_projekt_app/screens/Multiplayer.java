@@ -24,6 +24,8 @@ public class Multiplayer extends Activity {
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
 
+    //Username of client
+    String username = Username.user.getUsername();
 
 
     @Override
@@ -43,45 +45,21 @@ public class Multiplayer extends Activity {
 
         backButton.setOnClickListener(v -> finish());
 
-        startGameButton.setOnClickListener(v -> {
-
-            JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
-                    "");
-
-            MainMenu.webSocket.sendMessageToServer(msg);
-
-            responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
-                if(success){
-                    String newUsername = response.getString("username");
-                    User newUser = new User(newUsername);
-                    runOnUiThread(() -> {
-                        userListAdapter.addUser(newUser);
-                        userListAdapter.notifyDataSetChanged();
-                    });
-                    Log.i(TAG, "User " + newUsername + " added to lobby.");
-
-                }
-            };
-        });
         joinLobbyButton.setOnClickListener(v -> {
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
+                    ActionValues.JOINLOBBY.getValue(), username, null,"",
                     "");
-            MainMenu.webSocket.sendMessageToServer(msg);
+            Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
                     String username = response.getString("username");
-                    User user = new User(username);
                     runOnUiThread(() -> {
-                        userListAdapter.addUser(user);
+                        userListAdapter.addUser(Username.user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " added to lobby.");
-
                 }
             };
         });
@@ -89,17 +67,16 @@ public class Multiplayer extends Activity {
 
         leaveLobbyButton.setOnClickListener(v -> {
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.LEAVELOBBY.getValue(), "Dummy", null,"",
+                    ActionValues.LEAVELOBBY.getValue(), username, null,"",
                     "");
-            MainMenu.webSocket.sendMessageToServer(msg);
+            Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
                     String username = response.getString("username");
-                    User user = new User(username);
                     runOnUiThread(() -> {
-                        userListAdapter.removeUser(user);
+                        userListAdapter.removeUser(Username.user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " removed from lobby.");

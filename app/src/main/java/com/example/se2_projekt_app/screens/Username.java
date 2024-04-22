@@ -18,7 +18,7 @@ import org.json.JSONObject;
 
 public class Username extends Activity {
 
-    // Object to establish connection to server
+    //Object to establish connection to server
     public static WebSocketClient webSocket;
 
     //ResponseHandler passed when connection to server is being established
@@ -27,7 +27,7 @@ public class Username extends Activity {
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
 
-    //
+    //Create user object
     public static User user;
 
     //Tag needed for logger
@@ -71,9 +71,7 @@ public class Username extends Activity {
 
             // Sending message to server to register user
             Username.webSocket.sendMessageToServer(msg);
-
         });
-
 
         exitButton.setOnClickListener(v -> {
             try {
