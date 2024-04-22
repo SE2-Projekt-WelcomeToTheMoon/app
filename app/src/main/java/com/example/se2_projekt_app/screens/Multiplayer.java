@@ -43,28 +43,6 @@ public class Multiplayer extends Activity {
 
         backButton.setOnClickListener(v -> finish());
 
-        startGameButton.setOnClickListener(v -> {
-
-            JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
-                    "");
-
-            MainMenu.webSocket.sendMessageToServer(msg);
-
-            responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
-                if(success){
-                    String newUsername = response.getString("username");
-                    User newUser = new User(newUsername);
-                    runOnUiThread(() -> {
-                        userListAdapter.addUser(newUser);
-                        userListAdapter.notifyDataSetChanged();
-                    });
-                    Log.i(TAG, "User " + newUsername + " added to lobby.");
-
-                }
-            };
-        });
         joinLobbyButton.setOnClickListener(v -> {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
