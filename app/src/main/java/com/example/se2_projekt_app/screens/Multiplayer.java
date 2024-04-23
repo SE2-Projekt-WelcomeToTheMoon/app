@@ -47,7 +47,7 @@ public class Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
                     "");
-            MainMenu.webSocket.sendMessageToServer(msg);
+            Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
@@ -69,7 +69,7 @@ public class Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.LEAVELOBBY.getValue(), "Dummy", null,"",
                     "");
-            MainMenu.webSocket.sendMessageToServer(msg);
+            Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
