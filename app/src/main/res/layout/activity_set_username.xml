@@ -2,48 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="@drawable/background"
+    android:gravity="center"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="WELCOME\nto the Moon"
-        android:textSize="36sp"
-        android:textColor="#FFFFFF"
+        android:layout_marginTop="-100dp"
+        android:layout_marginBottom="150dp"
         android:gravity="center"
-        android:textStyle="bold"
         android:shadowColor="#B0B0B0"
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="2"
-        android:layout_marginBottom="32dp"/>
+        android:text="WELCOME\nto the Moon"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/inputUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Username"
-        android:textSize="21sp"
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:background="#8003DAC5"
-        android:forceDarkAllowed="false"
+        android:layout_width="250dp"
+        android:layout_height="54dp"
         android:layout_marginBottom="16dp"
-        />
+        android:background="#8003DAC5"
+        android:ems="10"
+        android:forceDarkAllowed="false"
+        android:hint="Username"
+        android:inputType="text"
+        android:singleLine="true"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/setUsername"
         style="@style/MainMenuButton"
         android:text="Set Username" />
-
-    <Button
-        android:id="@+id/exit"
-        style="@style/MainMenuButton"
-        android:text="Exit" />
 
 </LinearLayout>

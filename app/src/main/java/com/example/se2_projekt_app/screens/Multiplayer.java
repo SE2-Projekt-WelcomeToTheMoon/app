@@ -24,8 +24,6 @@ public class Multiplayer extends Activity {
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
 
-    //Username of client
-    String username = Username.user.getUsername();
 
 
     @Override
@@ -47,7 +45,7 @@ public class Multiplayer extends Activity {
 
         joinLobbyButton.setOnClickListener(v -> {
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), username, null,"",
+                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
                     "");
             Username.webSocket.sendMessageToServer(msg);
 
@@ -55,11 +53,13 @@ public class Multiplayer extends Activity {
                 boolean success = response.getBoolean("success");
                 if(success){
                     String username = response.getString("username");
+                    User user = new User(username);
                     runOnUiThread(() -> {
-                        userListAdapter.addUser(Username.user);
+                        userListAdapter.addUser(user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " added to lobby.");
+
                 }
             };
         });
@@ -67,7 +67,7 @@ public class Multiplayer extends Activity {
 
         leaveLobbyButton.setOnClickListener(v -> {
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.LEAVELOBBY.getValue(), username, null,"",
+                    ActionValues.LEAVELOBBY.getValue(), "Dummy", null,"",
                     "");
             Username.webSocket.sendMessageToServer(msg);
 
@@ -75,8 +75,9 @@ public class Multiplayer extends Activity {
                 boolean success = response.getBoolean("success");
                 if(success){
                     String username = response.getString("username");
+                    User user = new User(username);
                     runOnUiThread(() -> {
-                        userListAdapter.removeUser(Username.user);
+                        userListAdapter.removeUser(user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " removed from lobby.");

@@ -39,7 +39,6 @@ public class Username extends Activity {
         setContentView(R.layout.activity_set_username);
 
         Button setUsernameButton = findViewById(R.id.setUsername);
-        Button exitButton = findViewById(R.id.exit);
         TextView inputText = findViewById(R.id.inputUsername);
 
         // Establishing connection to server
@@ -59,9 +58,9 @@ public class Username extends Activity {
                     Intent intent = new Intent(this, MainMenu.class);
                     startActivity(intent);
                 }else{
-                    inputText.setText("Username already in use or could not be set, please use " +
-                            "another one.");
-                    Log.w(TAG, "Username couldn't be set: " + response.getString("message"));
+                    inputText.setText("Username could not be set, please try again or another one.");
+                    Log.w(TAG, "Username couldn't be set: " +
+                            response.getString("message"));
                 }
             };
 
@@ -71,15 +70,6 @@ public class Username extends Activity {
 
             // Sending message to server to register user
             Username.webSocket.sendMessageToServer(msg);
-        });
-
-        exitButton.setOnClickListener(v -> {
-            try {
-                webSocket.disconnectFromServer();
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-            this.finishAffinity();
         });
     }
 }
