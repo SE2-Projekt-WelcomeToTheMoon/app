@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.example.se2_projekt_app.screens.MainMenu;
 import com.example.se2_projekt_app.screens.Multiplayer;
+import com.example.se2_projekt_app.screens.Gameboard;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import lombok.SneakyThrows;
 
@@ -18,7 +21,7 @@ public class PostOffice {
      * @param response Response to route.
      */
     @SneakyThrows
-    public void routeResponse(JSONObject response){
+    public void routeResponse(JSONObject response) throws JSONException {
 
         String action = response.getString("action");
 
@@ -34,9 +37,8 @@ public class PostOffice {
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
             case "getNextCard":
-                Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG,"Rerouted message to Multiplayer");
-
+                Gameboard.responseReceiver.receiveResponse(response);
+                Log.i(TAG,"Rerouted message to Gameboard");
                 break;
             default:
                 Log.w(TAG, "Server response has invalid or no sender. Response not routed.");

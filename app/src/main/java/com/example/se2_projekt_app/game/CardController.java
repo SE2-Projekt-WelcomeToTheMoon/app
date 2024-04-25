@@ -2,16 +2,20 @@ package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.Element;
 import com.example.se2_projekt_app.enums.FieldValue;
 
+import lombok.Getter;
+
 public class CardController {
 
+    @Getter
+    private CardCombination[] currentCombination;
     /***
      * Gets the server String which is composed as follows:
      * data inside the combinations is split by - and ordered CombinationNumber-CurrentSymbol-CurrentNumber-NextSymbol
      * The Combinations themselves are split by ;
+     * Then saves the extracted CardDraw into CurrentCombination
      * @param serverString The String with the currentDrawData from the Server
-     * @return The Three current CardCombinations
      */
-    public CardCombination[] extractCardsFromServerString(String serverString){
+    public void extractCardsFromServerString(String serverString){
         if(serverString.isEmpty())throw new IllegalArgumentException("String cannot be empty");
         String[] splitString =serverString.split(";");
         if(splitString.length!=3)throw new IllegalArgumentException("String must Contain data about 3 Combinations");
@@ -24,7 +28,7 @@ public class CardController {
             Element nextSymbol=getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
-        return combinations;
+        currentCombination=combinations;
     }
 
     /***
