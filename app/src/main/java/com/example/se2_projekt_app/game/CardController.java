@@ -33,7 +33,7 @@ public class CardController {
      * @param element Element name in german from serverside
      * @return corresponding element
      */
-    private Element getSymbolAndTranslate(String element) {
+    public Element getSymbolAndTranslate(String element) {
 
         switch(element) {
             case "ROBOTER":
@@ -60,7 +60,7 @@ public class CardController {
      * @param value int to be converted
      * @return Corresponding FieldValue
      */
-    private FieldValue getCurrentNumberFromInt(int value) {
+    public FieldValue getCurrentNumberFromInt(int value) {
         for (FieldValue fieldValue : FieldValue.values()) {
             if (fieldValue.getValue() == value) {
                 return fieldValue;
