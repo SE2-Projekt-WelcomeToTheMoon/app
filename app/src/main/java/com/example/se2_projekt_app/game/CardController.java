@@ -27,13 +27,25 @@ public class CardController {
         return combinations;
     }
 
-    private FieldValue getCurrentNumberFromInt(int i) {
-        return null;
-    }
-
     private Element getSymbolAndTranslate(String combinationStringPart) {
         return null;
     }
+
+    /***
+     * Gets corresponding fieldValue from number
+     * @param value int to be converted
+     * @return Corresponding FieldValue
+     */
+    private FieldValue getCurrentNumberFromInt(int value) {
+        for (FieldValue fieldValue : FieldValue.values()) {
+            if (fieldValue.getValue() == value) {
+                return fieldValue;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
+    }
+
+
 
 
 }
