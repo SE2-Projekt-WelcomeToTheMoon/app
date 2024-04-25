@@ -37,4 +37,33 @@ public class CardControllerTest {
         assertEquals(FieldValue.THREE, cardController.getCurrentNumberFromInt(3));
 
     }
+    @Test
+    void testExtractCardsFromServerString_EmptyString() {
+        String serverString = "";
+        assertThrows(IllegalArgumentException.class, () ->
+            cardController.extractCardsFromServerString(serverString)
+        );
+    }
+
+    @Test
+    void testExtractCardsFromServerString_InvalidNumberOfCombinations() {
+        String serverString = "1-ROBOTER-2-WASSER;2-PLANT-3-ENERGIE";
+        assertThrows(IllegalArgumentException.class, () ->
+            cardController.extractCardsFromServerString(serverString)
+        );
+    }
+
+    @Test
+    void testGetSymbolAndTranslate_InvalidSymbol() {
+        assertThrows(IllegalArgumentException.class, () ->
+            cardController.getSymbolAndTranslate("INVALID_SYMBOL")
+        );
+    }
+
+    @Test
+    void testGetCurrentNumberFromInt_InvalidValue() {
+        assertThrows(IllegalArgumentException.class, () ->
+            cardController.getCurrentNumberFromInt(100)
+        );
+    }
 }
