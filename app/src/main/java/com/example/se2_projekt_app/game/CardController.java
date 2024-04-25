@@ -1,4 +1,39 @@
 package com.example.se2_projekt_app.game;
+import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldValue;
 
 public class CardController {
+
+    /***
+     * Gets the server String which is composed as follows:
+     * data inside the combinations is split by - and ordered CombinationNumber-CurrentSymbol-CurrentNumber-NextSymbol
+     * The Combinations themselves are split by ;
+     * @param serverString The String with the currentDrawData from the Server
+     * @return The Three current CardCombinations
+     */
+    public CardCombination[] extractCardsFromServerString(String serverString){
+        if(serverString.isEmpty())throw new IllegalArgumentException("String cannot be empty");
+        String[] splitString =serverString.split(";");
+        if(splitString.length!=3)throw new IllegalArgumentException("String must Contain data about 3 Combinations");
+        CardCombination[] combinations=new CardCombination[3];
+        for(String combinationString:splitString){
+            String[] combinationStringParts=combinationString.split("-");
+            int combinationNumber=Integer.parseInt(combinationStringParts[0]);
+            Element currentSymbol=getSymbolAndTranslate(combinationStringParts[1]);
+            FieldValue currentNumber=getCurrentNumberFromInt(Integer.parseInt(combinationStringParts[2]));
+            Element nextSymbol=getSymbolAndTranslate(combinationStringParts[3]);
+            combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
+        }
+        return combinations;
+    }
+
+    private FieldValue getCurrentNumberFromInt(int i) {
+        return null;
+    }
+
+    private Element getSymbolAndTranslate(String combinationStringPart) {
+        return null;
+    }
+
+
 }
