@@ -11,7 +11,7 @@ import java.util.List;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserViewHolder> {
 
-    // Use a final modifier for the userList as it should not change once it's set through the constructor
+    // Used a final modifier for the userList as it should not change once it's set through the constructor
     private final List<User> userList;
 
     public UserListAdapter(List<User> userList) {
@@ -35,11 +35,19 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
 
     @Override
     public int getItemCount() {
-        return userList != null ? userList.size() : 0; // Ensure null safety
+        return userList != null ? userList.size() : 0; // Ensures null safety
+    }
+
+    // Method to add a user to the list
+    public void addUser(User user) {
+        if (user != null && !userList.contains(user)) {
+            userList.add(user);
+            notifyItemInserted(userList.size() - 1); // Notify the adapter that an item was added to the end of the list
+        }
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
-        private final TextView usernameTextView; // Mark member as final since it's not expected to change
+        private final TextView usernameTextView; // Marked member as final since it's not expected to change
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
