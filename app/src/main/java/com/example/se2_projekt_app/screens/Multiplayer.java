@@ -44,16 +44,17 @@ public class Multiplayer extends Activity {
         backButton.setOnClickListener(v -> finish());
 
         joinLobbyButton.setOnClickListener(v -> {
+            String username = Username.user.getUsername();
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), "Dummy", null,"",
+                    ActionValues.JOINLOBBY.getValue(), username, null,"",
                     "");
             Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
-                    String username = response.getString("username");
-                    User user = new User(username);
+                    String usernameFromResponse = response.getString("username");
+                    User user = new User(usernameFromResponse);
                     runOnUiThread(() -> {
                         userListAdapter.addUser(user);
                         userListAdapter.notifyDataSetChanged();
@@ -66,16 +67,17 @@ public class Multiplayer extends Activity {
 
 
         leaveLobbyButton.setOnClickListener(v -> {
+            String username = Username.user.getUsername();
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.LEAVELOBBY.getValue(), "Dummy", null,"",
+                    ActionValues.LEAVELOBBY.getValue(), username, null,"",
                     "");
             Username.webSocket.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
-                    String username = response.getString("username");
-                    User user = new User(username);
+                    String usernameFromResponse = response.getString("username");
+                    User user = new User(usernameFromResponse);
                     runOnUiThread(() -> {
                         userListAdapter.removeUser(user);
                         userListAdapter.notifyDataSetChanged();
