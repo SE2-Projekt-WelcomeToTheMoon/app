@@ -1,5 +1,8 @@
 package com.example.se2_projekt_app.screens;
 
+import static android.content.ContentValues.TAG;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,10 +56,8 @@ public class Multiplayer extends Activity {
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
-                    String usernameFromResponse = response.getString("username");
-                    User user = new User(usernameFromResponse);
                     runOnUiThread(() -> {
-                        userListAdapter.addUser(user);
+                        userListAdapter.addUser(Username.user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " added to lobby.");
@@ -76,10 +77,8 @@ public class Multiplayer extends Activity {
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
-                    String usernameFromResponse = response.getString("username");
-                    User user = new User(usernameFromResponse);
                     runOnUiThread(() -> {
-                        userListAdapter.removeUser(user);
+                        userListAdapter.removeUser(Username.user);
                         userListAdapter.notifyDataSetChanged();
                     });
                     Log.i(TAG, "User " + username + " removed from lobby.");
