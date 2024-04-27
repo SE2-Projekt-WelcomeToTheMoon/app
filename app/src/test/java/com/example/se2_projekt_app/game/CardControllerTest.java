@@ -15,20 +15,14 @@ public class CardControllerTest {
     @Test
     void testExtractCardsFromServerString() {
         String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANNUNG";
-        CardCombination[] combinations = cardController.extractCardsFromServerString(serverString);
+        cardController.extractCardsFromServerString(serverString);
+        CardCombination[] combinations=cardController.getCurrentCombination();
         assertEquals(Element.ROBOT, combinations[0].getCurrentSymbol());
         assertEquals(FieldValue.TWO, combinations[0].getCurrentNumber());
         assertEquals(Element.WATER, combinations[0].getNextSymbol());
 
     }
 
-    @Test
-    void testGetSymbolAndTranslate() {
-        assertEquals(Element.ROBOT, cardController.getSymbolAndTranslate("ROBOTER"));
-        assertEquals(Element.WATER, cardController.getSymbolAndTranslate("WASSER"));
-        assertEquals(Element.PLANT, cardController.getSymbolAndTranslate("PFLANZE"));
-
-    }
 
     @Test
     void testGetCurrentNumberFromInt() {
@@ -53,12 +47,7 @@ public class CardControllerTest {
         );
     }
 
-    @Test
-    void testGetSymbolAndTranslate_InvalidSymbol() {
-        assertThrows(IllegalArgumentException.class, () ->
-            cardController.getSymbolAndTranslate("INVALID_SYMBOL")
-        );
-    }
+
 
     @Test
     void testGetCurrentNumberFromInt_InvalidValue() {

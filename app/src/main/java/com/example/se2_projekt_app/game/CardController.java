@@ -2,11 +2,8 @@ package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.Element;
 import com.example.se2_projekt_app.enums.FieldValue;
 
-import lombok.Getter;
 
 public class CardController {
-
-    @Getter
     private CardCombination[] currentCombination;
     /***
      * Gets the server String which is composed as follows:
@@ -23,41 +20,15 @@ public class CardController {
         for(String combinationString:splitString){
             String[] combinationStringParts=combinationString.split("-");
             int combinationNumber=Integer.parseInt(combinationStringParts[0]);
-            Element currentSymbol=getSymbolAndTranslate(combinationStringParts[1]);
+            Element currentSymbol=Element.getSymbolAndTranslate(combinationStringParts[1]);
             FieldValue currentNumber=getCurrentNumberFromInt(Integer.parseInt(combinationStringParts[2]));
-            Element nextSymbol=getSymbolAndTranslate(combinationStringParts[3]);
+            Element nextSymbol=Element.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
         currentCombination=combinations;
     }
 
-    /***
-     * The enum on the Serverside has german Names while the client side has english names, so this takes
-     * the String with the german name and finds the corresponding element
-     * @param element Element name in german from serverside
-     * @return corresponding element
-     */
-    public Element getSymbolAndTranslate(String element) {
 
-        switch(element) {
-            case "ROBOTER":
-                return Element.ROBOT;
-            case "WASSER":
-                return Element.WATER;
-            case "PFLANZE":
-                return Element.PLANT;
-            case "ENERGIE":
-                return Element.ENERGY;
-            case "RAUMANZUG":
-                return Element.SPACESUIT;
-            case "PLANNUNG":
-                return Element.PLANNING;
-            case "ANYTHING":
-                return Element.WILDCARD;
-            default:
-                throw new IllegalArgumentException("Not part of recognized symbols");
-        }
-    }
 
     /***
      * Gets corresponding fieldValue from number
@@ -74,6 +45,7 @@ public class CardController {
     }
 
 
-
-
+    public CardCombination[] getCurrentCombination() {
+        return currentCombination;
+    }
 }
