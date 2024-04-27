@@ -21,7 +21,7 @@ public class CardController {
             String[] combinationStringParts=combinationString.split("-");
             int combinationNumber=Integer.parseInt(combinationStringParts[0]);
             Element currentSymbol=Element.getSymbolAndTranslate(combinationStringParts[1]);
-            FieldValue currentNumber=getCurrentNumberFromInt(Integer.parseInt(combinationStringParts[2]));
+            FieldValue currentNumber=FieldValue.getCurrentNumberFromInt(Integer.parseInt(combinationStringParts[2]));
             Element nextSymbol=Element.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
@@ -29,20 +29,6 @@ public class CardController {
     }
 
 
-
-    /***
-     * Gets corresponding fieldValue from number
-     * @param value int to be converted
-     * @return Corresponding FieldValue
-     */
-    public FieldValue getCurrentNumberFromInt(int value) {
-        for (FieldValue fieldValue : FieldValue.values()) {
-            if (fieldValue.getValue() == value) {
-                return fieldValue;
-            }
-        }
-        throw new IllegalArgumentException("Invalid value: " + value);
-    }
 
 
     public CardCombination[] getCurrentCombination() {

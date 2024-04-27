@@ -24,13 +24,7 @@ public class CardControllerTest {
     }
 
 
-    @Test
-    void testGetCurrentNumberFromInt() {
-        assertEquals(FieldValue.ONE, cardController.getCurrentNumberFromInt(1));
-        assertEquals(FieldValue.TWO, cardController.getCurrentNumberFromInt(2));
-        assertEquals(FieldValue.THREE, cardController.getCurrentNumberFromInt(3));
 
-    }
     @Test
     void testExtractCardsFromServerString_EmptyString() {
         String serverString = "";
@@ -49,10 +43,5 @@ public class CardControllerTest {
 
 
 
-    @Test
-    void testGetCurrentNumberFromInt_InvalidValue() {
-        assertThrows(IllegalArgumentException.class, () ->
-            cardController.getCurrentNumberFromInt(100)
-        );
-    }
+
 }
