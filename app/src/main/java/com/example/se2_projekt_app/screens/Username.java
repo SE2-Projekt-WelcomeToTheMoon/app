@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.WebSocketClient;
 import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
-import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
 import org.json.JSONObject;
@@ -19,10 +19,7 @@ import org.json.JSONObject;
 public class Username extends Activity {
 
     //Object to establish connection to server
-    public static WebSocketClient webSocket;
-
-    //ResponseHandler passed when connection to server is being established
-    public PostOffice responseHandler = new PostOffice();
+    public static WebSocketClient webSocketClient;
 
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
@@ -40,27 +37,33 @@ public class Username extends Activity {
 
         Button setUsernameButton = findViewById(R.id.setUsername);
         TextView inputText = findViewById(R.id.inputUsername);
+        TextView outputText = findViewById(R.id.outputText);
 
-        // Establishing connection to server
-        webSocket = new WebSocketClient();
-        webSocket.connectToServer(responseHandler);
+        // Establishing connection to server via new thread
+        webSocketClient = new WebSocketClient();
+        Thread thread = new Thread(webSocketClient);
+        thread.start();
 
 
         setUsernameButton.setOnClickListener(v -> {
 
             // Handle response from server
             responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+                String username = response.getString(JSONKeys.USERNAME.getValue());
+                boolean success = response.getBoolean(JSONKeys.SUCCESS.getValue());
+                String message = response.getString(JSONKeys.MESSAGE.getValue());
                 if(success){
-                    user = new User(response.getString("username"));
-                    Log.i(TAG, "Username set to: "+ response.getString("username"));
+                    user = new User(username);
+                    Log.i(TAG, "Username set to: "+ username);
 
                     Intent intent = new Intent(this, MainMenu.class);
                     startActivity(intent);
                 }else{
-                    inputText.setText("Username could not be set, please try again or another one.");
-                    Log.w(TAG, "Username couldn't be set: " +
-                            response.getString("message"));
+                    runOnUiThread(() -> {
+                        outputText.setText(message);
+                        outputText.setBackgroundColor(0x8003DAC5);
+                            });
+                    Log.w(TAG, "Username couldn't be set.");
                 }
             };
 
@@ -69,7 +72,7 @@ public class Username extends Activity {
                     inputText.getText().toString(), null,"", "");
 
             // Sending message to server to register user
-            Username.webSocket.sendMessageToServer(msg);
+            webSocketClient.sendMessageToServer(msg);
         });
     }
 }
