@@ -7,7 +7,7 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
-public class Gameboard extends AppCompatActivity {
+public class GameBoard extends AppCompatActivity {
     CardController cardController=new CardController();
 
     public static ResponseReceiver responseReceiver;
