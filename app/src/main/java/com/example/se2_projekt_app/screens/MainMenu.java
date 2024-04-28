@@ -57,7 +57,7 @@ public class MainMenu extends Activity{
     public void exit(View view) {
         // Exit the game
         // Closing connection to server
-        Username.webSocket.disconnectFromServer();
+        Username.webSocketClient.disconnectFromServer();
         this.finishAffinity();
     }
 
