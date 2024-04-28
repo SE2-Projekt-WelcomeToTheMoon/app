@@ -1,8 +1,5 @@
 package com.example.se2_projekt_app.screens;
 
-import static android.content.ContentValues.TAG;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,7 +48,7 @@ public class Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), username, null,"",
                     "");
-            Username.webSocket.sendMessageToServer(msg);
+            Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
@@ -72,7 +69,7 @@ public class Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.LEAVELOBBY.getValue(), username, null,"",
                     "");
-            Username.webSocket.sendMessageToServer(msg);
+            Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
