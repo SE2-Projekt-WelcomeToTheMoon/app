@@ -25,17 +25,22 @@ public class Debug extends Activity {
 
         // Handling response from server
         responseReceiver = response -> {
+            //TODO Add functionality with actual images of cards
             String cardMessage = response.getString("message");
             cardController.extractCardsFromServerString(cardMessage);
-            updateCardsTest(this.getCurrentFocus());
+            updateTextViews();
         };
 
     }
 
-       @SuppressLint("DefaultLocale")
     private void updateCardsTest(View view) {
         String testDataString="0-ROBOTER-9-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-15-PLANNUNG";
         cardController.extractCardsFromServerString(testDataString);
+        updateTextViews();
+
+    }
+    @SuppressLint("DefaultLocale")
+    private void updateTextViews(){
         TextView cardOne = findViewById(R.id.cardOne);
         TextView cardTwo = findViewById(R.id.cardTwo);
         TextView cardThree = findViewById(R.id.cardThree);
