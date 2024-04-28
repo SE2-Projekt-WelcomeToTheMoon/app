@@ -2,12 +2,16 @@ package com.example.se2_projekt_app.networking.responsehandler;
 
 import android.util.Log;
 
+
 import com.example.se2_projekt_app.screens.Debug;
 import com.example.se2_projekt_app.screens.MainMenu;
-import com.example.se2_projekt_app.screens.Multiplayer;
-
 import org.json.JSONException;
+import com.example.se2_projekt_app.screens.Multiplayer;
+import com.example.se2_projekt_app.screens.Username;
+
+
 import org.json.JSONObject;
+
 import lombok.SneakyThrows;
 
 /**
@@ -27,19 +31,25 @@ public class PostOffice {
 
         switch(action){
             case "registerUser":
-                MainMenu.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to MainMenu.");
+                Username.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to Username view.");
                 break;
-
 
             case "joinLobby":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
+
             case "getNextCard":
                 Debug.responseReceiver.receiveResponse(response);
                 Log.i(TAG,"Rerouted message to Debug");
                 break;
+
+            case "leaveLobby":
+                Multiplayer.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to Multiplayer.");
+                break;
+
             default:
                 Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
         }
