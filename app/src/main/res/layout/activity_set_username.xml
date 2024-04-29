@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/output"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
@@ -10,8 +11,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-100dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginTop="-130dp"
+        android:layout_marginBottom="30dp"
         android:gravity="center"
         android:shadowColor="#B0B0B0"
         android:shadowDx="1"
@@ -20,6 +21,16 @@
         android:text="WELCOME\nto the Moon"
         android:textColor="#FFFFFF"
         android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/outputText"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <EditText
@@ -32,6 +43,7 @@
         android:forceDarkAllowed="false"
         android:hint="Username"
         android:inputType="text"
+        android:maxLength="20"
         android:singleLine="true"
         android:textSize="24sp"
         android:textStyle="bold"

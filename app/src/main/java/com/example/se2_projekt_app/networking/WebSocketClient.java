@@ -3,16 +3,16 @@ package com.example.se2_projekt_app.networking;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 
 import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+import com.example.se2_projekt_app.screens.Username;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import lombok.SneakyThrows;
+import java.util.concurrent.TimeUnit;
 
+import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,11 +22,13 @@ import okhttp3.WebSocketListener;
 /**
  * Establishes and manages connection to the backend server.
  */
-public class WebSocketClient {
+public class WebSocketClient implements Runnable{
 
     private static final String TAG = "WebSocketClient";
 
     private WebSocket websocket;
+    //ResponseHandler passed when connection to server is being established
+    private final PostOffice responseHandler = new PostOffice();
 
     /**
      * Establishes connection to server and provides methods to handle it.
@@ -99,15 +101,21 @@ public class WebSocketClient {
 
             /**
              * Contains logic that is being executed when connection has been terminated unexpectedly.
+             * Reconnects to server when null response has been received from server.
              * @param webSocket WebSocket that established connection to server.
              * @param t Exception why connection terminated.
              * @param response Response from server.
              */
+            @SneakyThrows
             @Override
-            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
+            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, Response response) {
                 super.onFailure(webSocket, t, response);
                 if(checkResponse(response)) Log.w(TAG,"Connection termination unexpected. Error: "
                         + t.getMessage());
+                TimeUnit.SECONDS.sleep(2);
+                Log.i(TAG, "Trying to reconnect...");
+                Username.webSocketClient.connectToServer(responseHandler);
+                Log.i(TAG, "Reconnected.");
             }
         });
     }
@@ -144,10 +152,19 @@ public class WebSocketClient {
     private boolean checkResponse(Response response) {
         if (response == null) {
             Log.w(TAG,"No response received.");
-            return false;
+            return true;
         } else {
             Log.i(TAG,"Response received.");
-            return true;
+            return false;
         }
+    }
+
+    /**
+     * Implemented run() method from interface Runnable. Calls the connectToServer method and passes
+     * the responseHandler to the method.
+     */
+    @Override
+    public void run() {
+        connectToServer(responseHandler);
     }
 }
