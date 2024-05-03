@@ -9,12 +9,22 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.game.GameBoard;
+import com.example.se2_projekt_app.game.GameBoardManager;
+import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
-public class Debug extends Activity {
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class GameScreen extends Activity implements ResponseReceiver {
 
     private DrawerLayout drawerLayout;
     private Button toggleDrawerButton;
     private Button closeDrawerButton;
+    private GameBoardManager gameBoardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,5 +70,25 @@ public class Debug extends Activity {
                 // Not used
             }
         });
+    }
+
+    @Override
+    public void receiveResponse(JSONObject response) throws JSONException {
+        String action = response.getString("action");
+        String message = response.getString("message");
+        String username = response.getString("username");
+
+        switch (action) {
+            case "updateGameBoardSimple":
+                gameBoardManager.simpleUpdateGameBoard(message, username);
+                break;
+
+            case "updateGameBoardFull":
+                gameBoardManager.fullUpdateGameBoard(message, username);
+                break;
+
+            default:
+                break;
+        }
     }
 }

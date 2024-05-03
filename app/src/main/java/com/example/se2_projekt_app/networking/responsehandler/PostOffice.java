@@ -2,10 +2,15 @@ package com.example.se2_projekt_app.networking.responsehandler;
 
 import android.util.Log;
 
+import com.example.se2_projekt_app.game.GameBoard;
+import com.example.se2_projekt_app.game.GameBoardManager;
+import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Log;
 
 import lombok.SneakyThrows;
 
@@ -14,6 +19,7 @@ import lombok.SneakyThrows;
  */
 public class PostOffice {
     private static final String TAG = "PostOffice";
+    private static final String ERROR = "PostOffice Error";
 
     /**
      * Routes messages to screens according to their action key value.
@@ -38,6 +44,17 @@ public class PostOffice {
             case "leaveLobby":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
+                break;
+
+                // gets changes from other user in format of
+            case "updateGameBoardSimple":
+            case "updateGameBoardFull":
+                try {
+                    GameScreen.receiveResponse(response);
+                } catch (JSONException e) {
+                    Log.i(ERROR, "Error while parsing JSON object.");
+                }
+                Log.i(TAG, "Rerouted message to GameBoardManager.");
                 break;
 
             default:

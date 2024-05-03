@@ -17,7 +17,7 @@ import java.util.List;
  * Represents a section of the game board that contains multiple GameBoxes.
  */
 public class Chamber implements Clickable {
-    private final List<GameBox> boxes;
+    private final List<Field> fields;
     private final List<RewardCategory> rewards;
 
     private int x;
@@ -34,12 +34,12 @@ public class Chamber implements Clickable {
      */
     public Chamber(int x, int y, int count, List<RewardCategory> rewards, FieldCategory category) {
         this.rewards = rewards;
-        this.boxes = new ArrayList<>();
+        this.fields = new ArrayList<>();
         // remove when rewards are used
         doSomething();
 
         for (int i = 0; i < count; i++) {
-            boxes.add(new GameBox(x + i * boxSize, y, boxSize, category.getColor(), 0));
+            fields.add(new Field(x + i * boxSize, y, boxSize, category.getColor(), 0));
         }
         this.x = x;
         this.y = y;
@@ -67,7 +67,7 @@ public class Chamber implements Clickable {
         initOutlinePaint();
 
 
-        for (GameBox box : boxes) {
+        for (Field box : fields) {
             box.draw(canvas, x, y);
         }
     }
@@ -98,12 +98,16 @@ public class Chamber implements Clickable {
         float relY = y - this.y;
 
         Log.d("Chamber", "Checking chamber at " + x + ", " + y);
-        for (GameBox box : boxes) {
+        for (Field field : fields) {
 
-            if (box.handleClick(relX, relY, boardView)) {
+            if (field.handleClick(relX, relY, boardView)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Field getField(int index) {
+        return fields.get(index);
     }
 }

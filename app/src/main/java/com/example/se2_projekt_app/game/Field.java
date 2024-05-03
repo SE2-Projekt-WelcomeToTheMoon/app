@@ -11,10 +11,11 @@ import com.example.se2_projekt_app.views.GameBoardView;
 /**
  * Represents a drawable box used in a game that can display a number.
  */
-public class GameBox implements Clickable {
+public class Field implements Clickable {
     private final int x;
     private final int y;
     private final int size;
+    // TODO change to fieldvalue
     private int number;
     public final Paint paint;
     private final Paint textPaint;
@@ -23,13 +24,13 @@ public class GameBox implements Clickable {
     /**
      * Constructs a GameBox with specified location, size, color, and number.
      *
-     * @param x            The x-coordinate of the top-left corner.
-     * @param y            The y-coordinate of the top-left corner.
-     * @param size         The size of each side of the square box.
-     * @param color        The fill color of the box.
-     * @param number       The number to display in the box.
+     * @param x      The x-coordinate of the top-left corner.
+     * @param y      The y-coordinate of the top-left corner.
+     * @param size   The size of each side of the square box.
+     * @param color  The fill color of the box.
+     * @param number The number to display in the box.
      */
-    public GameBox(int x, int y, int size, int color, int number) {
+    public Field(int x, int y, int size, int color, int number) {
         this.x = x;
         this.y = y;
         this.size = size;
@@ -54,20 +55,20 @@ public class GameBox implements Clickable {
     /**
      * Draws the box and its number translated by the specified offsets.
      *
-     * @param canvas The canvas on which to draw the translated box.
+     * @param canvas  The canvas on which to draw the translated box.
      * @param offsetX The horizontal offset.
      * @param offsetY The vertical offset.
      */
     public void draw(Canvas canvas, int offsetX, int offsetY) {
-        canvas.drawRect((float)x + offsetX, (float)y + offsetY, (float)x + offsetX + size, (float)y + offsetY + size, paint);
-        canvas.drawRect((float)x + offsetX, (float)y + offsetY, (float)x + offsetX + size, (float)y + offsetY + size, outlinePaint);
+        canvas.drawRect((float) x + offsetX, (float) y + offsetY, (float) x + offsetX + size, (float) y + offsetY + size, paint);
+        canvas.drawRect((float) x + offsetX, (float) y + offsetY, (float) x + offsetX + size, (float) y + offsetY + size, outlinePaint);
         drawNumber(canvas, x + offsetX, y + offsetY);
     }
 
     /**
      * Draws the number at the center of the given location.
      *
-     * @param canvas The canvas on which to draw the number.
+     * @param canvas  The canvas on which to draw the number.
      * @param offsetX The horizontal offset for the x-coordinate.
      * @param offsetY The vertical offset for the y-coordinate.
      */
@@ -79,6 +80,10 @@ public class GameBox implements Clickable {
 
     public void setColor(int color) {
         paint.setColor(color);
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     @Override

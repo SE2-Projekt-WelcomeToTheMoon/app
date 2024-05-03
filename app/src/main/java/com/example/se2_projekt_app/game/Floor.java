@@ -79,4 +79,8 @@ public class Floor implements Clickable {
         }
         return false;
     }
+
+    public Chamber getChamber(int index){
+        return chambers.get(index);
+    }
 }

@@ -62,7 +62,7 @@ public class MainMenu extends Activity{
     }
 
     public void openDebug(View view) {
-        Intent intent = new Intent(this, Debug.class);
+        Intent intent = new Intent(this, GameScreen.class);
         startActivity(intent);
     }
 }
