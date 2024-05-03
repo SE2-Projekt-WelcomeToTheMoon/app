@@ -9,7 +9,8 @@ import lombok.Getter;
 @Getter
 public enum ActionValues {
     REGISTERUSER("registerUser"),
-    JOINLOBBY("joinLobby");
+    JOINLOBBY("joinLobby"),
+    LEAVELOBBY("leaveLobby");
 
     private final String value;
     ActionValues(String action){
