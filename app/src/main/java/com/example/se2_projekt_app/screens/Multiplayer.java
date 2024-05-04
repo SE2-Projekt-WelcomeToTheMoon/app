@@ -14,15 +14,17 @@ import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import org.json.JSONObject;
 
 
-public class Multiplayer extends Activity {
+public class    Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter;
 
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
+    public static ResponseReceiver startGameResponseReceiver;
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
+    private static final String SUCCESS = "success";
 
 
 
@@ -51,7 +53,7 @@ public class Multiplayer extends Activity {
             Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+                boolean success = response.getBoolean(SUCCESS);
                 if(success){
                     runOnUiThread(() -> {
                         userListAdapter.addUser(Username.user);
@@ -72,7 +74,7 @@ public class Multiplayer extends Activity {
             Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+                boolean success = response.getBoolean(SUCCESS);
                 if(success){
                     runOnUiThread(() -> {
                         userListAdapter.removeUser(Username.user);
@@ -84,8 +86,28 @@ public class Multiplayer extends Activity {
             };
         });
 
+        Multiplayer.startGameResponseReceiver = response -> {
+            boolean success = response.getBoolean(SUCCESS);
+            if(success){
+                runOnUiThread(() -> {
+                    Log.i(TAG, "Switched to game view");
+                    setContentView(R.layout.activity_multiplayer_game);
+                });
+            }
+        };
+
         startGameButton.setOnClickListener(v -> {
-            finish();
+            String username = Username.user.getUsername();
+            JSONObject msg = JSONService.generateJSONObject(
+                    ActionValues.STARTGAME.getValue(), username, null,"",
+                    "");
+            Username.webSocketClient.sendMessageToServer(msg);
+            Multiplayer.responseReceiver = response -> {
+                boolean success = response.getBoolean(SUCCESS);
+                if(success){
+                    Log.i(TAG, "Started game successfully");
+                }
+            };
         });
 
     }

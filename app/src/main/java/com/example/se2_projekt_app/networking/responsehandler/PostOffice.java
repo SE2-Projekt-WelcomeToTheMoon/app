@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -14,13 +15,14 @@ import lombok.SneakyThrows;
  */
 public class PostOffice {
     private static final String TAG = "PostOffice";
+    private static final String MULTIPLAYER = "Rerouted message to Multiplayer.";
 
     /**
      * Routes messages to screens according to their action key value.
      * @param response Response to route.
      */
     @SneakyThrows
-    public void routeResponse(JSONObject response){
+    public void routeResponse(JSONObject response) throws JSONException {
 
         String action = response.getString("action");
 
@@ -32,12 +34,22 @@ public class PostOffice {
 
             case "joinLobby":
                 Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
             case "leaveLobby":
                 Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+                Log.i(TAG, MULTIPLAYER);
+                break;
+
+            case "startGame":
+                Multiplayer.responseReceiver.receiveResponse(response);
+                Log.i(TAG, MULTIPLAYER);
+                break;
+
+            case "gameIsStarted":
+                Multiplayer.startGameResponseReceiver.receiveResponse(response);
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
             default:
