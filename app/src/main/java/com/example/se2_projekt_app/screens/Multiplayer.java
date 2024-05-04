@@ -20,6 +20,7 @@ public class    Multiplayer extends Activity {
 
     //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
+    public static ResponseReceiver startGameResponseReceiver;
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
@@ -84,23 +85,28 @@ public class    Multiplayer extends Activity {
             };
         });
 
+        startGameResponseReceiver = response -> {
+            boolean success = response.getBoolean("success");
+            if(success){
+                runOnUiThread(() -> {
+                    Log.i(TAG, "Switched to game view");
+                    setContentView(R.layout.activity_multiplayer_game);
+                });
+            }
+        };
+
         startGameButton.setOnClickListener(v -> {
             String username = Username.user.getUsername();
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.STARTGAME.getValue(), username, null,"",
                     "");
             Username.webSocketClient.sendMessageToServer(msg);
-
             responseReceiver = response -> {
                 boolean success = response.getBoolean("success");
                 if(success){
-
-
+                    Log.i(TAG, "Started game successfully");
                 }
             };
-
-
-            setContentView(R.layout.activity_multiplayer_game);
         });
 
     }
