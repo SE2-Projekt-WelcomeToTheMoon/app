@@ -14,7 +14,7 @@ import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import org.json.JSONObject;
 
 
-public class Multiplayer extends Activity {
+public class    Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter;
 
@@ -85,7 +85,22 @@ public class Multiplayer extends Activity {
         });
 
         startGameButton.setOnClickListener(v -> {
-            finish();
+            String username = Username.user.getUsername();
+            JSONObject msg = JSONService.generateJSONObject(
+                    ActionValues.STARTGAME.getValue(), username, null,"",
+                    "");
+            Username.webSocketClient.sendMessageToServer(msg);
+
+            responseReceiver = response -> {
+                boolean success = response.getBoolean("success");
+                if(success){
+
+
+                }
+            };
+
+
+            setContentView(R.layout.activity_multiplayer_game);
         });
 
     }
