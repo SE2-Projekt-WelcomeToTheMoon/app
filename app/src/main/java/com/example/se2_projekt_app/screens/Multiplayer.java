@@ -24,6 +24,7 @@ public class    Multiplayer extends Activity {
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
+    private static final String SUCCESS = "success";
 
 
 
@@ -52,7 +53,7 @@ public class    Multiplayer extends Activity {
             Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+                boolean success = response.getBoolean(SUCCESS);
                 if(success){
                     runOnUiThread(() -> {
                         userListAdapter.addUser(Username.user);
@@ -73,7 +74,7 @@ public class    Multiplayer extends Activity {
             Username.webSocketClient.sendMessageToServer(msg);
 
             responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+                boolean success = response.getBoolean(SUCCESS);
                 if(success){
                     runOnUiThread(() -> {
                         userListAdapter.removeUser(Username.user);
@@ -85,8 +86,8 @@ public class    Multiplayer extends Activity {
             };
         });
 
-        startGameResponseReceiver = response -> {
-            boolean success = response.getBoolean("success");
+        Multiplayer.startGameResponseReceiver = response -> {
+            boolean success = response.getBoolean(SUCCESS);
             if(success){
                 runOnUiThread(() -> {
                     Log.i(TAG, "Switched to game view");
@@ -101,8 +102,8 @@ public class    Multiplayer extends Activity {
                     ActionValues.STARTGAME.getValue(), username, null,"",
                     "");
             Username.webSocketClient.sendMessageToServer(msg);
-            responseReceiver = response -> {
-                boolean success = response.getBoolean("success");
+            Multiplayer.responseReceiver = response -> {
+                boolean success = response.getBoolean(SUCCESS);
                 if(success){
                     Log.i(TAG, "Started game successfully");
                 }
