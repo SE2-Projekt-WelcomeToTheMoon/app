@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -23,6 +24,8 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
     private final Bitmap planningBitmap;
     private final Bitmap spacesuitBitmap;
     private final Bitmap waterBitmap;
+    private int[] xPositions;
+    private CardCombination[] currentCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,22 +36,47 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         planningBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planning);
         spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
         waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
+        this.xPositions=new int[3];
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        drawTest();
+        drawTest(0);
     }
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        drawTest();
+        drawTest(0);
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
 
-    private void drawTest() {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN) {
+           for (int i=0; i<3;i++){
+               if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]){
+
+                   drawTest(5);
+               } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]){
+                   drawTest(10);
+               } else {
+                   drawTest(100);
+               }
+
+           }
+        }
+        return true;
+    }
+
+
+
+
+    private void drawTest(int a) {
         Canvas canvas = null;
         try {
             canvas = getHolder().lockCanvas();
@@ -57,13 +85,15 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
                 canvas.drawColor(Color.WHITE);
 
                 // Calculate image dimensions
-                int imageHeight = canvas.getHeight() / 5;
+                float screenHeight = (float) 1 / 5;
+                int imageHeight = (int) (canvas.getHeight() * screenHeight);
                 int imageWidth = canvas.getWidth() / 3; // Limit width to one third of the screen width
 
                 // Draw the image and number three times with appropriate spacing
                 for (int i = 0; i < 3; i++) {
-                    int left = i * (imageWidth + 20); // Adjust spacing as needed
-                    drawCombinationTest(canvas, left, plantBitmap, robotBitmap,i, imageWidth, imageHeight);
+                    int offsetPerSymbol = 20;
+                    xPositions[i] = i * (imageWidth + offsetPerSymbol); // Adjust spacing as needed
+                    drawCombinationTest( canvas, xPositions[i], plantBitmap, robotBitmap,i+a, imageWidth, imageHeight);
                 }
             }
         } finally {
@@ -93,6 +123,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void updateCanvas(CardCombination[] combination){
+        this.currentCombination=combination;
         Canvas canvas = null;
         try {
             canvas = getHolder().lockCanvas();
