@@ -37,18 +37,18 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        draw();
+        drawTest();
     }
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        draw();
+        drawTest();
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
 
-    private void draw() {
+    private void drawTest() {
         Canvas canvas = null;
         try {
             canvas = getHolder().lockCanvas();
@@ -72,7 +72,6 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
     }
-
     private void drawCombinationTest(Canvas canvas, int offsetX, Bitmap currentSymbol, Bitmap nextSymbol, int currentNumber, int symbolWidth, int symbolHeight) {
         // Draw current Symbol
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
@@ -93,6 +92,30 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
     }
 
+    public void updateCanvas(CardCombination[] combination){
+        Canvas canvas = null;
+        try {
+            canvas = getHolder().lockCanvas();
+            if (canvas != null) {
+                // Clear canvas
+                canvas.drawColor(Color.WHITE);
+
+                // Calculate image dimensions
+                int imageHeight = canvas.getHeight() / 5;
+                int imageWidth = canvas.getWidth() / 3; // Limit width to one third of the screen width
+
+                // Draw the image and number three times with appropriate spacing
+                for (int i = 0; i < 3; i++) {
+                    int left = i * (imageWidth + 20); // Adjust spacing as needed
+                    drawCombination(canvas, left, combination[i], imageWidth, imageHeight);
+                }
+            }
+        } finally {
+            if (canvas != null) {
+                getHolder().unlockCanvasAndPost(canvas);
+            }
+        }
+    }
     private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight) {
         if(combination==null||combination.getCurrentNumber()==null||combination.getCurrentSymbol()==null||combination.getNextSymbol()==null)throw new IllegalArgumentException("Cannot draw from empty combination");
         Bitmap currentSymbol=getBitMapFromElement(combination.getCurrentSymbol());
