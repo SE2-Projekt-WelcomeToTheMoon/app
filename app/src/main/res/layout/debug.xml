@@ -6,11 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.se2_projekt_app.game.CardDrawView
-        android:id="@+id/cardDrawView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -20,12 +15,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.example.se2_projekt_app.game.GameBoardView
-        android:id="@+id/gameBoard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            <com.example.se2_projekt_app.game.CardDrawView
+                android:id="@+id/cardDrawView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-    <LinearLayout
+            <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -50,33 +45,6 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/cardOne"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="test" />
-
-        <TextView
-            android:id="@+id/cardTwo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="test2" />
-
-        <TextView
-            android:id="@+id/cardThree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="test3" />
-    </LinearLayout>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggle_drawer_button"
                 android:layout_width="40dp"
