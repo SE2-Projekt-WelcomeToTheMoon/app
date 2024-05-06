@@ -10,6 +10,8 @@ import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 
 
+import org.json.JSONException;
+
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -19,6 +21,7 @@ import lombok.SneakyThrows;
  */
 public class PostOffice {
     private static final String TAG = "PostOffice";
+    private static final String MULTIPLAYER = "Rerouted message to Multiplayer.";
 
     /**
      * Routes messages to screens according to their action key value.
@@ -36,18 +39,22 @@ public class PostOffice {
                 break;
 
             case "joinLobby":
+            case "leaveLobby":
+            case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
+
 
             case "getNextCard":
                 Debug.responseReceiver.receiveResponse(response);
                 Log.i(TAG,"Rerouted message to Debug");
                 break;
 
-            case "leaveLobby":
-                Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+         
+            case "gameIsStarted":
+                Multiplayer.startGameResponseReceiver.receiveResponse(response);
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
             default:
