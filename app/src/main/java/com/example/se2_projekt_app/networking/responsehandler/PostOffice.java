@@ -33,18 +33,10 @@ public class PostOffice {
                 break;
 
             case "joinLobby":
-                Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, MULTIPLAYER);
-                break;
-
             case "leaveLobby":
+            case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, MULTIPLAYER);
-                break;
-
-            case "startGame":
-                Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, MULTIPLAYER);
+                Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
 
             case "gameIsStarted":
