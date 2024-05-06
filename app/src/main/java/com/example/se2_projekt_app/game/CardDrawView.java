@@ -60,11 +60,13 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         if (action == MotionEvent.ACTION_DOWN) {
            for (int i=0; i<3;i++){
                if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]){
-
+                   CardCombination combination1=currentCombination[0];
                    drawTest(5);
                } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]){
+                   CardCombination combination2=currentCombination[1];
                    drawTest(10);
                } else {
+                   CardCombination combination3=currentCombination[2];
                    drawTest(100);
                }
 
