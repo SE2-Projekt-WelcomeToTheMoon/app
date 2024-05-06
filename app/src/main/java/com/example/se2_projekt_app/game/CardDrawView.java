@@ -18,14 +18,20 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
     private final Bitmap leafBitmap;
     private final Bitmap robotBitmap;
-
+    private final Bitmap energyBitmap;
+    private final Bitmap planningBitmap;
+    private final Bitmap spacesuitBitmap;
+    private final Bitmap waterBitmap;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
         leafBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.leaf);
         robotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-
+        energyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.energy);
+        planningBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planning);
+        spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
+        waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
     }
 
     @Override
