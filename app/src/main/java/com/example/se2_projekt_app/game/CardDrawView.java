@@ -13,10 +13,11 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.enums.Element;
 
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final Bitmap leafBitmap;
+    private final Bitmap plantBitmap;
     private final Bitmap robotBitmap;
     private final Bitmap energyBitmap;
     private final Bitmap planningBitmap;
@@ -26,7 +27,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
-        leafBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.leaf);
+        plantBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plant);
         robotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
         energyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.energy);
         planningBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planning);
@@ -62,7 +63,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
                 // Draw the image and number three times with appropriate spacing
                 for (int i = 0; i < 3; i++) {
                     int left = i * (imageWidth + 20); // Adjust spacing as needed
-                    drawCombination(canvas, left, leafBitmap, robotBitmap,i, imageWidth, imageHeight);
+                    drawCombinationTest(canvas, left, plantBitmap, robotBitmap,i, imageWidth, imageHeight);
                 }
             }
         } finally {
@@ -72,7 +73,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         }
     }
 
-    private void drawCombination(Canvas canvas, int offsetX, Bitmap currentSymbol, Bitmap nextSymbol,int currentNumber, int symbolWidth, int symbolHeight) {
+    private void drawCombinationTest(Canvas canvas, int offsetX, Bitmap currentSymbol, Bitmap nextSymbol, int currentNumber, int symbolWidth, int symbolHeight) {
         // Draw current Symbol
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
 
@@ -90,5 +91,41 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         int numberX = offsetX + (symbolWidth / 2);
         int numberY = symbolHeight / 2 + 25; // Adjust vertical position as needed
         canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
+    }
+
+    private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight) {
+        if(combination==null||combination.getCurrentNumber()==null||combination.getCurrentSymbol()==null||combination.getNextSymbol()==null)throw new IllegalArgumentException("Cannot draw from empty combination");
+        Bitmap currentSymbol=getBitMapFromElement(combination.getCurrentSymbol());
+        Bitmap nextSymbol=getBitMapFromElement(combination.getNextSymbol());
+        int currentNumber=combination.getCurrentNumber().getValue();
+
+        // Draw current Symbol
+        canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
+
+        // Draw nextSymbol on top of Current symbol at 1/4 the size
+        int robotWidth = symbolWidth / 4;
+        int robotHeight = symbolHeight / 4;
+        canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
+
+        // Draw number on top of current Symbol
+        Paint paint = new Paint();
+        paint.setTextSize(50);
+        paint.setColor(Color.BLACK);
+        paint.setTextAlign(Paint.Align.CENTER);
+        // Calculate position to center number on Symbol
+        int numberX = offsetX + (symbolWidth / 2);
+        int numberY = symbolHeight / 2 + 25; // Adjust vertical position as needed
+        canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
+    }
+    private Bitmap getBitMapFromElement(Element element){
+        switch(element){
+            case ENERGY:return energyBitmap;
+            case PLANNING:return planningBitmap;
+            case SPACESUIT: return spacesuitBitmap;
+            case WATER: return waterBitmap;
+            case PLANT: return plantBitmap;
+            case ROBOT: return robotBitmap;
+            default: return null;
+        }
     }
 }
