@@ -126,18 +126,18 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
 
         // Draw nextSymbol on top of Current symbol at 1/4 the size
-        int robotWidth = symbolWidth / 4;
-        int robotHeight = symbolHeight / 4;
+        int robotWidth = symbolWidth / 3;
+        int robotHeight = symbolHeight / 3;
         canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
 
         // Draw number on top of current Symbol
         Paint paint = new Paint();
-        paint.setTextSize(50);
+        paint.setTextSize(75);
         paint.setColor(Color.BLACK);
         paint.setTextAlign(Paint.Align.CENTER);
         // Calculate position to center number on Symbol
         int numberX = offsetX + (symbolWidth / 2);
-        int numberY = symbolHeight / 2 + 25; // Adjust vertical position as needed
+        int numberY = symbolHeight / 2 + 25;
         canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
     }
     private Bitmap getBitMapFromElement(Element element){
