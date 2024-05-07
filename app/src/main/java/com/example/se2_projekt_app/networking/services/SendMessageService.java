@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
+/**
+ * Service to send messages to server.
+ */
 public class SendMessageService {
     private static final String TAG = "SendMessageService";
     private static final WebSocketClient webSocket = Username.webSocketClient;

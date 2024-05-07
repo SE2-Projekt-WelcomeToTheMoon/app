@@ -40,13 +40,10 @@ public class Username extends Activity {
         TextView inputText = findViewById(R.id.inputUsername);
         TextView outputText = findViewById(R.id.outputText);
 
-
-
         // Establishing connection to server via new thread
         webSocketClient = new WebSocketClient();
         Thread thread = new Thread(webSocketClient);
         thread.start();
-
 
         setUsernameButton.setOnClickListener(v -> {
 
