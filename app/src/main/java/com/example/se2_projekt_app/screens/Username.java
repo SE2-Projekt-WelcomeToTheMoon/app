@@ -13,6 +13,7 @@ import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 
 import org.json.JSONObject;
 
@@ -39,6 +40,8 @@ public class Username extends Activity {
         TextView inputText = findViewById(R.id.inputUsername);
         TextView outputText = findViewById(R.id.outputText);
 
+
+
         // Establishing connection to server via new thread
         webSocketClient = new WebSocketClient();
         Thread thread = new Thread(webSocketClient);
@@ -62,7 +65,7 @@ public class Username extends Activity {
                     runOnUiThread(() -> {
                         outputText.setText(message);
                         outputText.setBackgroundColor(0x8003DAC5);
-                            });
+                    });
                     Log.w(TAG, "Username couldn't be set.");
                 }
             };
@@ -72,7 +75,14 @@ public class Username extends Activity {
                     inputText.getText().toString(), null,"", "");
 
             // Sending message to server to register user
-            webSocketClient.sendMessageToServer(msg);
+            if(!SendMessageService.sendMessage(msg)){
+                runOnUiThread(() -> {
+                    String output = "No username has been passed. User not created.";
+                    outputText.setText(output);
+                    outputText.setBackgroundColor(0x8003DAC5);
+                });
+                Log.w(TAG, "Username couldn't be set.");
+            }
         });
     }
 }
