@@ -11,6 +11,7 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +59,7 @@ public class    Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.JOINLOBBY.getValue(), username, null,"",
                     "");
-            Username.webSocketClient.sendMessageToServer(msg);
+            SendMessageService.sendMessage(msg);
         });
 
 
@@ -67,7 +68,7 @@ public class    Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.LEAVELOBBY.getValue(), username, null,"",
                     "");
-            Username.webSocketClient.sendMessageToServer(msg);
+            SendMessageService.sendMessage(msg);
         });
 
         Multiplayer.startGameResponseReceiver = response -> {
@@ -85,7 +86,7 @@ public class    Multiplayer extends Activity {
             JSONObject msg = JSONService.generateJSONObject(
                     ActionValues.STARTGAME.getValue(), username, null,"",
                     "");
-            Username.webSocketClient.sendMessageToServer(msg);
+            SendMessageService.sendMessage(msg);
             Multiplayer.responseReceiver = response -> {
                 boolean success = response.getBoolean(SUCCESS);
                 if(success){
@@ -138,7 +139,7 @@ public class    Multiplayer extends Activity {
     public void updateLobby(){
         String username = Username.user.getUsername();
         JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("requestLobbyUser", username, true, "", "");
-        Username.webSocketClient.sendMessageToServer(requestLobbyUsersMsg);
+        SendMessageService.sendMessage(requestLobbyUsersMsg);
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
