@@ -121,13 +121,11 @@ public class WebSocketClient implements Runnable{
     }
 
     /**
-     * Method to send a message to the server, receives a JSON Object as parameter and casts it
-     * to string to be able to send to server.
-     * @param msg JSON Object to be send to server.
+     * Method to send a message to the server, receives a JSON Object parsed to String as parameter.
+     * @param message JSON Object parsed to String to be send to server.
      */
-    public void sendMessageToServer(JSONObject msg) {
-        String messageToSend = msg.toString();
-        websocket.send(messageToSend);
+    public void sendMessageToServer(String message) {
+        websocket.send(message);
         Log.i(TAG, "Message sent to server.");
     }
 
