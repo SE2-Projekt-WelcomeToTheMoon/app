@@ -1,9 +1,6 @@
 package com.example.se2_projekt_app.game;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +9,7 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
-import lombok.Getter;
-
 public class Floor implements Clickable {
-    private final int x;
     private final int y;
     // cause we only move laterally, and don't need to store Y
     private int nextX;
@@ -25,7 +19,6 @@ public class Floor implements Clickable {
     int boxSize = 200;
 
     public Floor(int x, int y, FieldCategory category) {
-        this.x = x;
         this.y = y;
         this.nextX = x;
         this.category = category;

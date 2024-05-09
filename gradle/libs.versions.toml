@@ -16,6 +16,10 @@ espressoCoreVersion = "3.6.0-alpha03"
 espressoIntents = "3.5.1"
 jacksonBase = "2.17.0"
 jacksonDatabind = "2.17.0"
+junitJupiter = "2.20.0"
+android = "2.20.0"
+coreVersion = "1.14.0-alpha01"
+drawerlayout = "1.2.0"
 
 [libraries]
 json = { module = "org.json:json", version.ref = "json" }
@@ -35,6 +39,10 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "espressoIntents" }
 jackson-base = { group = "com.fasterxml.jackson", name = "jackson-base", version.ref = "jacksonBase" }
 jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jacksonDatabind" }
+junit-jupiter = { group = "org.mockito", name = "junit-jupiter", version.ref = "junitJupiter" }
+android = { group = "org.mockito", name = "android", version.ref = "android" }
+core = { group = "androidx.core", name = "core", version.ref = "coreVersion" }
+androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout", version.ref = "drawerlayout" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

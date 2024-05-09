@@ -75,21 +75,9 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
     @Override
     public void receiveResponse(JSONObject response) throws JSONException {
-        String action = response.getString("action");
         String message = response.getString("message");
         String username = response.getString("username");
 
-        switch (action) {
-            case "updateGameBoardSimple":
-                gameBoardManager.simpleUpdateGameBoard(message, username);
-                break;
-
-            case "updateGameBoardFull":
-                gameBoardManager.fullUpdateGameBoard(message, username);
-                break;
-
-            default:
-                break;
+        gameBoardManager.fullUpdateGameBoard(message, username);
         }
     }
-}

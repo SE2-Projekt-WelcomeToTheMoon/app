@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("all")
 public class GameBoardManager {
     private final List<User> users = new ArrayList<>();
 
@@ -51,23 +52,6 @@ public class GameBoardManager {
         }
     }
 
-    public boolean simpleUpdateGameBoard(String response, String username) {
-        User user = userExists(username);
-        if (user == null) {
-            return false;
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            FieldUpdateMessage fieldUpdateMessage = objectMapper.readValue(response, FieldUpdateMessage.class);
-            user.getGameBoard().updateGameBoard(fieldUpdateMessage);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public boolean sendSimpleUpdate(String user, FieldUpdateMessage fieldUpdateMessage) {
         String payload = serializeObject(fieldUpdateMessage);
         if (payload == null) {
@@ -89,7 +73,6 @@ public class GameBoardManager {
     }
 
     public void makeMove(User user, FieldUpdateMessage fieldUpdateMessage) {
-        user.getGameBoard().updateGameBoard(fieldUpdateMessage);
         sendSimpleUpdate(user.getUsername(), fieldUpdateMessage);
     }
 
@@ -103,4 +86,9 @@ public class GameBoardManager {
             return null;
         }
     }
+
+    public int getNumberOfUsers() {
+        return users.size();
+    }
+
 }

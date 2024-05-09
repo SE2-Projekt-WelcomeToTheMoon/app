@@ -10,8 +10,6 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
-import lombok.Getter;
-
 /**
  * Represents a drawable box used in a game that can display a number.
  */

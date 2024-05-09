@@ -12,17 +12,13 @@ public class GameBoard {
 
     public GameBoard() {
         this.floors = new ArrayList<>();
-        initializeGameBoard();
     }
 
     /**
      * PLACEHOLDER
      * Server will Provide Information at a later point
      */
-    private void initializeGameBoard() {
-        Floor floor = new Floor(0,0,FieldCategory.ENERGY);
-        floor.addChamber(3);
-        floor.addChamber(5);
+    public void addFloor(Floor floor){
         floors.add(floor);
         floor = new Floor(0,200,FieldCategory.WATER);
         floor.addChamber(3);

@@ -84,9 +84,7 @@ public class Multiplayer extends Activity {
             };
         });
 
-        startGameButton.setOnClickListener(v -> {
-            finish();
-        });
+        startGameButton.setOnClickListener(v -> finish());
 
     }
 }

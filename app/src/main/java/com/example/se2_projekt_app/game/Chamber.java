@@ -3,7 +3,6 @@ package com.example.se2_projekt_app.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
@@ -12,8 +11,6 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
 
 /**
  * Represents a section of the game board that contains multiple GameBoxes.

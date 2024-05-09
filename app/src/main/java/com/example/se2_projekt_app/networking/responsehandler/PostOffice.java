@@ -46,9 +46,7 @@ public class PostOffice {
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
 
-                // gets changes from other user in format of
-            case "updateGameBoardSimple":
-            case "updateGameBoardFull":
+            case "updateGameBoard":
                 try {
                     GameScreen.responseReceiver.receiveResponse(response);
                 } catch (JSONException e) {
