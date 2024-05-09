@@ -9,6 +9,8 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
+import lombok.Getter;
+
 /**
  * Represents a drawable box used in a game that can display a number.
  */
@@ -24,10 +26,10 @@ public class Field implements Clickable {
     /**
      * Constructs a GameBox with specified location, size, color, and number.
      *
-     * @param x      The x-coordinate of the top-left corner.
-     * @param y      The y-coordinate of the top-left corner.
-     * @param size   The size of each side of the square box.
-     * @param color  The fill color of the box.
+     * @param x          The x-coordinate of the top-left corner.
+     * @param y          The y-coordinate of the top-left corner.
+     * @param size       The size of each side of the square box.
+     * @param color      The fill color of the box.
      * @param fieldValue The number to display in the box.
      */
     public Field(int x, int y, int size, int color, FieldValue fieldValue) {
@@ -54,14 +56,12 @@ public class Field implements Clickable {
     /**
      * Draws the box and its number translated by the specified offsets.
      *
-     * @param canvas  The canvas on which to draw the translated box.
-     * @param offsetX The horizontal offset.
-     * @param offsetY The vertical offset.
+     * @param canvas The canvas on which to draw the translated box.
      */
-    public void draw(Canvas canvas, int offsetX, int offsetY) {
-        canvas.drawRect((float) x + offsetX, (float) y + offsetY, (float) x + offsetX + size, (float) y + offsetY + size, paint);
-        canvas.drawRect((float) x + offsetX, (float) y + offsetY, (float) x + offsetX + size, (float) y + offsetY + size, outlinePaint);
-        drawNumber(canvas, x + offsetX, y + offsetY);
+    public void draw(Canvas canvas) {
+        canvas.drawRect(x, y, x + size, y + size, paint);
+        canvas.drawRect(x, y, x + size, y + size, outlinePaint);
+        drawNumber(canvas, x, y);
     }
 
     /**
@@ -87,11 +87,9 @@ public class Field implements Clickable {
 
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView) {
-        Log.d("GameBox", "Checking box at " + x + ", " + y);
-        // TODO change to proper logic with the CardView
         if (isPointInsideBox(x, y)) {
             Log.d("GameBox", "Box clicked at " + this.x + ", " + this.y);
-            this.fieldValue = FieldValue.FIFTEEN;
+            this.fieldValue = FieldValue.FIVE;
             this.paint.setColor(Color.GREEN);
             boardView.drawGameBoard();
             return true;

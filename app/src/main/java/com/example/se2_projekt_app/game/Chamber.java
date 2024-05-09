@@ -22,7 +22,6 @@ public class Chamber implements Clickable {
     private final List<Field> fields;
 
     private final int x;
-
     private final int y;
 
     int boxSize = 200;
@@ -37,10 +36,17 @@ public class Chamber implements Clickable {
         this.fields = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            fields.add(new Field(x + i * boxSize, y, boxSize, category.getColor(), FieldValue.NONE));
+            fields.add(new Field(x + (i * boxSize), y, boxSize, category.getColor(), FieldValue.NONE));
         }
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * For Testing purposes
+     */
+    public void addField(Field field) {
+        this.fields.add(field);
     }
 
     private void initOutlinePaint() {
@@ -59,8 +65,8 @@ public class Chamber implements Clickable {
     public void draw(Canvas canvas) {
         initOutlinePaint();
 
-        for (Field box : fields) {
-            box.draw(canvas, x, y);
+        for (Field field : fields) {
+            field.draw(canvas);
         }
     }
 
@@ -68,6 +74,16 @@ public class Chamber implements Clickable {
         return fields.get(index);
     }
 
+    public List<Field> getFields() {
+        return new ArrayList<>(fields);
+    }
+
+    public int getX() {
+        return this.x;
+    }
+    public int getY() {
+        return this.y;
+    }
     /**
      * For Testing purposes
      *
@@ -87,13 +103,8 @@ public class Chamber implements Clickable {
      */
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView) {
-        float relX = x - this.x;
-        float relY = y - this.y;
-
-        Log.d("Chamber", "Checking chamber at " + x + ", " + y);
         for (Field field : fields) {
-
-            if (field.handleClick(relX, relY, boardView)) {
+            if (field.handleClick(x, y, boardView)) {
                 return true;
             }
         }

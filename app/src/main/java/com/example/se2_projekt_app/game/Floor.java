@@ -45,6 +45,14 @@ public class Floor implements Clickable {
     }
 
     /**
+     * Just for Testing
+     * @param chamber
+     */
+    public void addChamber(Chamber chamber) {
+        this.chambers.add(chamber);
+    }
+
+    /**
      * @param canvas
      */
     public void draw(Canvas canvas) {
@@ -66,12 +74,8 @@ public class Floor implements Clickable {
 
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView) {
-        float relX = x - this.x;
-        float relY = y - this.y;
-
         for (Chamber chamber : chambers) {
-            Log.d("Floor", "Checking chamber at " + x + ", " + y);
-            if (chamber.handleClick(relX, relY, boardView)) {
+            if (chamber.handleClick(x, y, boardView)) {
                 return true;
             }
         }
