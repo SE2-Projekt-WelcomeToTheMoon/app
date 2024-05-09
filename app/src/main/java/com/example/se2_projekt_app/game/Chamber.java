@@ -6,40 +6,38 @@ import android.graphics.Paint;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
-import com.example.se2_projekt_app.enums.RewardCategory;
+import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+
 /**
  * Represents a section of the game board that contains multiple GameBoxes.
  */
 public class Chamber implements Clickable {
     private final List<Field> fields;
-    private final List<RewardCategory> rewards;
 
-    private int x;
-    private int y;
+    private final int x;
+
+    private final int y;
 
     int boxSize = 200;
 
     /**
      * Constructs a Section with a specified origin.
      *
-     * @param x       The x-coordinate of the top-left corner of the section.
-     * @param y       The y-coordinate of the top-left corner of the section.
-     * @param rewards
+     * @param x The x-coordinate of the top-left corner of the section.
+     * @param y The y-coordinate of the top-left corner of the section.
      */
-    public Chamber(int x, int y, int count, List<RewardCategory> rewards, FieldCategory category) {
-        this.rewards = rewards;
+    public Chamber(int x, int y, int count, FieldCategory category) {
         this.fields = new ArrayList<>();
-        // remove when rewards are used
-        doSomething();
 
         for (int i = 0; i < count; i++) {
-            fields.add(new Field(x + i * boxSize, y, boxSize, category.getColor(), 0));
+            fields.add(new Field(x + i * boxSize, y, boxSize, category.getColor(), FieldValue.NONE));
         }
         this.x = x;
         this.y = y;
@@ -56,40 +54,35 @@ public class Chamber implements Clickable {
     /**
      * Draws all GameBoxes in the section, translated to the section's position.
      *
-     * TODO reimplement this but working
-     * int totalWidth = boxes.size() * this.boxSize;
-     * canvas.drawRect(x, y, x + totalWidth, y + 200, outlinePaint);  // Assumes each box is 200 pixels high
-     *
-     *
      * @param canvas The canvas on which to draw the boxes.
      */
     public void draw(Canvas canvas) {
         initOutlinePaint();
-
 
         for (Field box : fields) {
             box.draw(canvas, x, y);
         }
     }
 
-    /**
-     * PLACEHOLDER
-     * remove when rewards are used, just here so that sonarcloud doesnt complain
-     */
-    public void doSomething() {
-        for (RewardCategory reward : rewards) {
-            Log.d("Chamber", "Reward: " + reward);
-        }
+    public Field getField(int index) {
+        return fields.get(index);
     }
 
-
+    /**
+     * For Testing purposes
+     *
+     * @return
+     */
+    public int getSize() {
+        return fields.size();
+    }
 
     /**
      * Handles click events within the section, checks if a click is within any GameBox,
      * and updates the box color and number if clicked.
      *
-     * @param x The x-coordinate of the click relative to the section's parent container.
-     * @param y The y-coordinate of the click relative to the section's parent container.
+     * @param x         The x-coordinate of the click relative to the section's parent container.
+     * @param y         The y-coordinate of the click relative to the section's parent container.
      * @param boardView The view that needs to be redrawn after handling the click.
      */
     @Override
@@ -105,9 +98,5 @@ public class Chamber implements Clickable {
             }
         }
         return false;
-    }
-
-    public Field getField(int index) {
-        return fields.get(index);
     }
 }

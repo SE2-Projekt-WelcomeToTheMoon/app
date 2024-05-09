@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 public class GameScreen extends Activity implements ResponseReceiver {
 
+    public static ResponseReceiver responseReceiver;
     private DrawerLayout drawerLayout;
     private Button toggleDrawerButton;
     private Button closeDrawerButton;

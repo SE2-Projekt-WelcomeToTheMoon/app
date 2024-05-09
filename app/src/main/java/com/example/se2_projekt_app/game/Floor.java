@@ -9,16 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
-import com.example.se2_projekt_app.enums.RewardCategory;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
+import lombok.Getter;
+
 public class Floor implements Clickable {
-    int x;
-    int y;
-    int nextX;
-    private FieldCategory category;
-    private List<Chamber> chambers;
+    private final int x;
+    private final int y;
+    // cause we only move laterally, and don't need to store Y
+    private int nextX;
+    private final FieldCategory category;
+    private final List<Chamber> chambers;
 
     int boxSize = 200;
 
@@ -30,40 +32,36 @@ public class Floor implements Clickable {
         this.chambers = new ArrayList<>();
     }
 
-    public void addChamber(int count, List<RewardCategory> rewards) {
-        Chamber chamber = new Chamber(nextX, y, count, rewards, category);
-        // shift to the right for the next chamber why doesnt it work with 200????
-        this.nextX += count * boxSize - 100;
+    /**
+     * Adds a Chamber to the Floor
+     *
+     * @param count Refers to the Amount of Fields the Chamber should have
+     */
+    public void addChamber(int count) {
+        Chamber chamber = new Chamber(nextX, y, count, category);
+        // shift to the right for the next chamber why doesn't it work with 200????
+        this.nextX += count * boxSize;
         chambers.add(chamber);
     }
 
-    private void initOutlinePaint() {
-        Paint outlinePaint;
-        outlinePaint = new Paint();
-        outlinePaint.setColor(Color.BLACK);
-        outlinePaint.setStyle(Paint.Style.STROKE);
-        outlinePaint.setStrokeWidth(10);
-    }
-
     /**
-     *
-     * TODO draw the outline of the floor
-     * int totalWidth = nextX;
-     * canvas.drawRect(x, y, nextX, y + 200, outlinePaint);
-     *
      * @param canvas
      */
     public void draw(Canvas canvas) {
-        initOutlinePaint();
-
         for (Chamber chamber : chambers) {
             chamber.draw(canvas);
         }
     }
 
+    public Chamber getChamber(int index) {
+        return chambers.get(index);
+    }
 
     public List<Chamber> getChambers() {
-        return chambers;
+        return new ArrayList<>(this.chambers);
+    }
+    public int getNextX() {
+        return this.nextX;
     }
 
     @Override
@@ -72,15 +70,11 @@ public class Floor implements Clickable {
         float relY = y - this.y;
 
         for (Chamber chamber : chambers) {
-            Log.d("Floor", "Checking chamber at " + x + ", " + y );
+            Log.d("Floor", "Checking chamber at " + x + ", " + y);
             if (chamber.handleClick(relX, relY, boardView)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public Chamber getChamber(int index){
-        return chambers.get(index);
     }
 }

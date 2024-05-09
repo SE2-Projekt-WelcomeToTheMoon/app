@@ -17,25 +17,25 @@ public class FieldUpdateMessage {
     @Getter
     private final int field;
     @Getter
-    private final FieldValue value;
+    private final FieldValue fieldValue;
 
     public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value){
         this.floor = floor;
         this.chamber = chamber;
         this.field = field;
-        this.value = value;
+        this.fieldValue = value;
     }
 
     public int getFloor() {
-        return floor;
+        return this.floor;
     }
     public int getChamber() {
-        return chamber;
+        return this.chamber;
     }
     public int getField() {
-        return field;
+        return this.field;
     }
-    public FieldValue getValue() {
-        return value;
+    public FieldValue getFieldValue() {
+        return this.fieldValue;
     }
 }

@@ -50,7 +50,7 @@ public class PostOffice {
             case "updateGameBoardSimple":
             case "updateGameBoardFull":
                 try {
-                    GameScreen.receiveResponse(response);
+                    GameScreen.responseReceiver.receiveResponse(response);
                 } catch (JSONException e) {
                     Log.i(ERROR, "Error while parsing JSON object.");
                 }
