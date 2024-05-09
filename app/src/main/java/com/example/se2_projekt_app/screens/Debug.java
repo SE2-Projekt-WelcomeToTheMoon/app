@@ -34,7 +34,7 @@ public class Debug extends Activity {
         closeDrawerButton = findViewById(R.id.close_drawer_button);
 //        progressBar = findViewById(R.id.progressbar);
         view = findViewById(R.id.rocket_count);
-        view.setText("22"); // Testing purposes
+//        view.setText("22"); // Testing purposes
 //        progressBar.setMax(57);
 //        progressBar.setProgress(15);
 //        final int[] progress = {0};
