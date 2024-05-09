@@ -85,6 +85,7 @@ dependencies {
     implementation libs.androidx.espresso.intents
     implementation libs.jackson.base
     implementation libs.jackson.databind
+    implementation libs.android
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine

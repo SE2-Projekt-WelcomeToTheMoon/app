@@ -36,7 +36,7 @@ public class Chamber implements Clickable {
         this.fields = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            fields.add(new Field(x + (i * boxSize), y, boxSize, category.getColor(), FieldValue.NONE));
+            fields.add(new Field(x + (i * boxSize), y, boxSize, category, FieldValue.NONE));
         }
         this.x = x;
         this.y = y;

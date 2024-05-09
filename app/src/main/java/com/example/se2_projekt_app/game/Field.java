@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
@@ -29,17 +30,17 @@ public class Field implements Clickable {
      * @param x          The x-coordinate of the top-left corner.
      * @param y          The y-coordinate of the top-left corner.
      * @param size       The size of each side of the square box.
-     * @param color      The fill color of the box.
+     * @param category   The fill color of the box.
      * @param fieldValue The number to display in the box.
      */
-    public Field(int x, int y, int size, int color, FieldValue fieldValue) {
+    public Field(int x, int y, int size, FieldCategory category, FieldValue fieldValue) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.fieldValue = fieldValue;
 
         paint = new Paint();
-        paint.setColor(color);
+        paint.setColor(category.getColor());
         paint.setStyle(Paint.Style.FILL);
 
         textPaint = new Paint();
@@ -77,12 +78,12 @@ public class Field implements Clickable {
         canvas.drawText(String.valueOf(this.fieldValue.getValue()), centerX, centerY, textPaint);
     }
 
-    public void setColor(int color) {
-        paint.setColor(color);
-    }
-
     public void setNumber(FieldValue fieldValue) {
         this.fieldValue = fieldValue;
+    }
+
+    public FieldValue getNumber() {
+        return this.fieldValue;
     }
 
     @Override
