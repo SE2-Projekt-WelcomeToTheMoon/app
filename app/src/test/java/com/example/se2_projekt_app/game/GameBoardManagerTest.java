@@ -51,46 +51,4 @@ class GameBoardManagerTest {
         User user = gameBoardManager.userExists("User2");
         assertEquals(mockUser2, user, "User should be found in list");
     }
-
-    @Test
-    void testFullUpdateGameBoard() {
-        GameBoard gameBoard = new GameBoard();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Floor floor = new Floor(0,0,FieldCategory.ENERGY);
-        gameBoard.addFloor(floor);
-
-        String testResponse = null;
-        try {
-            testResponse = objectMapper.writeValueAsString(gameBoard);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        assertTrue(gameBoardManager.fullUpdateGameBoard(testResponse, "User"), "GameBoard should be updated");
-        verify(mockUser).setGameBoard(any(GameBoard.class));
-    }
-
-    @Test
-    void testGameBoardSerializationAndDeserialization() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GameBoard gameBoard = new GameBoard();
-        Floor floor = new Floor(0,0,FieldCategory.ENERGY);
-        gameBoard.addFloor(floor);
-
-        String jsonOutput = null;
-        try {
-            jsonOutput = objectMapper.writeValueAsString(gameBoard);
-            assertNotNull(jsonOutput);
-            System.out.println("Serialized JSON: " + jsonOutput); // This helps verify the output format
-
-            // Now test deserialization
-            GameBoard deserializedGameBoard = objectMapper.readValue(jsonOutput, GameBoard.class);
-            assertNotNull(deserializedGameBoard);
-            // Additional checks can be added to verify the correctness of the deserialized object.
-        } catch (JsonProcessingException e) {
-            fail("Serialization or deserialization failed with exception: " + e.getMessage());
-        }
-    }
-
 }

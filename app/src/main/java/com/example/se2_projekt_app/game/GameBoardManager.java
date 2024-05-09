@@ -52,41 +52,6 @@ public class GameBoardManager {
         }
     }
 
-    public boolean sendSimpleUpdate(String user, FieldUpdateMessage fieldUpdateMessage) {
-        String payload = serializeObject(fieldUpdateMessage);
-        if (payload == null) {
-            return false;
-        }
-        JSONObject message = JSONService.generateJSONObject("updateGameBoardSimple", user, true, payload, "");
-        // sendMessageToServer(message)
-        return true;
-    }
-
-    public boolean sendFullUpdate(String user, GameBoard gameBoard) {
-        String payload = serializeObject(gameBoard);
-        if (payload == null) {
-            return false;
-        }
-        JSONObject message = JSONService.generateJSONObject("updateGameBoardFull", user, true, payload, "");
-        // sendMessageToServer(message)
-        return true;
-    }
-
-    public void makeMove(User user, FieldUpdateMessage fieldUpdateMessage) {
-        sendSimpleUpdate(user.getUsername(), fieldUpdateMessage);
-    }
-
-    public String serializeObject(Object obj) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(obj);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public int getNumberOfUsers() {
         return users.size();
     }
