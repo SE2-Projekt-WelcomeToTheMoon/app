@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldValue;
 
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -24,7 +25,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
     private final Bitmap planningBitmap;
     private final Bitmap spacesuitBitmap;
     private final Bitmap waterBitmap;
-    private int[] xPositions;
+    private final int[] xPositions;
     private CardCombination[] currentCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
@@ -37,20 +38,24 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
         waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
         this.xPositions=new int[3];
+        CardCombination[] testCombinations={new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE),new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE),new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE)};
+        updateCanvas(testCombinations);
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        drawTest(0);
+        updateCanvas(currentCombination);
     }
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-        drawTest(0);
+        updateCanvas(currentCombination);
     }
 
     @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {}
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        //Had to include this method but dont need it yet
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -61,67 +66,19 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
            for (int i=0; i<3;i++){
                if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]){
                    CardCombination combination1=currentCombination[0];
-                   drawTest(5);
+                   currentCombination[1]=new CardCombination(Element.ROBOT,Element.ROBOT,FieldValue.ELEVEN);
+                   updateCanvas(currentCombination);
                } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]){
                    CardCombination combination2=currentCombination[1];
-                   drawTest(10);
+                   //Enter code here
                } else {
                    CardCombination combination3=currentCombination[2];
-                   drawTest(100);
+                   //Enter Code here
                }
 
            }
         }
         return true;
-    }
-
-
-
-
-    private void drawTest(int a) {
-        Canvas canvas = null;
-        try {
-            canvas = getHolder().lockCanvas();
-            if (canvas != null) {
-                // Clear canvas
-                canvas.drawColor(Color.WHITE);
-
-                // Calculate image dimensions
-                float screenHeight = (float) 1 / 5;
-                int imageHeight = (int) (canvas.getHeight() * screenHeight);
-                int imageWidth = canvas.getWidth() / 3; // Limit width to one third of the screen width
-
-                // Draw the image and number three times with appropriate spacing
-                for (int i = 0; i < 3; i++) {
-                    int offsetPerSymbol = 20;
-                    xPositions[i] = i * (imageWidth + offsetPerSymbol); // Adjust spacing as needed
-                    drawCombinationTest( canvas, xPositions[i], plantBitmap, robotBitmap,i+a, imageWidth, imageHeight);
-                }
-            }
-        } finally {
-            if (canvas != null) {
-                getHolder().unlockCanvasAndPost(canvas);
-            }
-        }
-    }
-    private void drawCombinationTest(Canvas canvas, int offsetX, Bitmap currentSymbol, Bitmap nextSymbol, int currentNumber, int symbolWidth, int symbolHeight) {
-        // Draw current Symbol
-        canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
-
-        // Draw nextSymbol on top of Current symbol at 1/4 the size
-        int robotWidth = symbolWidth / 4;
-        int robotHeight = symbolHeight / 4;
-        canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
-
-        // Draw number on top of current Symbol
-        Paint paint = new Paint();
-        paint.setTextSize(50);
-        paint.setColor(Color.BLACK);
-        paint.setTextAlign(Paint.Align.CENTER);
-        // Calculate position to center number on Symbol
-        int numberX = offsetX + (symbolWidth / 2);
-        int numberY = symbolHeight / 2 + 25; // Adjust vertical position as needed
-        canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
     }
 
     public void updateCanvas(CardCombination[] combination){
@@ -139,8 +96,8 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
                 // Draw the image and number three times with appropriate spacing
                 for (int i = 0; i < 3; i++) {
-                    int left = i * (imageWidth + 20); // Adjust spacing as needed
-                    drawCombination(canvas, left, combination[i], imageWidth, imageHeight);
+                    xPositions[i] = i * (imageWidth + 20); // Adjust spacing as needed
+                    drawCombination(canvas, xPositions[i], combination[i], imageWidth, imageHeight);
                 }
             }
         } finally {
@@ -163,15 +120,28 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         int robotHeight = symbolHeight / 3;
         canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
 
-        // Draw number on top of current Symbol
-        Paint paint = new Paint();
-        paint.setTextSize(75);
-        paint.setColor(Color.BLACK);
-        paint.setTextAlign(Paint.Align.CENTER);
+
+
+        // Draw number on top of current Symbol with a white outline
+        Paint outlinePaint = new Paint();
+        outlinePaint.setTextSize(90); // Increase text size for outline
+        outlinePaint.setColor(Color.WHITE); // Outline color
+        outlinePaint.setStyle(Paint.Style.STROKE); // Outline style
+        outlinePaint.setStrokeWidth(6); // Increase outline width
+        outlinePaint.setTextAlign(Paint.Align.CENTER);
         // Calculate position to center number on Symbol
-        int numberX = offsetX + (symbolWidth / 2);
-        int numberY = symbolHeight / 2 + 25;
-        canvas.drawText(String.valueOf(currentNumber), numberX, numberY, paint);
+        int outlineNumberX = offsetX + (symbolWidth / 2);
+        int outlineNumberY = symbolHeight / 2 + 25;
+        canvas.drawText(String.valueOf(currentNumber), outlineNumberX, outlineNumberY, outlinePaint);
+
+        // Draw the number again in black (centered on top of the outline)
+        Paint textPaint = new Paint();
+        textPaint.setTextSize(90); // Increase text size
+        textPaint.setColor(Color.BLACK); // Text color
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(String.valueOf(currentNumber), outlineNumberX, outlineNumberY, textPaint);
+
+
     }
     private Bitmap getBitMapFromElement(Element element){
         switch(element){

@@ -34,7 +34,7 @@ public class Debug extends Activity {
 
         // Handling response from server
         responseReceiver = response -> {
-            //TODO Add functionality with actual images of cards
+
             String cardMessage = response.getString("message");
             cardController.extractCardsFromServerString(cardMessage);
             cardDrawView.updateCanvas(cardController.getCurrentCombination());
