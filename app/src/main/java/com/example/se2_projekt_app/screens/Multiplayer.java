@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class    Multiplayer extends Activity {
+public class Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter = new UserListAdapter(new ArrayList<>());
 
@@ -112,6 +112,7 @@ public class    Multiplayer extends Activity {
                         runOnUiThread(() -> {
                             try {
                                 userListAdapter.removeUser(new User(response.getString("username")));
+        startGameButton.setOnClickListener(v -> finish());
 
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -124,14 +125,12 @@ public class    Multiplayer extends Activity {
                         for (int i = 0; i < users.length(); i++) {
                             newUserList.add(new User(users.getString(i)));
                         }
-                        runOnUiThread(() -> {
-                            userListAdapter.setUsers(newUserList);
-                        });
+                        runOnUiThread(() -> userListAdapter.setUsers(newUserList));
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
                 }
-            };
+            }
 
         };
     }

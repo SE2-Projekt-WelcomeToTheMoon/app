@@ -41,7 +41,7 @@ public class SendMessageService {
     private static boolean checkMessage(JSONObject messageToCheck){
         return (((messageToCheck.getString("action") != null) &&
                 !(messageToCheck.getString("action").isEmpty())) &&
-                ((messageToCheck.getString("username") != null)) &&
+                (messageToCheck.getString("username") != null) &&
                 !(messageToCheck.getString("username").isEmpty()));
     }
 }

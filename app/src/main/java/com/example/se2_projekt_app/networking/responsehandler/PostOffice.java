@@ -2,16 +2,11 @@ package com.example.se2_projekt_app.networking.responsehandler;
 
 import android.util.Log;
 
-
-import com.example.se2_projekt_app.screens.Debug;
-import com.example.se2_projekt_app.screens.MainMenu;
-import org.json.JSONException;
+import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 
-
 import org.json.JSONException;
-
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -21,10 +16,12 @@ import lombok.SneakyThrows;
  */
 public class PostOffice {
     private static final String TAG = "PostOffice";
+    private static final String ERROR = "PostOffice Error";
     private static final String MULTIPLAYER = "Rerouted message to Multiplayer.";
 
     /**
      * Routes messages to screens according to their action key value.
+     *
      * @param response Response to route.
      */
     @SneakyThrows
@@ -32,7 +29,7 @@ public class PostOffice {
 
         String action = response.getString("action");
 
-        switch(action){
+        switch (action) {
             case "registerUser":
                 Username.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Username view.");
@@ -42,19 +39,21 @@ public class PostOffice {
             case "leaveLobby":
             case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
-
-            case "getNextCard":
-                Debug.responseReceiver.receiveResponse(response);
-                Log.i(TAG,"Rerouted message to Debug");
-                break;
-
-         
             case "gameIsStarted":
                 Multiplayer.startGameResponseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
+                break;
+
+            case "updateGameBoard":
+                try {
+                    GameScreen.responseReceiver.receiveResponse(response);
+                } catch (JSONException e) {
+                    Log.i(ERROR, "Error while parsing JSON object.");
+                }
+                Log.i(TAG, "Rerouted message to GameBoardManager.");
                 break;
 
             default:

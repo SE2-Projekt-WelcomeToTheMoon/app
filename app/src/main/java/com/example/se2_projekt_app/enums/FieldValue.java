@@ -1,6 +1,8 @@
 package com.example.se2_projekt_app.enums;
 
+import lombok.Getter;
 
+@Getter
 public enum FieldValue {
     NONE(0),
     ONE(1),
@@ -18,8 +20,6 @@ public enum FieldValue {
     THIRTEEN(13),
     FOURTEEN(14),
     FIFTEEN(15);
-
-
 
     private final int value;
 
