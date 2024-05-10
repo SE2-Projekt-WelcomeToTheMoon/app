@@ -1,5 +1,6 @@
 package com.example.se2_projekt_app.screens;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.se2_projekt_app.R;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserViewHolder> {
 
     // Used a final modifier for the userList as it should not change once it's set through the constructor
@@ -45,14 +48,20 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
             notifyItemInserted(userList.size() - 1); // Notify the adapter that an item was added to the end of the list
         }
     }
+    @SuppressLint("NotifyDataSetChanged")
     public void removeUser(User user) {
         if(user != null && userList.contains(user)){
-            int index = userList.indexOf(user);
             userList.remove(user);
-            notifyItemRemoved(index);
+            notifyDataSetChanged();
         }
     }
-
+    @SuppressLint("NotifyDataSetChanged")
+    public void setUsers(List<User> newUsers) {
+        //to get the current state from server
+        userList.clear();
+        userList.addAll(newUsers);
+        notifyDataSetChanged();
+    }
     static class UserViewHolder extends RecyclerView.ViewHolder {
         private final TextView usernameTextView; // Marked member as final since it's not expected to change
 

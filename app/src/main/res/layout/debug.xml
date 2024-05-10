@@ -1,22 +1,47 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-        <FrameLayout
+        <androidx.drawerlayout.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-    <com.example.se2_projekt_app.views.GameBoardView
-        android:id="@+id/gameBoard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <com.example.se2_projekt_app.game.GameBoardView
+                    android:id="@+id/gameBoard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="horizontal">
+                    <!-- Overlay UI elements here -->
+                    <Button
+                        android:id="@+id/debug_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Back" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Action 2" />
+                </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,89 +84,131 @@
             android:text="Action 2"/>
     </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/toggle_drawer_button"
-                android:layout_width="40dp"
-                android:layout_height="52dp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/toggle_drawer_button"
+                    android:layout_width="40dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginBottom="85dp"
+                    android:text="t"
+                    app:backgroundTint="@color/design_default_color_secondary"
+                    app:icon="@drawable/is_greater_than_mathematical_sign"
+                    app:iconGravity="top"
+                    app:iconTint="#000000" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="126dp"
+                    android:layout_height="500dp"
+                    android:layout_gravity="end|center_vertical">
+
+
+                    <!--                    <ProgressBar-->
+                    <!--                        android:id="@+id/progressbar"-->
+                    <!--                        style="?android:progressBarStyleHorizontal"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="400dp"-->
+                    <!--                        android:layout_gravity="center_vertical"-->
+                    <!--                        android:rotation="270"/>-->
+
+                    <TextView
+                        android:id="@+id/rocket_count"
+                        android:layout_width="63dp"
+                        android:layout_height="63dp"
+                        android:layout_marginTop="438dp"
+                        android:layout_marginEnd="-63dp"
+                        android:background="#ffe6af"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColorLink="#000000"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/rocketLogo"
+                        android:layout_width="50dp"
+                        android:layout_height="63dp"
+                        android:layout_marginStart="-50dp"
+                        android:layout_marginTop="438dp"
+                        android:rotation="270"
+                        android:src="@drawable/rocket_logo"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
+
+            <com.google.android.material.navigation.NavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="377dp"
+                android:layout_height="152dp"
                 android:layout_gravity="bottom|start"
-                android:layout_marginBottom="85dp"
-                android:text="t"
-                app:backgroundTint="@color/design_default_color_secondary"
-                app:icon="@drawable/is_greater_than_mathematical_sign"
-                app:iconGravity="top"
-                app:iconTint="#000000" />
-        </FrameLayout>
+                android:fitsSystemWindows="false">
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="377dp"
-            android:layout_height="152dp"
-            android:layout_gravity="bottom|start"
-            android:fitsSystemWindows="false">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="50dp"
+                    android:backgroundTint="@color/design_default_color_secondary"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginRight="50dp"
-                android:backgroundTint="@color/design_default_color_secondary"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="16dp">
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="74dp"
+                        android:layout_height="119dp"
+                        android:layout_marginRight="10dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="74dp"
-                    android:layout_height="119dp"
-                    android:layout_marginRight="10dp">
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/background" />
+                    </androidx.cardview.widget.CardView>
 
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/background" />
-                </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="74dp"
+                        android:layout_height="119dp"
+                        android:layout_marginRight="10dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="74dp"
-                    android:layout_height="119dp"
-                    android:layout_marginRight="10dp">
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/background" />
+                    </androidx.cardview.widget.CardView>
 
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/background" />
-                </androidx.cardview.widget.CardView>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="74dp"
+                        android:layout_height="119dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="74dp"
-                    android:layout_height="119dp">
+                        <ImageView
+                            android:id="@+id/imageView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/background" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/background" />
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/close_drawer_button"
+                    android:layout_width="40dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="16dp"
+                    android:text="t"
+                    app:backgroundTint="@color/design_default_color_secondary"
+                    app:icon="@drawable/is_less_than_mathematical_sign"
+                    app:iconGravity="top"
+                    app:iconTint="#000000" />
+            </com.google.android.material.navigation.NavigationView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/close_drawer_button"
-                android:layout_width="40dp"
-                android:layout_height="52dp"
-                android:layout_gravity="top|end"
-                android:layout_margin="16dp"
-                android:text="t"
-                app:backgroundTint="@color/design_default_color_secondary"
-                app:icon="@drawable/is_less_than_mathematical_sign"
-                app:iconGravity="top"
-                app:iconTint="#000000" />
-        </com.google.android.material.navigation.NavigationView>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </androidx.drawerlayout.widget.DrawerLayout>
-</FrameLayout>
+        </androidx.drawerlayout.widget.DrawerLayout>
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,13 +20,14 @@ import lombok.SneakyThrows;
 public class PostOffice {
     private static final String TAG = "PostOffice";
     private static final String ERROR = "PostOffice Error";
+    private static final String MULTIPLAYER = "Rerouted message to Multiplayer.";
 
     /**
      * Routes messages to screens according to their action key value.
      * @param response Response to route.
      */
     @SneakyThrows
-    public void routeResponse(JSONObject response){
+    public void routeResponse(JSONObject response) throws JSONException {
 
         String action = response.getString("action");
 
@@ -37,13 +38,15 @@ public class PostOffice {
                 break;
 
             case "joinLobby":
+            case "leaveLobby":
+            case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Multiplayer.");
                 break;
 
-            case "leaveLobby":
-                Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+            case "gameIsStarted":
+                Multiplayer.startGameResponseReceiver.receiveResponse(response);
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
             case "updateGameBoard":
