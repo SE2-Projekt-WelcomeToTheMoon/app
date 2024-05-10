@@ -1,8 +1,11 @@
 package com.example.se2_projekt_app.game;
-import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 
+import lombok.Getter;
 
+
+@Getter
 public class CardController {
     private CardCombination[] currentCombination;
     /***
@@ -20,18 +23,13 @@ public class CardController {
         for(String combinationString:splitString){
             String[] combinationStringParts=combinationString.split("-");
             int combinationNumber=Integer.parseInt(combinationStringParts[0]);
-            Element currentSymbol=Element.getSymbolAndTranslate(combinationStringParts[1]);
+            FieldCategory currentSymbol=FieldCategory.getSymbolAndTranslate(combinationStringParts[1]);
             FieldValue currentNumber=FieldValue.getCurrentNumberFromInt(Integer.parseInt(combinationStringParts[2]));
-            Element nextSymbol=Element.getSymbolAndTranslate(combinationStringParts[3]);
+            FieldCategory nextSymbol=FieldCategory.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
         currentCombination=combinations;
     }
 
 
-
-
-    public CardCombination[] getCurrentCombination() {
-        return currentCombination;
-    }
 }

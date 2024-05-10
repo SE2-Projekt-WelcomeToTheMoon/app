@@ -3,7 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 
 class CardControllerTest {
@@ -17,11 +17,12 @@ class CardControllerTest {
         String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANNUNG";
         cardController.extractCardsFromServerString(serverString);
         CardCombination[] combinations=cardController.getCurrentCombination();
-        assertEquals(Element.ROBOT, combinations[0].getCurrentSymbol());
+        assertEquals(FieldCategory.ROBOT, combinations[0].getCurrentSymbol());
         assertEquals(FieldValue.TWO, combinations[0].getCurrentNumber());
-        assertEquals(Element.WATER, combinations[0].getNextSymbol());
+        assertEquals(FieldCategory.WATER, combinations[0].getNextSymbol());
 
     }
+
 
 
 

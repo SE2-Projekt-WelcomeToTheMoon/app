@@ -14,7 +14,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.enums.Element;
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback {
@@ -38,7 +38,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
         waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
         this.xPositions=new int[3];
-        CardCombination[] testCombinations={new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE),new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE),new CardCombination(Element.PLANT,Element.PLANT, FieldValue.ONE)};
+        CardCombination[] testCombinations={new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE)};
         updateCanvas(testCombinations);
     }
 
@@ -142,7 +142,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
 
     }
-    private Bitmap getBitMapFromElement(Element element){
+    private Bitmap getBitMapFromElement(FieldCategory element){
         switch(element){
             case ENERGY:return energyBitmap;
             case PLANNING:return planningBitmap;

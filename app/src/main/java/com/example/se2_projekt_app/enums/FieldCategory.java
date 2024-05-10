@@ -2,6 +2,9 @@ package com.example.se2_projekt_app.enums;
 
 import android.graphics.Color;
 
+import lombok.Getter;
+
+@Getter
 public enum FieldCategory {
     ROBOT(Color.DKGRAY),
     WATER(Color.BLUE),
@@ -16,32 +19,30 @@ public enum FieldCategory {
     FieldCategory(int color) {
         this.color = color;
     }
-    public int getColor() {
-        return color;
-    }
+
     /***
      * The enum on the Serverside has german Names while the client side has english names, so this takes
      * the String with the german name and finds the corresponding element
      * @param element Element name in german from serverside
      * @return corresponding element
      */
-    public static Element getSymbolAndTranslate(String element) {
+    public static FieldCategory getSymbolAndTranslate(String element) {
 
         switch(element) {
             case "ROBOTER":
-                return Element.ROBOT;
+                return FieldCategory.ROBOT;
             case "WASSER":
-                return Element.WATER;
+                return FieldCategory.WATER;
             case "PFLANZE":
-                return Element.PLANT;
+                return FieldCategory.PLANT;
             case "ENERGIE":
-                return Element.ENERGY;
+                return FieldCategory.ENERGY;
             case "RAUMANZUG":
-                return Element.SPACESUIT;
+                return FieldCategory.SPACESUIT;
             case "PLANNUNG":
-                return Element.PLANNING;
+                return FieldCategory.PLANNING;
             case "ANYTHING":
-                return Element.WILDCARD;
+                return FieldCategory.WILDCARD;
             default:
                 throw new IllegalArgumentException("Not part of recognized symbols");
         }
