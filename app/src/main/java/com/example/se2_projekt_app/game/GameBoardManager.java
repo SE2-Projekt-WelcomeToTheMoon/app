@@ -1,8 +1,10 @@
 package com.example.se2_projekt_app.game;
 
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.screens.User;
+import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
@@ -33,6 +35,14 @@ public class GameBoardManager {
             }
         }
         return null;
+    }
+
+    public void initGameBoard(User user) {
+        GameBoard gameBoard = new GameBoard();
+        Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
+        floor.addChamber(3);
+        gameBoard.addFloor(floor);
+        user.setGameBoard(gameBoard);
     }
 
     public boolean fullUpdateGameBoard(String response, String username) {
