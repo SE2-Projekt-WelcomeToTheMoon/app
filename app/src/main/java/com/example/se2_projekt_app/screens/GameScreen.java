@@ -30,7 +30,6 @@ public class GameScreen extends Activity implements ResponseReceiver {
     private Button closeDrawerButton;
     private ProgressBar progressBar;
     private TextView view;
-    public static ResponseReceiver responseReceiver;
     private GameBoardManager gameBoardManager;
 
     @Override

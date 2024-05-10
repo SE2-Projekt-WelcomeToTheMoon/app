@@ -12,7 +12,7 @@ public enum ActionValues {
     JOINLOBBY("joinLobby"),
     LEAVELOBBY("leaveLobby"),
     REQUESTLOBBYUSER("requestLobbyUser"),
-    STARTGAME("startGame");
+    STARTGAME("startGame"),
     UPDATESIMPLE("updateGameBoardSimple"),
     UPDATEFULL("updateGameBoardFull");
 
