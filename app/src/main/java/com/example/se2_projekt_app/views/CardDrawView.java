@@ -1,4 +1,4 @@
-package com.example.se2_projekt_app.game;
+package com.example.se2_projekt_app.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.CardCombination;
 
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback {
 
