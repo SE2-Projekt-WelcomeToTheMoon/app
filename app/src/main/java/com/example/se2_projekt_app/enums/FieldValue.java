@@ -28,6 +28,21 @@ public enum FieldValue {
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
+
+    /***
+     * Gets corresponding fieldValue from number
+     * @param value int to be converted
+     * @return Corresponding FieldValue
+     */
+    public static FieldValue getCurrentNumberFromInt(int value) {
+        for (FieldValue fieldValue : FieldValue.values()) {
+            if (fieldValue.getValue() == value) {
+                return fieldValue;
+            }
+        }
+        throw new IllegalArgumentException("Invalid value: " + value);
+    }
+
 }
