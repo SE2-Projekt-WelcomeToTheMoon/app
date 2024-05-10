@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.se2_projekt_app.enums.Element;
 import com.example.se2_projekt_app.enums.FieldValue;
 
-public class CardControllerTest {
+class CardControllerTest {
     CardController cardController;
     @BeforeEach
     void setup(){

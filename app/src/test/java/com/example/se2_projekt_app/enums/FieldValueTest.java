@@ -3,7 +3,7 @@ package com.example.se2_projekt_app.enums;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FieldValueTest {
+class FieldValueTest {
 
     @Test
     void testGetCurrentNumberFromInt_ValidValues() {

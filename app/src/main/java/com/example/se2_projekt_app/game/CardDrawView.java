@@ -66,8 +66,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
            for (int i=0; i<3;i++){
                if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]){
                    CardCombination combination1=currentCombination[0];
-                   currentCombination[1]=new CardCombination(Element.ROBOT,Element.ROBOT,FieldValue.ELEVEN);
-                   updateCanvas(currentCombination);
+                   //Enter code here
                } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]){
                    CardCombination combination2=currentCombination[1];
                    //Enter code here

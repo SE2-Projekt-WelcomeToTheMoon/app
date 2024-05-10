@@ -70,7 +70,7 @@ sonar {
         property "sonar.coverage.exclusions", "**/enums/*.java, **/ActionValues.java," +
                 " **/JSONKeys.java, **/responsehandler/*.java, **/SendMessageService.java," +
                 "**/WebSocketClient.java, **/screens/*.java, **/MainActivity.java," +
-                "**/LobbyManager.java"
+                "**/LobbyManager.java,"+"**/CardDrawView.java"
     }
 }
 

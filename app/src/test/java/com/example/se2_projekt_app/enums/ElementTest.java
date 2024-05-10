@@ -1,7 +1,7 @@
 package com.example.se2_projekt_app.enums;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-public class ElementTest {
+class ElementTest {
 
     @Test
     void testGetSymbolAndTranslate_ValidSymbols() {
