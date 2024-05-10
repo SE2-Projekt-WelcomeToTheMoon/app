@@ -96,7 +96,7 @@ public class Field implements Clickable {
         return false;
     }
 
-    private boolean isPointInsideBox(float x, float y) {
+    public boolean isPointInsideBox(float x, float y) {
         return x >= this.x && x < this.x + size && y >= this.y && y < this.y + size;
     }
 }

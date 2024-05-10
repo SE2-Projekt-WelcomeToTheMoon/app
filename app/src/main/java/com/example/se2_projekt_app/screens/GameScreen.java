@@ -11,12 +11,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
-import com.example.se2_projekt_app.game.GameBoard;
 import com.example.se2_projekt_app.game.GameBoardManager;
-import com.example.se2_projekt_app.networking.json.ActionValues;
-import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 
 import org.json.JSONException;

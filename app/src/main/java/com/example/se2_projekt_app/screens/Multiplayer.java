@@ -125,14 +125,12 @@ public class Multiplayer extends Activity {
                         for (int i = 0; i < users.length(); i++) {
                             newUserList.add(new User(users.getString(i)));
                         }
-                        runOnUiThread(() -> {
-                            userListAdapter.setUsers(newUserList);
-                        });
+                        runOnUiThread(() -> userListAdapter.setUsers(newUserList));
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
                 }
-            };
+            }
 
         };
     }

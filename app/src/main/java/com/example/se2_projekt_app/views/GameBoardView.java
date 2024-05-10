@@ -12,7 +12,6 @@ import android.view.SurfaceHolder;
 import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
-import com.example.se2_projekt_app.game.Chamber;
 import com.example.se2_projekt_app.game.Floor;
 import com.example.se2_projekt_app.game.GameBoard;
 

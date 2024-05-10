@@ -2,15 +2,12 @@ package com.example.se2_projekt_app.networking.responsehandler;
 
 import android.util.Log;
 
-import com.example.se2_projekt_app.game.GameBoard;
-import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.util.Log;
 
 import lombok.SneakyThrows;
 
@@ -24,6 +21,7 @@ public class PostOffice {
 
     /**
      * Routes messages to screens according to their action key value.
+     *
      * @param response Response to route.
      */
     @SneakyThrows
@@ -31,7 +29,7 @@ public class PostOffice {
 
         String action = response.getString("action");
 
-        switch(action){
+        switch (action) {
             case "registerUser":
                 Username.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to Username view.");
@@ -41,7 +39,7 @@ public class PostOffice {
             case "leaveLobby":
             case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Multiplayer.");
+                Log.i(TAG, MULTIPLAYER);
                 break;
 
             case "gameIsStarted":

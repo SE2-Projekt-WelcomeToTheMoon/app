@@ -65,4 +65,10 @@ class FieldTest {
         field.setNumber(FieldValue.TWO);
         assertEquals(FieldValue.TWO, field.getNumber(), "Field number should be updated");
     }
+
+    @Test
+    void testIsPointInside() {
+        assertTrue(field.isPointInsideBox(15, 30), "Should return true when click is inside the box");
+        assertFalse(field.isPointInsideBox(500, 30), "Should return false when click is outside the box");
+    }
 }
