@@ -28,7 +28,7 @@
         <activity android:name=".screens.Highscore" />
         <activity android:name=".screens.Singleplayer" />
         <activity android:name=".screens.Multiplayer"/>
-        <activity android:name=".screens.Debug"/>
+        <activity android:name=".screens.GameScreen"/>
         <activity android:name=".screens.MainMenu"/>
     </application>
 </manifest>

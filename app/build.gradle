@@ -67,10 +67,12 @@ sonar {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions", "**/enums/*.java, **/ActionValues.java," +
-                " **/JSONKeys.java, **/responsehandler/*.java, **/SendMessageService.java," +
-                "**/WebSocketClient.java, **/screens/*.java, **/MainActivity.java," +
-                "**/LobbyManager.java"
+        property "sonar.coverage.exclusions",
+                "**/enums/*.java, **/ActionValues.java," +
+                        " **/JSONKeys.java, **/responsehandler/*.java, **/SendMessageService.java," +
+                        "**/WebSocketClient.java, **/screens/*.java, **/MainActivity.java," +
+                        "**/LobbyManager.java, **/views/*.java, **/networking/json/FieldUpdateMessage.java," +
+                        "**/game/GameBoardManager.java";
     }
 }
 
@@ -84,6 +86,11 @@ dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.espresso.core
     implementation libs.androidx.espresso.intents
+    implementation libs.jackson.base
+    implementation libs.jackson.databind
+    implementation libs.android
+    implementation libs.core
+    implementation libs.androidx.drawerlayout
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine

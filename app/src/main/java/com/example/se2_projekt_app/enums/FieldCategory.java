@@ -2,7 +2,7 @@ package com.example.se2_projekt_app.enums;
 
 import android.graphics.Color;
 
-public enum Element {
+public enum FieldCategory {
     ROBOT(Color.DKGRAY),
     WATER(Color.BLUE),
     PLANT(Color.GREEN),
@@ -13,7 +13,7 @@ public enum Element {
 
     private final int color;
 
-    Element(int color) {
+    FieldCategory(int color) {
         this.color = color;
     }
     public int getColor() {

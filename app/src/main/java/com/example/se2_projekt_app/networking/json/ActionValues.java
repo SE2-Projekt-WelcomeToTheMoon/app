@@ -12,11 +12,16 @@ public enum ActionValues {
     JOINLOBBY("joinLobby"),
     LEAVELOBBY("leaveLobby"),
     REQUESTLOBBYUSER("requestLobbyUser"),
-    STARTGAME("startGame");
+    STARTGAME("startGame"),
+    UPDATESIMPLE("updateGameBoardSimple"),
+    UPDATEFULL("updateGameBoardFull");
 
     private final String value;
     ActionValues(String action){
         this.value = action;
     }
 
+    public String getValue() {
+        return value;
+    }
 }
