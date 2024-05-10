@@ -28,6 +28,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
     private final Bitmap waterBitmap;
     private final int[] xPositions;
     private CardCombination[] currentCombination;
+    private final int yHeight;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,8 +40,11 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
         waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
         this.xPositions=new int[3];
+        this.yHeight=getHolder().lockCanvas().getHeight()/5;
+
         CardCombination[] testCombinations={new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE)};
         updateCanvas(testCombinations);
+
     }
 
     @Override
@@ -64,19 +68,19 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
-           for (int i=0; i<3;i++){
-               if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]){
+
+               if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]&&event.getY()<yHeight){
                    CardCombination combination1=currentCombination[0];
                    //Enter code here
-               } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]){
+               } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]&&event.getY()<yHeight){
                    CardCombination combination2=currentCombination[1];
                    //Enter code here
-               } else {
+               } else if(event.getY()<yHeight){
                    CardCombination combination3=currentCombination[2];
                    //Enter Code here
                }
 
-           }
+
         }
         return true;
     }
