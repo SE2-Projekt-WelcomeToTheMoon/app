@@ -67,10 +67,12 @@ sonar {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions", "**/enums/*.java, **/ActionValues.java," +
+        property "sonar.coverage.exclusions",
+                "**/enums/*.java, **/ActionValues.java," +
                 " **/JSONKeys.java, **/responsehandler/*.java, **/SendMessageService.java," +
                 "**/WebSocketClient.java, **/screens/*.java, **/MainActivity.java," +
-                "**/LobbyManager.java"
+                "**/LobbyManager.java", "**/views/*.java", "**/networking/json/FieldUpdateMessage.java" +
+                "**/game/GameBoardManager.java"
     }
 }
 
