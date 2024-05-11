@@ -14,6 +14,8 @@ import com.example.se2_projekt_app.views.GameBoardView;
  * Represents a drawable box used in a game that can display a number.
  */
 public class Field implements Clickable {
+    private boolean isChanged = false;
+    private boolean isFinalized = false;
     private final int x;
     private final int y;
     private final int size;
@@ -83,13 +85,21 @@ public class Field implements Clickable {
     public FieldValue getNumber() {
         return this.fieldValue;
     }
+    public boolean isChanged() {
+        return isChanged;
+    }
 
     @Override
-    public boolean handleClick(float x, float y, GameBoardView boardView) {
-        if (isPointInsideBox(x, y)) {
+    public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
+        if (isPointInsideBox(x, y) && !isFinalized) {
             Log.d("GameBox", "Box clicked at " + this.x + ", " + this.y);
-            this.fieldValue = FieldValue.FIVE;
-            this.paint.setColor(Color.GREEN);
+            if (this.fieldValue == fieldValue){
+                this.fieldValue = FieldValue.NONE;
+                isChanged = false;
+            } else {
+                this.fieldValue = fieldValue;
+                isChanged = true;
+            }
             boardView.drawGameBoard();
             return true;
         }
@@ -98,5 +108,12 @@ public class Field implements Clickable {
 
     public boolean isPointInsideBox(float x, float y) {
         return x >= this.x && x < this.x + size && y >= this.y && y < this.y + size;
+    }
+
+    public void setFinalized() {
+        isFinalized = true;
+    }
+    public boolean isFinalized() {
+        return isFinalized;
     }
 }

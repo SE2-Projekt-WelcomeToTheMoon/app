@@ -48,6 +48,8 @@ public class GameScreen extends Activity implements ResponseReceiver {
         findViewById(R.id.player3_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player3"));
         findViewById(R.id.player4_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player4"));
 
+        findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
+
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
