@@ -117,7 +117,7 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
         switch (action) {
             case "updateGameBoard":
-                gameBoardManager.fullUpdateGameBoard(response.getString("message"), username);
+                gameBoardManager.updateUser(response.getString("message"), username);
                 break;
             case "newScore":
                 // get value from message

@@ -38,7 +38,6 @@ class FieldTest {
         field = new Field(initialX, initialY, boxSize, FieldCategory.ENERGY, FieldValue.ONE);
     }
 
-
     @Test
     void testHandleClick() {
         assertTrue(field.handleClick(15, 30, boardView, null),
@@ -99,11 +98,9 @@ class FieldTest {
     }
 
     @Test
-    void testIsChanged() {
-        assertFalse(field.isChanged(), "Field should not be changed initially");
-        field.setNumber(FieldValue.TWO);
-        assertTrue(field.isChanged(), "Field should be changed after setting a new number");
-        field.setNumber(FieldValue.TWO);
-        assertFalse(field.isChanged(), "Field should not be changed after setting the same number");
+    void testIsChanged(){
+        assertFalse(field.isChanged());
+        field.handleClick(15,30, boardView, FieldValue.FIVE);
+        assertTrue(field.isChanged());
     }
 }

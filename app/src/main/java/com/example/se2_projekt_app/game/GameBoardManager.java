@@ -66,7 +66,6 @@ public class GameBoardManager {
         }
     }
 
-
     public void showGameBoard(String username) {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
@@ -74,62 +73,51 @@ public class GameBoardManager {
         }
     }
 
-    /**
-     * maybe legacy
-     *
-     * @param response
-     * @param username
-     * @return
-     */
-    public boolean fullUpdateGameBoard(String response, String username) {
+    public boolean updateUser(String username, String response) {
         User user = userExists(username);
         if (user == null) {
             Log.e("GameBoardManager", "User does not exist");
             return false;
         }
 
-        try {
-            GameBoard gameBoard = objectMapper.readValue(response, GameBoard.class);
-            user.setGameBoard(gameBoard);
-            if (user.getUsername().equals(localUsername)) {
-                gameBoardView.setGameBoard(gameBoard);
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
+        updateGameBoard(user, fieldUpdateMessage);
+        updateGameBoardView(user);
+        Log.i("GameBoardManager", "GameBoard updated for User: " + user.getUsername());
+        return true;
     }
 
-    public void updateUser(String username, String response) {
-        User user = userExists(username);
-        if (user == null) {
-            Log.e("GameBoardManager", "User does not exist");
-            return;
-        }
+    private FieldUpdateMessage parseFieldUpdateMessage(String response) {
         try {
-            FieldUpdateMessage fieldUpdateMessage = objectMapper.readValue(response, FieldUpdateMessage.class);
-            updateGameBoard(user, fieldUpdateMessage);
-            if (user.getUsername().equals(localUsername)) {
-                gameBoardView.setGameBoard(user.getGameBoard());
-                Log.i("GameBoardManager", "Updated GameBoard for local user");
-            }
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
+            return objectMapper.readValue(response, FieldUpdateMessage.class);
         } catch (JsonProcessingException e) {
+            Log.e("JSON Parsing Error", "Detailed Error: " + e.getOriginalMessage());
             throw new RuntimeException(e);
         }
-
     }
 
-    public void updateGameBoard(User user, FieldUpdateMessage fieldUpdateMessage) {
+
+    private void updateGameBoardView(User user) {
+        if (user.getUsername().equals(localUsername)) {
+            gameBoardView.setGameBoard(user.getGameBoard());
+        }
+    }
+
+    public boolean updateGameBoard(User user, FieldUpdateMessage fieldUpdateMessage) {
         GameBoard gameBoard = user.getGameBoard();
+        if (gameBoard == null) {
+            return false;
+        }
+
         int floor = fieldUpdateMessage.getFloor();
         int chamber = fieldUpdateMessage.getChamber();
         int field = fieldUpdateMessage.getField();
         FieldValue fieldValue = fieldUpdateMessage.getFieldValue();
+
         gameBoard.getFloor(floor).getChamber(chamber).getField(field).setNumber(fieldValue);
+
         user.setGameBoard(gameBoard);
+        return true;
     }
 
     /**
@@ -138,36 +126,43 @@ public class GameBoardManager {
      * When the last Accessed Field was double tapped to undo the click it wont register the field as changed.
      * If the field is already finalized, not changed or null it will not send the field to the backend.
      */
-    public void acceptTurn() {
+    public boolean acceptTurn() {
         User user = userExists(localUsername);
         if (user == null) {
-            return;
+            return false;
         }
 
         GameBoard gameBoard = user.getGameBoard();
         Field field = getLastAccessedField(gameBoard);
         if (field == null) {
-            return;
+            return false;
         }
 
         field.setFinalized();
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber());
 
-        String payload = "";
-        try {
-            payload = objectMapper.writeValueAsString(fieldUpdateMessage);
-        } catch (Exception e) {
-            Log.e("GameBoardManager", "Error while converting FieldUpdateMessage to JSON");
-            e.printStackTrace();
-        }
+        String payload = createPayload(field);
         JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
 
         Log.d("GameBoardManager", "Payload: " + payload);
+        return true;
+    }
 
+    private String createPayload(Field field) {
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber());
+        try {
+            return objectMapper.writeValueAsString(fieldUpdateMessage);
+        } catch (Exception e) {
+            Log.e("GameBoardManager", "Error while converting FieldUpdateMessage to JSON");
+            e.printStackTrace();
+            return "";
+        }
     }
 
     private Field getLastAccessedField(GameBoard gameBoard) {
+        if (gameBoard == null){
+            return null;
+        }
         int floorIndex = gameBoardView.getLastAccessedFloor();
         Floor floor = gameBoard.getFloor(floorIndex);
         int chamberIndex = floor.getLastAccessedChamber();

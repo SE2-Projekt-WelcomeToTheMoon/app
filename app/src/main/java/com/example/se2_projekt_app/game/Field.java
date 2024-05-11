@@ -86,6 +86,7 @@ public class Field implements Clickable {
     public FieldValue getNumber() {
         return this.fieldValue;
     }
+
     public boolean isChanged() {
         return isChanged;
     }
