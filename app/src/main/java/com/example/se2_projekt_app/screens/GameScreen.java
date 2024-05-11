@@ -11,6 +11,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.GameBoardView;
@@ -50,6 +51,10 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
+        // insert draw on touch values
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
+
+        findViewById(R.id.game_screen_server_response_button).setOnClickListener(v -> mockServer());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -126,5 +131,14 @@ public class GameScreen extends Activity implements ResponseReceiver {
             default:
                 // error handling
         }
+    }
+
+    public void mockServer(){
+        gameBoardManager.initGameBoard(new User("Player1"));
+        String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
+        gameBoardManager.updateUser("Player1", response);
+        gameBoardManager.initGameBoard(new User("Player1"));
+        response = "{\"floor\":8, \"chamber\":2, \"field\":1, \"fieldValue\":\"TEN\"}";
+        gameBoardManager.updateUser("Player1", response);
     }
 }

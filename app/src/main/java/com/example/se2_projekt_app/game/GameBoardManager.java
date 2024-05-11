@@ -3,10 +3,13 @@ package com.example.se2_projekt_app.game;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
+import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.screens.User;
 import com.example.se2_projekt_app.views.GameBoardView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
@@ -52,36 +55,15 @@ public class GameBoardManager {
     public void initGameBoard(User user) {
         User existingUser = userExists(user.getUsername());
         if (existingUser == null) {
-            GameBoard gameBoard = new GameBoard();
-            Floor floor;
-            switch (user.getUsername()) {
-                case "Player1":
-                    floor = new Floor(0, 0, FieldCategory.ENERGY);
-                    floor.addChamber(5);
-                    break;
-                case "Player2":
-                    floor = new Floor(0, 0, FieldCategory.ROBOT);
-                    floor.addChamber(3);
-                    break;
-                case "Player3":
-                    floor = new Floor(0, 0, FieldCategory.PLANT);
-                    floor.addChamber(2);
-                    break;
-                case "Player4":
-                    floor = new Floor(0, 0, FieldCategory.PLANNING);
-                    floor.addChamber(1);
-                    break;
-                default:
-                    floor = new Floor(0, 0, FieldCategory.PLANNING);
-                    floor.addChamber(1);
-            }
-            gameBoard.addFloor(floor);
+            GameBoard gameBoard = GameBoardService.createGameBoard();
             user.setGameBoard(gameBoard);
             this.users.add(user);
         } else {
             user = existingUser;
         }
-        gameBoardView.setGameBoard(user.getGameBoard());
+        if (user.getUsername().equals(localUsername)) {
+            gameBoardView.setGameBoard(user.getGameBoard());
+        }
     }
 
 
@@ -92,9 +74,17 @@ public class GameBoardManager {
         }
     }
 
+    /**
+     * maybe legacy
+     *
+     * @param response
+     * @param username
+     * @return
+     */
     public boolean fullUpdateGameBoard(String response, String username) {
         User user = userExists(username);
         if (user == null) {
+            Log.e("GameBoardManager", "User does not exist");
             return false;
         }
 
@@ -109,6 +99,37 @@ public class GameBoardManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void updateUser(String username, String response) {
+        User user = userExists(username);
+        if (user == null) {
+            Log.e("GameBoardManager", "User does not exist");
+            return;
+        }
+        try {
+            FieldUpdateMessage fieldUpdateMessage = objectMapper.readValue(response, FieldUpdateMessage.class);
+            updateGameBoard(user, fieldUpdateMessage);
+            if (user.getUsername().equals(localUsername)) {
+                gameBoardView.setGameBoard(user.getGameBoard());
+                Log.i("GameBoardManager", "Updated GameBoard for local user");
+            }
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void updateGameBoard(User user, FieldUpdateMessage fieldUpdateMessage) {
+        GameBoard gameBoard = user.getGameBoard();
+        int floor = fieldUpdateMessage.getFloor();
+        int chamber = fieldUpdateMessage.getChamber();
+        int field = fieldUpdateMessage.getField();
+        FieldValue fieldValue = fieldUpdateMessage.getFieldValue();
+        gameBoard.getFloor(floor).getChamber(chamber).getField(field).setNumber(fieldValue);
+        user.setGameBoard(gameBoard);
     }
 
     /**
@@ -170,4 +191,5 @@ public class GameBoardManager {
     public int getNumberOfUsers() {
         return users.size();
     }
+
 }

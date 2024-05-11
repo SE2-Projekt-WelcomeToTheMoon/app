@@ -2,14 +2,19 @@ package com.example.se2_projekt_app.networking.json;
 
 import com.example.se2_projekt_app.enums.FieldValue;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * This is a Skeleton for easy receiving Messages from Client in a proper Format
  */
+@Getter
+@Setter
 public class FieldUpdateMessage {
-    private final int floor;
-    public final int chamber;
-    public final int field;
-    public final FieldValue fieldValue;
+    private int floor;
+    public int chamber;
+    public int field;
+    public FieldValue fieldValue;
 
     public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value) {
         this.floor = floor;

@@ -34,11 +34,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Back" />
-
                     <Button
+                        android:id="@+id/game_screen_accept_turn_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Action 2" />
+                        android:text="Accept Turn" />
+                    <Button
+                        android:id="@+id/game_screen_random_field_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Random" />
+                    <Button
+                        android:id="@+id/game_screen_server_response_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Server" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
