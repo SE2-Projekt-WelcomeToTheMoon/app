@@ -17,7 +17,7 @@ public class Floor implements Clickable {
     private final FieldCategory category;
     private final List<Chamber> chambers;
     int boxSize = 200;
-    private int lastAccessedChamber = 0;
+    private int lastAccessedChamber = -1;
 
     public Floor(int x, int y, FieldCategory category) {
         this.y = y;
@@ -80,5 +80,8 @@ public class Floor implements Clickable {
 
     public int getLastAccessedChamber() {
         return lastAccessedChamber;
+    }
+    public void setLastAccessedChamber(int lastAccessedChamber) {
+        this.lastAccessedChamber = lastAccessedChamber;
     }
 }

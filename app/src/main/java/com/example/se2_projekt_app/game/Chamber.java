@@ -20,7 +20,7 @@ public class Chamber implements Clickable {
     private final int x;
     private final int y;
     int boxSize = 200;
-    private int lastAccessedField = 0;
+    private int lastAccessedField = -1;
 
     /**
      * Constructs a Section with a specified origin.
@@ -113,5 +113,14 @@ public class Chamber implements Clickable {
 
     public int getLastAccessedField() {
         return lastAccessedField;
+    }
+
+    /**
+     * Just for Testing
+     *
+     * @return
+     */
+    public int setLastAccessedField(int lastAccessedField) {
+        return this.lastAccessedField = lastAccessedField;
     }
 }

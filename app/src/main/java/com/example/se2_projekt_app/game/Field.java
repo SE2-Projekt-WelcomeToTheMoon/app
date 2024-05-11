@@ -78,8 +78,18 @@ public class Field implements Clickable {
         canvas.drawText(String.valueOf(this.fieldValue.getValue()), centerX, centerY, textPaint);
     }
 
+    /**
+     * Just for Testing
+     * @param fieldValue
+     */
     public void setNumber(FieldValue fieldValue) {
-        this.fieldValue = fieldValue;
+        if (this.fieldValue == fieldValue) {
+            this.fieldValue = FieldValue.NONE;
+            isChanged = false;
+        } else {
+            isChanged = true;
+            this.fieldValue = fieldValue;
+        }
     }
 
     public FieldValue getNumber() {

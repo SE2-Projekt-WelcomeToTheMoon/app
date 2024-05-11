@@ -41,11 +41,30 @@ class FieldTest {
 
     @Test
     void testHandleClick() {
-        assertTrue(field.handleClick(15, 30, boardView),
+        assertTrue(field.handleClick(15, 30, boardView, null),
                 "Handle click should return true when click is inside a chamber threshold");
 
-        assertFalse(field.handleClick(500, 30, boardView),
+        assertFalse(field.handleClick(500, 30, boardView, null),
                 "Handle click should return false when click is outside any chamber");
+    }
+
+    @Test
+    void testHandleClickWithFinalizedField() {
+        field.setFinalized();
+        assertFalse(field.handleClick(15, 30, boardView, null),
+                "Handle click should return false when click is inside a finalized field");
+    }
+
+    @Test
+    void testHandleClickWithSameField() {
+        assertEquals(FieldValue.ONE, field.getNumber(), "Initial Field number should be set correctly");
+        assertTrue(field.handleClick(15, 30, boardView, FieldValue.TWO),
+                "Field should be set to FieldValue.TWO when clicked");
+        assertEquals(FieldValue.TWO, field.getNumber(), "Field number should be updated");
+        assertTrue(field.handleClick(15, 30, boardView, FieldValue.TWO),
+                "Field should be set to FieldValue.NONE when clicked again");
+        assertEquals(FieldValue.NONE, field.getNumber(), "Field number should be updated");
+
     }
 
     @Test
@@ -70,5 +89,21 @@ class FieldTest {
     void testIsPointInside() {
         assertTrue(field.isPointInsideBox(15, 30), "Should return true when click is inside the box");
         assertFalse(field.isPointInsideBox(500, 30), "Should return false when click is outside the box");
+    }
+
+    @Test
+    void testSetFinalized() {
+        assertFalse(field.isFinalized(), "Field should not be finalized initially");
+        field.setFinalized();
+        assertTrue(field.isFinalized(), "Field should be finalized after calling setFinalized");
+    }
+
+    @Test
+    void testIsChanged() {
+        assertFalse(field.isChanged(), "Field should not be changed initially");
+        field.setNumber(FieldValue.TWO);
+        assertTrue(field.isChanged(), "Field should be changed after setting a new number");
+        field.setNumber(FieldValue.TWO);
+        assertFalse(field.isChanged(), "Field should not be changed after setting the same number");
     }
 }
