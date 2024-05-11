@@ -24,7 +24,7 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private float translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
-    private final GameBoard gameboard = new GameBoard();
+    public GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
 
     /**
@@ -39,10 +39,14 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
         setFocusable(true);
         init(context);
 
-        //temp
         Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
-        floor.addChamber(3);
+        floor.addChamber(5);
         gameboard.addFloor(floor);
+    }
+
+    public void setGameBoard(GameBoard gameBoard) {
+        this.gameboard = gameBoard;
+        this.drawGameBoard();
     }
 
     /**

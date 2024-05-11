@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.views.GameBoardView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +31,23 @@ public class GameScreen extends Activity implements ResponseReceiver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.debug);
+        setContentView(R.layout.game_screen);
+
+        GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
+        gameBoardManager = new GameBoardManager(gameBoardView);
+
+        for (int i = 1; i < 5; i++) {
+            gameBoardManager.initGameBoard(new User("Player" + i));
+        }
+
+        gameBoardManager.showGameBoard(gameBoardManager.getLocalUsername());
 
         findViewById(R.id.debug_back).setOnClickListener(v -> finish());
+        findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player1"));
+        findViewById(R.id.player2_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player2"));
+        findViewById(R.id.player3_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player3"));
+        findViewById(R.id.player4_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player4"));
+
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -90,9 +105,24 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
     @Override
     public void receiveResponse(JSONObject response) throws JSONException {
-        String message = response.getString("message");
         String username = response.getString("username");
+        String action = response.getString("action");
 
-        gameBoardManager.fullUpdateGameBoard(message, username);
+        switch (action) {
+            case "updateGameBoard":
+                gameBoardManager.fullUpdateGameBoard(response.getString("message"), username);
+                break;
+            case "newScore":
+                // get value from message
+                break;
+            case "newDraw":
+                // override current draw
+                break;
+            case "makeMove":
+                // make move
+                break;
+            default:
+                // error handling
+        }
     }
 }
