@@ -22,15 +22,15 @@ import org.json.JSONObject;
 public class GameScreen extends Activity implements ResponseReceiver {
 
     public static ResponseReceiver responseReceiver;
-    private DrawerLayout drawerLayout;
+
     private Button toggleDrawerButton;
-    private Button closeDrawerButton;
     private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
 
@@ -58,7 +58,7 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
-        closeDrawerButton = findViewById(R.id.close_drawer_button);
+        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 //        progressBar = findViewById(R.id.progressbar);
         //view = findViewById(R.id.rocket_count);
 //        view.setText("22"); // Testing purposes
@@ -67,12 +67,9 @@ public class GameScreen extends Activity implements ResponseReceiver {
 //        final int[] progress = {0};
 
 //                progress[0] += user.getRockets;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 //                        progressBar.setProgress(progress[0], true);
 //                        view.setText(String.valueOf(Username.user.getRockets()));
-            }
         });
 
         toggleDrawerButton.setOnClickListener(v -> {
