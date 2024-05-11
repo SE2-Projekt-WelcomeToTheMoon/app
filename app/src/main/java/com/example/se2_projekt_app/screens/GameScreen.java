@@ -131,11 +131,12 @@ public class GameScreen extends Activity implements ResponseReceiver {
     }
 
     public void mockServer(){
-        gameBoardManager.initGameBoard(new User("Player1"));
+        String player = "Player1";
+        gameBoardManager.initGameBoard(new User(player));
         String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
-        gameBoardManager.updateUser("Player1", response);
-        gameBoardManager.initGameBoard(new User("Player1"));
+        gameBoardManager.updateUser(player, response);
+        gameBoardManager.initGameBoard(new User(player));
         response = "{\"floor\":8, \"chamber\":2, \"field\":1, \"fieldValue\":\"TEN\"}";
-        gameBoardManager.updateUser("Player1", response);
+        gameBoardManager.updateUser(player, response);
     }
 }

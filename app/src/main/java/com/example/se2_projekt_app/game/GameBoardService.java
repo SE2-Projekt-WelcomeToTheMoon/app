@@ -4,9 +4,7 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 
 public class GameBoardService {
 
-    private GameBoard gameBoard;
     public GameBoardService() {
-        this.gameBoard = createGameBoard();
     }
 
     public static GameBoard createGameBoard() {

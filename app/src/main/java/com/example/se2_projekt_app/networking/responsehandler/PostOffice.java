@@ -18,7 +18,6 @@ public class PostOffice {
     private static final String TAG = "PostOffice";
     private static final String ERROR = "PostOffice Error";
     private static final String MULTIPLAYER = "Rerouted message to Multiplayer.";
-    private static final String GAMEBOARD = "Rerouted message to GameBoardManager.";
 
     /**
      * Routes messages to screens according to their action key value.
@@ -53,11 +52,11 @@ public class PostOffice {
             case "newDraw":
             case "makeMove":
                 GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, GAMEBOARD);
+                Log.i(TAG, "Rerouted message to GameScreen.");
                 break;
 
             default:
-                Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
+                Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
         }
     }
 }
