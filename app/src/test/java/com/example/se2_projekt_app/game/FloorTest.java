@@ -60,16 +60,16 @@ class FloorTest {
     void testHandleClick() {
         floor.addChamber(mockChamber);
 
-        when(mockChamber.handleClick(anyFloat(), anyFloat(), any())).thenAnswer(invocation -> {
+        when(mockChamber.handleClick(anyFloat(), anyFloat(), any(), any())).thenAnswer(invocation -> {
             float x = invocation.getArgument(0);
             float y = invocation.getArgument(1);
             return (x >= -boxSize && x <= boxSize && y >= 0 && y <= boxSize);
         });
 
-        assertTrue(floor.handleClick(15, 30, null),
+        assertTrue(floor.handleClick(15, 30, null, null),
                 "Handle click should return true when click is inside a chamber threshold");
 
-        assertFalse(floor.handleClick(500, 30, null),
+        assertFalse(floor.handleClick(500, 30, null, null),
                 "Handle click should return false when click is outside any chamber");
     }
 
@@ -97,5 +97,12 @@ class FloorTest {
         assertEquals(floor.getChamber(2).getX(), initialX + 8 * boxSize, "Third chamber should be at initialX + 8 * boxSize");
 
         assertEquals(floor.getChamber(0).getY(), initialY, "First chamber should be at initialY");
+    }
+
+    @Test
+    void testGetLastAccessedChamber() {
+        assertEquals(-1, floor.getLastAccessedChamber(), "Last accessed chamber should be -1 initially");
+        floor.setLastAccessedChamber(3);
+        assertEquals(3, floor.getLastAccessedChamber(), "Last accessed chamber should be set correctly");
     }
 }

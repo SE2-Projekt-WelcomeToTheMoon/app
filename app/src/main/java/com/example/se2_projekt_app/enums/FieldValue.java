@@ -1,5 +1,7 @@
 package com.example.se2_projekt_app.enums;
 
+import java.util.Random;
+
 import lombok.Getter;
 
 @Getter
@@ -43,6 +45,12 @@ public enum FieldValue {
             }
         }
         throw new IllegalArgumentException("Invalid value: " + value);
+    }
+
+    private static final Random RANDOM = new Random();
+    public static FieldValue getRandomFieldValue() {
+        FieldValue[] values = FieldValue.values();
+        return values[RANDOM.nextInt(values.length)];
     }
 
 }

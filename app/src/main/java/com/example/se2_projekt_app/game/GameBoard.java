@@ -30,6 +30,9 @@ public class GameBoard {
 
         this.floors.get(floor).getChamber(chamber).getField(field).setNumber(fieldValue);
     }
+    public Floor getFloor(int index) {
+        return floors.get(index);
+    }
     public List<Floor> getFloors() {
         return new ArrayList<>(floors);
     }

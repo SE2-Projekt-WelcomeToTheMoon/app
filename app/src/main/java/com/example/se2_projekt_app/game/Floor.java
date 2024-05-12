@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
+import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
@@ -15,8 +16,8 @@ public class Floor implements Clickable {
     private int nextX;
     private final FieldCategory category;
     private final List<Chamber> chambers;
-
     int boxSize = 200;
+    private int lastAccessedChamber = -1;
 
     public Floor(int x, int y, FieldCategory category) {
         this.y = y;
@@ -66,12 +67,21 @@ public class Floor implements Clickable {
     }
 
     @Override
-    public boolean handleClick(float x, float y, GameBoardView boardView) {
-        for (Chamber chamber : chambers) {
-            if (chamber.handleClick(x, y, boardView)) {
+    public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
+        for (int i = 0; i < chambers.size(); i++) {
+            Chamber chamber = chambers.get(i);
+            if (chamber.handleClick(x, y, boardView, fieldValue)) {
+                lastAccessedChamber = i;
                 return true;
             }
         }
         return false;
+    }
+
+    public int getLastAccessedChamber() {
+        return lastAccessedChamber;
+    }
+    public void setLastAccessedChamber(int lastAccessedChamber) {
+        this.lastAccessedChamber = lastAccessedChamber;
     }
 }

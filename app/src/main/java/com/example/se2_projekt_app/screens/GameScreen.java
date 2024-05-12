@@ -11,8 +11,10 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.views.GameBoardView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,23 +22,43 @@ import org.json.JSONObject;
 public class GameScreen extends Activity implements ResponseReceiver {
 
     public static ResponseReceiver responseReceiver;
-    private DrawerLayout drawerLayout;
+
     private Button toggleDrawerButton;
-    private Button closeDrawerButton;
     private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.debug);
+        setContentView(R.layout.game_screen);
+
+        GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
+        gameBoardManager = new GameBoardManager(gameBoardView);
+
+        for (int i = 1; i < 5; i++) {
+            gameBoardManager.initGameBoard(new User("Player" + i));
+        }
+
+        gameBoardManager.showGameBoard(gameBoardManager.getLocalUsername());
 
         findViewById(R.id.debug_back).setOnClickListener(v -> finish());
+        findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player1"));
+        findViewById(R.id.player2_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player2"));
+        findViewById(R.id.player3_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player3"));
+        findViewById(R.id.player4_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player4"));
+
+        findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
+
+        // insert draw on touch values
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
+
+        findViewById(R.id.game_screen_server_response_button).setOnClickListener(v -> mockServer());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
-        closeDrawerButton = findViewById(R.id.close_drawer_button);
+        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 //        progressBar = findViewById(R.id.progressbar);
         //view = findViewById(R.id.rocket_count);
 //        view.setText("22"); // Testing purposes
@@ -45,12 +67,9 @@ public class GameScreen extends Activity implements ResponseReceiver {
 //        final int[] progress = {0};
 
 //                progress[0] += user.getRockets;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 //                        progressBar.setProgress(progress[0], true);
 //                        view.setText(String.valueOf(Username.user.getRockets()));
-            }
         });
 
         toggleDrawerButton.setOnClickListener(v -> {
@@ -90,9 +109,34 @@ public class GameScreen extends Activity implements ResponseReceiver {
 
     @Override
     public void receiveResponse(JSONObject response) throws JSONException {
-        String message = response.getString("message");
         String username = response.getString("username");
+        String action = response.getString("action");
 
-        gameBoardManager.fullUpdateGameBoard(message, username);
+        switch (action) {
+            case "updateGameBoard":
+                gameBoardManager.updateUser(response.getString("message"), username);
+                break;
+            case "newScore":
+                // get value from message
+                break;
+            case "newDraw":
+                // override current draw
+                break;
+            case "makeMove":
+                // make move
+                break;
+            default:
+                // error handling
+        }
+    }
+
+    public void mockServer(){
+        String player = "Player1";
+        gameBoardManager.initGameBoard(new User(player));
+        String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
+        gameBoardManager.updateUser(player, response);
+        gameBoardManager.initGameBoard(new User(player));
+        response = "{\"floor\":8, \"chamber\":2, \"field\":1, \"fieldValue\":\"TEN\"}";
+        gameBoardManager.updateUser(player, response);
     }
 }

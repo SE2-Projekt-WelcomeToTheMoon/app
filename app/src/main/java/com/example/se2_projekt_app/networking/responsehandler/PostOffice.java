@@ -48,16 +48,15 @@ public class PostOffice {
                 break;
 
             case "updateGameBoard":
-                try {
-                    GameScreen.responseReceiver.receiveResponse(response);
-                } catch (JSONException e) {
-                    Log.i(ERROR, "Error while parsing JSON object.");
-                }
-                Log.i(TAG, "Rerouted message to GameBoardManager.");
+            case "newScore":
+            case "newDraw":
+            case "makeMove":
+                GameScreen.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to GameScreen.");
                 break;
 
             default:
-                Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
+                Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
         }
     }
 }

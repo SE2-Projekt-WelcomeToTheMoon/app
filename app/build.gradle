@@ -71,8 +71,7 @@ sonar {
                 "**/enums/*.java, **/ActionValues.java," +
                         " **/JSONKeys.java, **/responsehandler/*.java, **/SendMessageService.java," +
                         "**/WebSocketClient.java, **/screens/*.java, **/MainActivity.java," +
-                        "**/LobbyManager.java, **/views/*.java, **/networking/json/FieldUpdateMessage.java," +
-                        "**/game/GameBoardManager.java";
+                        "**/LobbyManager.java, **/views/*.java, **/networking/json/FieldUpdateMessage.java,";
     }
 }
 

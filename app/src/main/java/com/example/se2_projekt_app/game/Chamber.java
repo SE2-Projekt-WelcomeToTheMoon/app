@@ -17,11 +17,10 @@ import java.util.List;
  */
 public class Chamber implements Clickable {
     private final List<Field> fields;
-
     private final int x;
     private final int y;
-
     int boxSize = 200;
+    private int lastAccessedField = -1;
 
     /**
      * Constructs a Section with a specified origin.
@@ -78,9 +77,11 @@ public class Chamber implements Clickable {
     public int getX() {
         return this.x;
     }
+
     public int getY() {
         return this.y;
     }
+
     /**
      * For Testing purposes
      *
@@ -99,12 +100,27 @@ public class Chamber implements Clickable {
      * @param boardView The view that needs to be redrawn after handling the click.
      */
     @Override
-    public boolean handleClick(float x, float y, GameBoardView boardView) {
-        for (Field field : fields) {
-            if (field.handleClick(x, y, boardView)) {
+    public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
+            if (field.handleClick(x, y, boardView, fieldValue)) {
+                lastAccessedField = i;
                 return true;
             }
         }
         return false;
+    }
+
+    public int getLastAccessedField() {
+        return lastAccessedField;
+    }
+
+    /**
+     * Just for Testing
+     *
+     * @return
+     */
+    public void setLastAccessedField(int lastAccessedField) {
+        this.lastAccessedField = lastAccessedField;
     }
 }

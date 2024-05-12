@@ -16,6 +16,10 @@ public enum FieldCategory {
 
     private final int color;
 
+    public int getColor(){
+        return this.color;
+    }
+
     FieldCategory(int color) {
         this.color = color;
     }
