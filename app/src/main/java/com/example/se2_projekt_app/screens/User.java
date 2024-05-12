@@ -7,6 +7,7 @@ import java.util.Objects;
 public class User {
     private String username;
     private GameBoard gameBoard;
+    private boolean isLocalUser;
 
     public User(String username) {
         this.username = username;
@@ -37,4 +38,11 @@ public class User {
         this.gameBoard = gameBoard;
     }
 
+    public void setLocalUser(boolean localUser) {
+        isLocalUser = localUser;
+    }
+
+    public boolean getLocalUser() {
+        return isLocalUser;
+    }
 }

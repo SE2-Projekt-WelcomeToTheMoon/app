@@ -37,6 +37,7 @@ public class MainMenu extends Activity{
 
     public void startMP(View view) {
         Intent intent = new Intent(this, Multiplayer.class);
+        intent.putExtra("username", getIntent().getStringExtra("username"));
         startActivity(intent);
     }
 

@@ -29,6 +29,7 @@ public class GameBoardManager {
     private int chamberIndex;
     private int fieldIndex;
     private ObjectMapper objectMapper;
+    private final GameBoard emptyBoard = new GameBoard();
 
     public GameBoardManager(GameBoardView gameBoardView) {
         this.gameBoardView = gameBoardView;
@@ -53,14 +54,19 @@ public class GameBoardManager {
     }
 
     public void initGameBoard(User user) {
-        User existingUser = userExists(user.getUsername());
-        if (existingUser == null) {
-            GameBoard gameBoard = GameBoardService.createGameBoard();
-            user.setGameBoard(gameBoard);
-            this.users.add(user);
-        } else {
-            user = existingUser;
+        if (userExists(user.getUsername()) != null) {
+            Log.e("GameBoardManager", "User already exists");
+            return;
         }
+        if (user.getLocalUser()) {
+            this.localUsername = user.getUsername();
+            Log.d("GameBoardManager", "Local User set to: " + localUsername);
+        }
+
+        GameBoard gameBoard = GameBoardService.createGameBoard();
+        user.setGameBoard(gameBoard);
+        this.users.add(user);
+
         if (user.getUsername().equals(localUsername)) {
             gameBoardView.setGameBoard(user.getGameBoard());
         }
@@ -70,6 +76,9 @@ public class GameBoardManager {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             gameBoardView.setGameBoard(user.getGameBoard());
+        } else {
+            gameBoardView.setGameBoard(emptyBoard);
+            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
         }
     }
 
@@ -160,7 +169,7 @@ public class GameBoardManager {
     }
 
     private Field getLastAccessedField(GameBoard gameBoard) {
-        if (gameBoard == null){
+        if (gameBoard == null) {
             return null;
         }
         int floorIndex = gameBoardView.getLastAccessedFloor();
@@ -181,6 +190,10 @@ public class GameBoardManager {
 
     public String getLocalUsername() {
         return localUsername;
+    }
+
+    public void setLocalUsername(String localUsername) {
+        this.localUsername = localUsername;
     }
 
     public int getNumberOfUsers() {

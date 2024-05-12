@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.screens;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -15,11 +16,13 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.GameBoardView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
-public class GameScreen extends Activity implements ResponseReceiver {
+public class GameScreen extends Activity {
 
     public static ResponseReceiver responseReceiver;
 
@@ -37,9 +40,9 @@ public class GameScreen extends Activity implements ResponseReceiver {
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
         gameBoardManager = new GameBoardManager(gameBoardView);
 
-        for (int i = 1; i < 5; i++) {
-            gameBoardManager.initGameBoard(new User("Player" + i));
-        }
+        String localUser = getIntent().getStringExtra("username");
+        gameBoardManager.initGameBoard(new User(localUser));
+        gameBoardManager.setLocalUsername(localUser);
 
         gameBoardManager.showGameBoard(gameBoardManager.getLocalUsername());
 
@@ -105,32 +108,47 @@ public class GameScreen extends Activity implements ResponseReceiver {
                 // Not used
             }
         });
+
+        responseReceiver = response -> {
+            if (response.getBoolean("success")) {
+                String action = response.getString("action");
+                String username = response.getString("username");
+                String message = response.getString("message");
+                switch (action) {
+                    case "initUsers":
+                        runOnUiThread(() -> {
+                            Log.i("GameScreen", "Game started, got UserList: " + message);
+                            List<String> usernames = deserializeUserList(message);
+                            if (usernames != null) {
+                                for (String user : usernames) {
+                                    gameBoardManager.initGameBoard(new User(user));
+                                }
+                            }
+
+                        });
+                        break;
+                    case "updateGameBoard":
+                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
+                        break;
+                    default:
+                        Log.w("GameScreen", "Server response has invalid or no sender. Response not routed.");
+                }
+            }
+        };
     }
 
-    @Override
-    public void receiveResponse(JSONObject response) throws JSONException {
-        String username = response.getString("username");
-        String action = response.getString("action");
-
-        switch (action) {
-            case "updateGameBoard":
-                gameBoardManager.updateUser(response.getString("message"), username);
-                break;
-            case "newScore":
-                // get value from message
-                break;
-            case "newDraw":
-                // override current draw
-                break;
-            case "makeMove":
-                // make move
-                break;
-            default:
-                // error handling
+    public List<String> deserializeUserList(String message) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(message, new TypeReference<List<String>>() {
+            });
+        } catch (JsonProcessingException e) {
+            Log.e("GameScreen", "Error deserializing user list", e);
+            return null;
         }
     }
 
-    public void mockServer(){
+    public void mockServer() {
         String player = "Player1";
         gameBoardManager.initGameBoard(new User(player));
         String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
