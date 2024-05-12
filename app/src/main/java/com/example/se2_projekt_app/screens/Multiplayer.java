@@ -112,7 +112,6 @@ public class Multiplayer extends Activity {
                         runOnUiThread(() -> {
                             try {
                                 userListAdapter.removeUser(new User(response.getString("username")));
-        startGameButton.setOnClickListener(v -> finish());
 
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
