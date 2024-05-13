@@ -27,7 +27,7 @@ class GameBoardTest {
         Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
         floor.addChamber(3);
         gameBoard.addFloor(floor);
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(0, 0, 0, FieldValue.ONE);
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(0, 0, 0, FieldValue.ONE, "");
         gameBoard.updateGameBoard(fieldUpdateMessage);
         assertEquals(FieldValue.ONE, gameBoard.getFloors().get(0).getChamber(0).getField(0).getNumber(), "Field should be updated");
     }

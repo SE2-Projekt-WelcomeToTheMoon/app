@@ -32,6 +32,7 @@ public class Multiplayer extends Activity {
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
+    private static final String TAG_USERS = "users";
     private static final String SUCCESS = "success";
 
 
@@ -79,6 +80,10 @@ public class Multiplayer extends Activity {
                     Log.i(TAG, "Switched to game view");
                     Intent intent = new Intent(this, GameScreen.class);
                     intent.putExtra("username", getIntent().getStringExtra("username"));
+
+                    ArrayList<String> users = userListAdapter.getUsernameList();
+                    intent.putStringArrayListExtra(TAG_USERS, users);
+
                     startActivity(intent);
                 });
             }
@@ -123,7 +128,7 @@ public class Multiplayer extends Activity {
                         });
                         break;
                     case "requestLobbyUser":
-                        JSONArray users = response.getJSONArray("users");
+                        JSONArray users = response.getJSONArray(TAG_USERS);
                         List<User> newUserList = new ArrayList<>();
                         for (int i = 0; i < users.length(); i++) {
                             newUserList.add(new User(users.getString(i)));
@@ -145,7 +150,7 @@ public class Multiplayer extends Activity {
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
-                JSONArray users = response.getJSONArray("users");
+                JSONArray users = response.getJSONArray(TAG_USERS);
                 List<User> newUserList = new ArrayList<>();
 
                 for (int i = 0; i < users.length(); i++) {

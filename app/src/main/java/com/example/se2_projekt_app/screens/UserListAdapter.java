@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.se2_projekt_app.R;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
@@ -74,5 +76,13 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
         public void bind(final User user) {
             usernameTextView.setText(user.getUsername());
         }
+    }
+
+    public ArrayList<String> getUsernameList(){
+        ArrayList<String> usernameList = new ArrayList<>();
+        for (User user : userList) {
+            usernameList.add(user.getUsername());
+        }
+        return usernameList;
     }
 }

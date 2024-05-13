@@ -2,22 +2,19 @@ package com.example.se2_projekt_app.game;
 
 import android.util.Log;
 
-import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
 import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
 
 @SuppressWarnings("all")
 public class GameBoardManager {
@@ -83,17 +80,28 @@ public class GameBoardManager {
     }
 
     public boolean updateUser(String username, String response) {
-        User user = userExists(username);
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
+
+        String workingUsername = fieldUpdateMessage.getUserOwner();
+        User user = userExists(workingUsername);
+
         if (user == null) {
-            Log.e("GameBoardManager", "User does not exist");
+            Log.e("GameBoardManager", "User does not exist: " + workingUsername);
             return false;
         }
 
-        FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
         updateGameBoard(user, fieldUpdateMessage);
-        updateGameBoardView(user);
-        Log.i("GameBoardManager", "GameBoard updated for User: " + user.getUsername());
+
+        if (workingUsername.equals(localUsername)) {
+            Log.i("GameBoardManager", "Updating game view for local user");
+            updateGameBoardView(user);
+        }
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + workingUsername);
         return true;
+
+
     }
 
     private FieldUpdateMessage parseFieldUpdateMessage(String response) {
@@ -151,14 +159,15 @@ public class GameBoardManager {
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        JSONObject jsonObject = JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        SendMessageService.sendMessage(jsonObject);
 
         Log.d("GameBoardManager", "Payload: " + payload);
         return true;
     }
 
     private String createPayload(Field field) {
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber());
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername);
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
         } catch (Exception e) {

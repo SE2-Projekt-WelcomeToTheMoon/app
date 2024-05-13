@@ -16,20 +16,19 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.GameBoardView;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameScreen extends Activity {
-
     public static ResponseReceiver responseReceiver;
-
     private Button toggleDrawerButton;
     private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
+    private HashMap<String, String> playerMap;
+    private final String TAG = "GameScreen";
+    private final String TAG_USERNAME = "username";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +39,37 @@ public class GameScreen extends Activity {
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
         gameBoardManager = new GameBoardManager(gameBoardView);
 
-        String localUser = getIntent().getStringExtra("username");
-        gameBoardManager.initGameBoard(new User(localUser));
+
+        // get local user
+        String localUser = getIntent().getStringExtra(TAG_USERNAME);
+        Log.d(TAG, "Local user is " + localUser);
         gameBoardManager.setLocalUsername(localUser);
+
+        playerMap = new HashMap<>();
+        ArrayList<String> users = getIntent().getStringArrayListExtra("users");
+        initUsers(users);
 
         gameBoardManager.showGameBoard(gameBoardManager.getLocalUsername());
 
         findViewById(R.id.debug_back).setOnClickListener(v -> finish());
-        findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player1"));
-        findViewById(R.id.player2_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player2"));
-        findViewById(R.id.player3_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player3"));
-        findViewById(R.id.player4_button).setOnClickListener(v -> gameBoardManager.showGameBoard("Player4"));
+        findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard(localUser));
+        findViewById(R.id.player2_button).setOnClickListener(v -> {
+            assert playerMap != null;
+            gameBoardManager.showGameBoard(playerMap.get("Player2"));
+        });
+        findViewById(R.id.player3_button).setOnClickListener(v -> {
+            assert playerMap != null;
+            gameBoardManager.showGameBoard(playerMap.get("Player3"));
+        });
+        findViewById(R.id.player4_button).setOnClickListener(v -> {
+            assert playerMap != null;
+            gameBoardManager.showGameBoard(playerMap.get("Player4"));
+        });
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
-
-        findViewById(R.id.game_screen_server_response_button).setOnClickListener(v -> mockServer());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -112,49 +124,37 @@ public class GameScreen extends Activity {
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
-                String username = response.getString("username");
+                String username = response.getString(TAG_USERNAME);
                 String message = response.getString("message");
                 switch (action) {
-                    case "initUsers":
-                        runOnUiThread(() -> {
-                            Log.i("GameScreen", "Game started, got UserList: " + message);
-                            List<String> usernames = deserializeUserList(message);
-                            if (usernames != null) {
-                                for (String user : usernames) {
-                                    gameBoardManager.initGameBoard(new User(user));
-                                }
-                            }
-
-                        });
-                        break;
-                    case "updateGameBoard":
+                    case "updateUser":
+                        Log.d(TAG, "Received updateUser message {}" + message);
                         runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
+                    case "makeMove":
+                        //placeholder
+                        break;
                     default:
-                        Log.w("GameScreen", "Server response has invalid or no sender. Response not routed.");
+                        Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
                 }
             }
         };
     }
 
-    public List<String> deserializeUserList(String message) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(message, new TypeReference<List<String>>() {
-            });
-        } catch (JsonProcessingException e) {
-            Log.e("GameScreen", "Error deserializing user list", e);
-            return null;
+    void initUsers(ArrayList<String> users) {
+        String localUser = getIntent().getStringExtra(TAG_USERNAME);
+        if (users != null && !users.isEmpty()) {
+            playerMap = new HashMap<>();
+            playerMap.put("Player1", localUser);
+            Log.i(TAG, "Player 1 is " + localUser);
+            int count = 2;
+            for (String user : users) {
+                gameBoardManager.initGameBoard(new User(user));
+                if (!user.equals(localUser)) {
+                    Log.i(TAG, "Player " + count + " is " + user);
+                    playerMap.put("Player" + count++, user);
+                }
+            }
         }
-    }
-
-    public void mockServer() {
-        String player = "Player1";
-        gameBoardManager.initGameBoard(new User(player));
-        String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
-        gameBoardManager.updateUser(player, response);
-        gameBoardManager.initGameBoard(new User(player));
-        response = "{\"floor\":8, \"chamber\":2, \"field\":1, \"fieldValue\":\"TEN\"}";
-        gameBoardManager.updateUser(player, response);
     }
 }
