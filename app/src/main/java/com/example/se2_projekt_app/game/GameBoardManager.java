@@ -27,6 +27,7 @@ public class GameBoardManager {
     private int fieldIndex;
     private ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
+    private SendMessageService sendMessageService = new SendMessageService();
 
     public GameBoardManager(GameBoardView gameBoardView) {
         this.gameBoardView = gameBoardView;
@@ -166,7 +167,7 @@ public class GameBoardManager {
         return true;
     }
 
-    private String createPayload(Field field) {
+    public String createPayload(Field field) {
         FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername);
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
@@ -177,7 +178,7 @@ public class GameBoardManager {
         }
     }
 
-    private Field getLastAccessedField(GameBoard gameBoard) {
+    Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
             return null;
         }
@@ -207,6 +208,10 @@ public class GameBoardManager {
 
     public int getNumberOfUsers() {
         return users.size();
+    }
+    // for testing only
+    public void setSendMessageService(SendMessageService sendMessageService) {
+        this.sendMessageService = sendMessageService;
     }
 
 }
