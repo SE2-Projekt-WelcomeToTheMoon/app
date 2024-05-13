@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.screens;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -31,6 +32,7 @@ public class Multiplayer extends Activity {
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
+    private static final String TAG_USERS = "users";
     private static final String SUCCESS = "success";
 
 
@@ -76,7 +78,13 @@ public class Multiplayer extends Activity {
             if(success){
                 runOnUiThread(() -> {
                     Log.i(TAG, "Switched to game view");
-                    setContentView(R.layout.activity_multiplayer_game);
+                    Intent intent = new Intent(this, GameScreen.class);
+                    intent.putExtra("username", getIntent().getStringExtra("username"));
+
+                    ArrayList<String> users = userListAdapter.getUsernameList();
+                    intent.putStringArrayListExtra(TAG_USERS, users);
+
+                    startActivity(intent);
                 });
             }
         };
@@ -119,7 +127,7 @@ public class Multiplayer extends Activity {
                         });
                         break;
                     case "requestLobbyUser":
-                        JSONArray users = response.getJSONArray("users");
+                        JSONArray users = response.getJSONArray(TAG_USERS);
                         List<User> newUserList = new ArrayList<>();
                         for (int i = 0; i < users.length(); i++) {
                             newUserList.add(new User(users.getString(i)));
@@ -141,7 +149,7 @@ public class Multiplayer extends Activity {
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
-                JSONArray users = response.getJSONArray("users");
+                JSONArray users = response.getJSONArray(TAG_USERS);
                 List<User> newUserList = new ArrayList<>();
 
                 for (int i = 0; i < users.length(); i++) {

@@ -2,22 +2,19 @@ package com.example.se2_projekt_app.game;
 
 import android.util.Log;
 
-import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
 import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
 
 @SuppressWarnings("all")
 public class GameBoardManager {
@@ -29,6 +26,8 @@ public class GameBoardManager {
     private int chamberIndex;
     private int fieldIndex;
     private ObjectMapper objectMapper;
+    private final GameBoard emptyBoard = new GameBoard();
+    private SendMessageService sendMessageService = new SendMessageService();
 
     public GameBoardManager(GameBoardView gameBoardView) {
         this.gameBoardView = gameBoardView;
@@ -53,14 +52,19 @@ public class GameBoardManager {
     }
 
     public void initGameBoard(User user) {
-        User existingUser = userExists(user.getUsername());
-        if (existingUser == null) {
-            GameBoard gameBoard = GameBoardService.createGameBoard();
-            user.setGameBoard(gameBoard);
-            this.users.add(user);
-        } else {
-            user = existingUser;
+        if (userExists(user.getUsername()) != null) {
+            Log.e("GameBoardManager", "User already exists");
+            return;
         }
+        if (user.getLocalUser()) {
+            this.localUsername = user.getUsername();
+            Log.d("GameBoardManager", "Local User set to: " + localUsername);
+        }
+
+        GameBoard gameBoard = GameBoardService.createGameBoard();
+        user.setGameBoard(gameBoard);
+        this.users.add(user);
+
         if (user.getUsername().equals(localUsername)) {
             gameBoardView.setGameBoard(user.getGameBoard());
         }
@@ -70,21 +74,35 @@ public class GameBoardManager {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             gameBoardView.setGameBoard(user.getGameBoard());
+        } else {
+            gameBoardView.setGameBoard(emptyBoard);
+            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
         }
     }
 
     public boolean updateUser(String username, String response) {
-        User user = userExists(username);
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
+
+        String workingUsername = fieldUpdateMessage.getUserOwner();
+        User user = userExists(workingUsername);
+
         if (user == null) {
-            Log.e("GameBoardManager", "User does not exist");
+            Log.e("GameBoardManager", "User does not exist: " + workingUsername);
             return false;
         }
 
-        FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
         updateGameBoard(user, fieldUpdateMessage);
-        updateGameBoardView(user);
-        Log.i("GameBoardManager", "GameBoard updated for User: " + user.getUsername());
+
+        if (workingUsername.equals(localUsername)) {
+            Log.i("GameBoardManager", "Updating game view for local user");
+            updateGameBoardView(user);
+        }
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + workingUsername);
         return true;
+
+
     }
 
     private FieldUpdateMessage parseFieldUpdateMessage(String response) {
@@ -142,14 +160,15 @@ public class GameBoardManager {
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        JSONObject jsonObject = JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        SendMessageService.sendMessage(jsonObject);
 
         Log.d("GameBoardManager", "Payload: " + payload);
         return true;
     }
 
-    private String createPayload(Field field) {
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber());
+    public String createPayload(Field field) {
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername);
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
         } catch (Exception e) {
@@ -159,8 +178,8 @@ public class GameBoardManager {
         }
     }
 
-    private Field getLastAccessedField(GameBoard gameBoard) {
-        if (gameBoard == null){
+    Field getLastAccessedField(GameBoard gameBoard) {
+        if (gameBoard == null) {
             return null;
         }
         int floorIndex = gameBoardView.getLastAccessedFloor();
@@ -183,8 +202,16 @@ public class GameBoardManager {
         return localUsername;
     }
 
+    public void setLocalUsername(String localUsername) {
+        this.localUsername = localUsername;
+    }
+
     public int getNumberOfUsers() {
         return users.size();
+    }
+    // for testing only
+    public void setSendMessageService(SendMessageService sendMessageService) {
+        this.sendMessageService = sendMessageService;
     }
 
 }

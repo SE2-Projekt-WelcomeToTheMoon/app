@@ -57,6 +57,7 @@ public class Username extends Activity {
                     Log.i(TAG, "Username set to: "+ username);
 
                     Intent intent = new Intent(this, MainMenu.class);
+                    intent.putExtra("username", username);
                     startActivity(intent);
                 }else{
                     runOnUiThread(() -> {
