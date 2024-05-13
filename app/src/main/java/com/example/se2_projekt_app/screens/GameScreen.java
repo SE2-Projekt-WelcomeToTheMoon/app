@@ -27,8 +27,8 @@ public class GameScreen extends Activity {
     private TextView view;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
-    private final String TAG = "GameScreen";
-    private final String TAG_USERNAME = "username";
+    private static final String TAG = "GameScreen";
+    private static final String TAG_USERNAME = "username";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
