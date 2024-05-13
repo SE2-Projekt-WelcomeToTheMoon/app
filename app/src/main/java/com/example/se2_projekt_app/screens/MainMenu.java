@@ -11,9 +11,6 @@ import lombok.SneakyThrows;
 
 public class MainMenu extends Activity{
 
-    //Tag needed for logger
-    private static final String TAG = "MainMenu";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +34,7 @@ public class MainMenu extends Activity{
 
     public void startMP(View view) {
         Intent intent = new Intent(this, Multiplayer.class);
+        intent.putExtra("username", getIntent().getStringExtra("username"));
         startActivity(intent);
     }
 

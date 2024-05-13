@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.screens;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.networking.json.ActionValues;
+import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
@@ -31,7 +33,12 @@ public class Multiplayer extends Activity {
 
     //Tag needed for logger
     private static final String TAG = "Multiplayer";
-    private static final String SUCCESS = "success";
+    private static final String TAG_USERS = "users";
+    private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
+    private static final String USERNAME = JSONKeys.USERNAME.getValue();
+    private static final String ACTION = JSONKeys.ACTION.getValue();
+
+
 
 
 
@@ -76,7 +83,13 @@ public class Multiplayer extends Activity {
             if(success){
                 runOnUiThread(() -> {
                     Log.i(TAG, "Switched to game view");
-                    setContentView(R.layout.activity_multiplayer_game);
+                    Intent intent = new Intent(this, GameScreen.class);
+                    intent.putExtra(USERNAME, getIntent().getStringExtra(USERNAME));
+
+                    ArrayList<String> users = userListAdapter.getUsernameList();
+                    intent.putStringArrayListExtra(TAG_USERS, users);
+
+                    startActivity(intent);
                 });
             }
         };
@@ -96,12 +109,12 @@ public class Multiplayer extends Activity {
         });
 
         responseReceiver = response -> {
-            if (response.getBoolean("success")) {
-                switch (response.getString("action")) {
+            if (response.getBoolean(SUCCESS)) {
+                switch (response.getString(ACTION)) {
                     case "joinLobby":
                         runOnUiThread(() -> {
                             try {
-                                userListAdapter.addUser(new User(response.getString("username")));
+                                userListAdapter.addUser(new User(response.getString(USERNAME)));
 
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -111,7 +124,7 @@ public class Multiplayer extends Activity {
                     case "leaveLobby":
                         runOnUiThread(() -> {
                             try {
-                                userListAdapter.removeUser(new User(response.getString("username")));
+                                userListAdapter.removeUser(new User(response.getString(USERNAME)));
 
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -119,7 +132,7 @@ public class Multiplayer extends Activity {
                         });
                         break;
                     case "requestLobbyUser":
-                        JSONArray users = response.getJSONArray("users");
+                        JSONArray users = response.getJSONArray(TAG_USERS);
                         List<User> newUserList = new ArrayList<>();
                         for (int i = 0; i < users.length(); i++) {
                             newUserList.add(new User(users.getString(i)));
@@ -140,8 +153,8 @@ public class Multiplayer extends Activity {
         SendMessageService.sendMessage(requestLobbyUsersMsg);
 
         responseReceiver = response -> {
-            if (response.getBoolean("success")) {
-                JSONArray users = response.getJSONArray("users");
+            if (response.getBoolean(SUCCESS)) {
+                JSONArray users = response.getJSONArray(TAG_USERS);
                 List<User> newUserList = new ArrayList<>();
 
                 for (int i = 0; i < users.length(); i++) {

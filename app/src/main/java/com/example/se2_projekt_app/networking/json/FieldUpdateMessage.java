@@ -16,12 +16,14 @@ public class FieldUpdateMessage {
     private int chamber;
     private int field;
     private FieldValue fieldValue;
+    private String userOwner;
 
-    public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value) {
+    public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value, String userOwner) {
         this.floor = floor;
         this.chamber = chamber;
         this.field = field;
         this.fieldValue = value;
+        this.userOwner = userOwner;
     }
     @JsonCreator
     public FieldUpdateMessage(){
@@ -29,6 +31,7 @@ public class FieldUpdateMessage {
         this.chamber = 0;
         this.field = 0;
         this.fieldValue = FieldValue.NONE;
+        this.userOwner = "";
     }
 
     public void setFloor(int floor) {
@@ -61,5 +64,12 @@ public class FieldUpdateMessage {
 
     public FieldValue getFieldValue() {
         return this.fieldValue;
+    }
+
+    public void setUserOwner(String userOwner) {
+        this.userOwner = userOwner;
+    }
+    public String getUserOwner() {
+        return userOwner;
     }
 }

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
 import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,6 +33,8 @@ class GameBoardManagerTest {
     private GameBoard mockGameBoard;
     @Mock
     private GameBoardView mockGameBoardView;
+    @Mock
+    private static SendMessageService mockSendMessageService = mock(SendMessageService.class);
 
     @BeforeEach
     void setUp() {
@@ -39,9 +42,10 @@ class GameBoardManagerTest {
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
         gameBoardManager = new GameBoardManager(mockGameBoardView);
+        gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
-    }
+        }
 
     @Test
     void testUserOperations() {
@@ -89,11 +93,12 @@ class GameBoardManagerTest {
         floor.addChamber(1);
         gameBoard.addFloor(floor);
 
-        assertFalse(gameBoardManager.updateUser("Player10", ""));
+        assertFalse(gameBoardManager.updateUser("Player10", "{\"floor\":0,\"chamber\":0,\"field\":0,\"fieldValue\":\"FIVE\",\"userOwner\":\"test\"}"));
 
         when(mockUser.getGameBoard()).thenReturn(gameBoard);
+        gameBoardManager.setLocalUsername("Player1");
 
-        String response = "{\"floor\":0, \"chamber\":0, \"field\":0, \"fieldValue\":\"FIVE\"}";
+        String response = "{\"floor\":0,\"chamber\":0,\"field\":0,\"fieldValue\":\"FIVE\",\"userOwner\":\"Player1\"}";
 
         assertEquals(FieldValue.NONE, gameBoard.getFloor(0).getChamber(0).getField(0).getNumber());
         assertTrue(gameBoardManager.updateUser(mockUser.getUsername(), response));
@@ -115,28 +120,36 @@ class GameBoardManagerTest {
     }
 
     @Test
-    void testAcceptTurnFalse2() {
-        when(mockUser.getGameBoard()).thenReturn(null);
-        assertFalse(gameBoardManager.acceptTurn());
-    }
-
-    @Test
-    void testAcceptTurn() {
-        GameBoard gameBoard = new GameBoard();
-        Floor floor = new Floor(0, 0, FieldCategory.ENERGY);
-        floor.addChamber(2);
-        gameBoard.addFloor(floor);
-        floor.handleClick(0, 0, mockGameBoardView, FieldValue.ONE);
-
-        when(mockUser.getGameBoard()).thenReturn(gameBoard);
-        assertTrue(gameBoardManager.acceptTurn());
-        floor.handleClick(0, 0, mockGameBoardView, FieldValue.ONE);
-        assertFalse(gameBoardManager.acceptTurn());
-    }
-
-    @Test
     void testGetLocalUsername(){
         assertEquals("Player1", gameBoardManager.getLocalUsername());
     }
 
+    @Test
+    void testCreatePayload() {
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(0, 0, 0, FieldValue.FIVE, "Player1");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String expected = "";
+        try {
+            expected = objectMapper.writeValueAsString(fieldUpdateMessage);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        assertEquals(expected, gameBoardManager.createPayload(new Field(0, 0, 0, FieldCategory.ENERGY, FieldValue.FIVE)));
+    }
+
+    @Test
+    void testGetLastAccessedField() {
+        assertNull(gameBoardManager.getLastAccessedField(null));
+        GameBoard gameBoard = new GameBoard();
+        Floor floor = new Floor(0, 0, FieldCategory.ENERGY);
+        floor.addChamber(1);
+        gameBoard.addFloor(floor);
+
+        floor.handleClick(0,0,mockGameBoardView, FieldValue.FIFTEEN);
+
+        Field field = gameBoardManager.getLastAccessedField(gameBoard);
+        Field field2 = gameBoard.getFloor(0).getChamber(0).getField(0);
+
+        assertEquals(field2, field);
+    }
 }
