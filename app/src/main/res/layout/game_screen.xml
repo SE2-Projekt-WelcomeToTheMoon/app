@@ -44,11 +44,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Random" />
-                    <Button
-                        android:id="@+id/game_screen_server_response_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Server" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
