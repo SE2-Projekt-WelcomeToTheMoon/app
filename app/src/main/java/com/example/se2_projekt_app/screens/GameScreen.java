@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.core.view.GravityCompat;
@@ -24,7 +23,8 @@ public class GameScreen extends Activity implements ResponseReceiver {
     public static ResponseReceiver responseReceiver;
 
     private Button toggleDrawerButton;
-    private ProgressBar progressBar;
+
+//    private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
 

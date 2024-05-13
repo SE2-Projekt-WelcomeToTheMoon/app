@@ -96,7 +96,7 @@ public class Multiplayer extends Activity {
         });
 
         responseReceiver = response -> {
-            if (response.getBoolean("success")) {
+            if (response.getBoolean(SUCCESS)) {
                 switch (response.getString("action")) {
                     case "joinLobby":
                         runOnUiThread(() -> {
