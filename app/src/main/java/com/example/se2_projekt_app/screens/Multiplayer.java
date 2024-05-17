@@ -41,7 +41,7 @@ public class Multiplayer extends Activity {
 
 
 
-
+    // fixme extract methods!
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

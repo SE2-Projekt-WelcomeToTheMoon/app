@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 class FieldCategoryTest {
 
+    // fixme extract in individual (parameterized) tests
     @Test
     void testGetSymbolAndTranslate_ValidSymbols() {
         assertEquals(FieldCategory.ROBOT, FieldCategory.getSymbolAndTranslate("ROBOTER"));

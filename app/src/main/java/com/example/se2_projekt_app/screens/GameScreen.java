@@ -30,6 +30,7 @@ public class GameScreen extends Activity {
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
 
+    // fixme extract methods!
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DrawerLayout drawerLayout;

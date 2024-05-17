@@ -8,6 +8,7 @@ public class JSONService {
 
     private JSONService(){}
 
+    // fixme see server comments, avoid using manual message building
     /**
      * Method to generate a JSON O
      * object

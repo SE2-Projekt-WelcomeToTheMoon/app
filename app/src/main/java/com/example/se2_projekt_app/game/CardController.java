@@ -5,6 +5,7 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import lombok.Getter;
 
 
+// fixme see comments for backend
 @Getter
 public class CardController {
     private CardCombination[] currentCombination;

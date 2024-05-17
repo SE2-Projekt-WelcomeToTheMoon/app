@@ -110,6 +110,8 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
     }
+
+    // fixme extract methods based on comments
     private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight) {
         if(combination==null||combination.getCurrentNumber()==null||combination.getCurrentSymbol()==null||combination.getNextSymbol()==null)throw new IllegalArgumentException("Cannot draw from empty combination");
         Bitmap currentSymbol=getBitMapFromElement(combination.getCurrentSymbol());

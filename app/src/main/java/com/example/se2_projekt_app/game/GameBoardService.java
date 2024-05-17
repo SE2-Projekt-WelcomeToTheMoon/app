@@ -4,7 +4,7 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 
 public class GameBoardService {
 
-
+    // fixme extract method per visual floor for clarity
     public static GameBoard createGameBoard() {
         GameBoard gameBoard = new GameBoard();
         Floor floor = new Floor(0, 0, FieldCategory.SPACESUIT);
