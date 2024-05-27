@@ -18,6 +18,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <com.example.se2_projekt_app.views.CardDrawView
+                    android:id="@+id/cardDrawView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
                 <com.example.se2_projekt_app.views.GameBoardView
                     android:id="@+id/gameBoardView"
                     android:layout_width="match_parent"

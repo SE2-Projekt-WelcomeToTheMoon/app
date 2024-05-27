@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
+import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.GameBoardView;
 
@@ -27,6 +28,7 @@ public class GameScreen extends Activity {
     private TextView view;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
+    private CardController cardcontroller;
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
 
