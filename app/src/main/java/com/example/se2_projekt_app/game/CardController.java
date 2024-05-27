@@ -1,13 +1,21 @@
 package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.views.CardDrawView;
 
 import lombok.Getter;
 
 
 @Getter
 public class CardController {
+    @Getter
     private CardCombination[] currentCombination;
+    private final CardDrawView cardDrawView;
+
+    public CardController(CardDrawView cardDrawView) {
+        this.cardDrawView = cardDrawView;
+    }
+
     /***
      * Gets the server String which is composed as follows:
      * data inside the combinations is split by - and ordered CombinationNumber-CurrentSymbol-CurrentNumber-NextSymbol
@@ -29,6 +37,9 @@ public class CardController {
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
         currentCombination=combinations;
+    }
+    public void displayCurrentCombination(){
+        cardDrawView.updateCanvas(currentCombination);
     }
 
 

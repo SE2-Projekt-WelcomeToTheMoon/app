@@ -15,6 +15,7 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.views.CardDrawView;
 import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
@@ -123,6 +124,11 @@ public class GameScreen extends Activity {
             }
         });
 
+
+
+        CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
+        cardcontroller = new CardController(cardDrawView);
+
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
@@ -135,6 +141,11 @@ public class GameScreen extends Activity {
                         break;
                     case "makeMove":
                         //placeholder
+                        break;
+                    case "nextCardDraw":
+                        Log.d(TAG, "Updating to show next card drawn with message {}"+message);
+                        cardcontroller.extractCardsFromServerString(message);
+                        cardcontroller.displayCurrentCombination();
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
