@@ -13,7 +13,7 @@ public class ShakeDetector implements SensorEventListener {
     private static final int SHAKE_SLOP_TIME_MS = 500;
     private static final String TAG = "ShakeDetector";
 
-    private SensorManager sensorManager;
+    private final SensorManager sensorManager;
     private Sensor accelerometer;
     private long shakeTimestamp;
     private OnShakeListener listener;
