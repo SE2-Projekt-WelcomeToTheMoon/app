@@ -14,6 +14,7 @@ import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
+import com.example.se2_projekt_app.sensors.ShakeDetector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,25 +23,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Multiplayer extends Activity {
 
     private UserListAdapter userListAdapter = new UserListAdapter(new ArrayList<>());
 
-    //Object implements method to handle response received from server
     public static ResponseReceiver responseReceiver;
     public static ResponseReceiver startGameResponseReceiver;
 
-    //Tag needed for logger
     private static final String TAG = "Multiplayer";
     private static final String TAG_USERS = "users";
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
     private static final String USERNAME = JSONKeys.USERNAME.getValue();
     private static final String ACTION = JSONKeys.ACTION.getValue();
 
-
-
-
+    private ShakeDetector shakeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,26 +57,12 @@ public class Multiplayer extends Activity {
 
         backButton.setOnClickListener(v -> finish());
 
-        joinLobbyButton.setOnClickListener(v -> {
-            String username = Username.user.getUsername();
-            JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.JOINLOBBY.getValue(), username, null,"",
-                    "");
-            SendMessageService.sendMessage(msg);
-        });
-
-
-        leaveLobbyButton.setOnClickListener(v -> {
-            String username = Username.user.getUsername();
-            JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.LEAVELOBBY.getValue(), username, null,"",
-                    "");
-            SendMessageService.sendMessage(msg);
-        });
+        joinLobbyButton.setOnClickListener(v -> joinLobby());
+        leaveLobbyButton.setOnClickListener(v -> leaveLobby());
 
         Multiplayer.startGameResponseReceiver = response -> {
             boolean success = response.getBoolean(SUCCESS);
-            if(success){
+            if (success) {
                 runOnUiThread(() -> {
                     Log.i(TAG, "Switched to game view");
                     Intent intent = new Intent(this, GameScreen.class);
@@ -97,12 +79,12 @@ public class Multiplayer extends Activity {
         startGameButton.setOnClickListener(v -> {
             String username = Username.user.getUsername();
             JSONObject msg = JSONService.generateJSONObject(
-                    ActionValues.STARTGAME.getValue(), username, null,"",
+                    ActionValues.STARTGAME.getValue(), username, null, "",
                     "");
             SendMessageService.sendMessage(msg);
             Multiplayer.responseReceiver = response -> {
                 boolean success = response.getBoolean(SUCCESS);
-                if(success){
+                if (success) {
                     Log.i(TAG, "Started game successfully");
                 }
             };
@@ -145,9 +127,13 @@ public class Multiplayer extends Activity {
             }
 
         };
+
+        shakeDetector = new ShakeDetector(this);
+        shakeDetector.setOnShakeListener(this::joinLobby);
     }
+
     @SuppressLint("NotifyDataSetChanged")
-    public void updateLobby(){
+    public void updateLobby() {
         String username = Username.user.getUsername();
         JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("requestLobbyUser", username, true, "", "");
         SendMessageService.sendMessage(requestLobbyUsersMsg);
@@ -167,5 +153,32 @@ public class Multiplayer extends Activity {
             }
         };
     }
-}
 
+    private void joinLobby() {
+        String username = Username.user.getUsername();
+        JSONObject msg = JSONService.generateJSONObject(
+                ActionValues.JOINLOBBY.getValue(), username, null, "",
+                "");
+        SendMessageService.sendMessage(msg);
+    }
+
+    private void leaveLobby() {
+        String username = Username.user.getUsername();
+        JSONObject msg = JSONService.generateJSONObject(
+                ActionValues.LEAVELOBBY.getValue(), username, null, "",
+                "");
+        SendMessageService.sendMessage(msg);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shakeDetector.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shakeDetector.stop();
+    }
+}
