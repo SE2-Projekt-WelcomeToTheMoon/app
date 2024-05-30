@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
+import lombok.Setter;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,6 +35,8 @@ public class WebSocketClient implements Runnable{
     //ResponseHandler passed when connection to server is being established
     private final PostOffice responseHandler = new PostOffice();
     private boolean connectionUp = false;
+    @Setter
+    private static boolean disconPurpously = false;
     private ResponseReceiver response;
 
     /**
@@ -122,10 +125,11 @@ public class WebSocketClient implements Runnable{
                         + t.getMessage());
                 connectionUp = false;
                 TimeUnit.SECONDS.sleep(2);
-                Log.i(TAG, "Trying to reconnect...");
-                Username.webSocketClient.connectToServer(responseHandler);
-                if(connectionUp) reconnectToServer();
-                Log.i(TAG, "Reconnected.");
+                if(!disconPurpously){
+                    Log.i(TAG, "Trying to reconnect...");
+                    if(!connectionUp) reconnectToServer();
+                    Log.i(TAG, "Reconnected.");
+                }
             }
         });
     }
@@ -169,18 +173,19 @@ public class WebSocketClient implements Runnable{
     }
 
     private boolean reconnectToServer(){
-            JSONObject message = JSONService.generateJSONObject(
-                    JSONKeys.RECONNECT.getValue(), Username.user.getUsername(),
-                    true, "", "");
-            SendMessageService.sendMessage(message);
-            response = msg -> {
-                boolean success = msg.getBoolean(JSONKeys.SUCCESS.getValue());
-                if (success) {
-                    connectionUp = true;
-                }
-            };
-            if(connectionUp) return true;
-            return false;
+        Username.webSocketClient.connectToServer(responseHandler);
+        JSONObject message = JSONService.generateJSONObject(
+                JSONKeys.RECONNECT.getValue(), Username.user.getUsername(),
+                true, "", "");
+        SendMessageService.sendMessage(message);
+        response = msg -> {
+            boolean success = msg.getBoolean(JSONKeys.SUCCESS.getValue());
+            if (success) {
+                connectionUp = true;
+            }
+        };
+        if(connectionUp) return true;
+        return false;
     }
 
     /**
