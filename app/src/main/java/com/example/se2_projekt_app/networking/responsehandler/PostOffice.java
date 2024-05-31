@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.networking.responsehandler;
 
 import android.util.Log;
 
+import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
@@ -47,8 +48,14 @@ public class PostOffice {
                 break;
             case "updateUser":
             case "makeMove":
+            case "playerHasCheated":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen.");
+                break;
+
+            case "cheat":
+                GameBoardManager.cheatResponseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted cheat message to GameBoardManager.");
                 break;
 
             default:
