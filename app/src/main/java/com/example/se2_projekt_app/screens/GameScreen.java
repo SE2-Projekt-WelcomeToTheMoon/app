@@ -52,21 +52,37 @@ public class GameScreen extends Activity {
         gameBoardManager.showGameBoard(gameBoardManager.getLocalUsername());
 
         findViewById(R.id.debug_back).setOnClickListener(v -> finish());
-        findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard(localUser));
+        findViewById(R.id.player1_button).setOnClickListener(v -> {
+            gameBoardManager.showGameBoard(localUser);
+            view = findViewById(R.id.rocket_count);
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(localUser))); // Testing purposes
+        });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
+            view = findViewById(R.id.rocket_count);
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player2")))); // Testing purposes
         });
         findViewById(R.id.player3_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player3"));
+            view = findViewById(R.id.rocket_count);
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player3")))); // Testing purposes
         });
         findViewById(R.id.player4_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player4"));
+            view = findViewById(R.id.rocket_count);
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
         });
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
+
+
+        findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
+                    Log.i(TAG, "Cheat");
+                    gameBoardManager.cheat();
+                });
 
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
@@ -133,6 +149,14 @@ public class GameScreen extends Activity {
                         break;
                     case "makeMove":
                         //placeholder
+                        break;
+                    case "playerHasCheated":
+                        Log.d(TAG, "Player {} has cheated" + message);
+                        runOnUiThread(() -> {
+                            gameBoardManager.updateCheatedUser(username, message);
+                            view = findViewById(R.id.rocket_count);
+                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username))); // Testing purposes
+                        });
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
