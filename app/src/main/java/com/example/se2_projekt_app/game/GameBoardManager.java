@@ -1,9 +1,7 @@
 package com.example.se2_projekt_app.game;
 
 import android.util.Log;
-import android.widget.TextView;
 
-import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
@@ -11,7 +9,6 @@ import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
-import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.User;
 import com.example.se2_projekt_app.screens.Username;
 import com.example.se2_projekt_app.views.GameBoardView;
@@ -36,6 +33,7 @@ public class GameBoardManager {
     private final GameBoard emptyBoard = new GameBoard();
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
     public static ResponseReceiver cheatResponseReceiver;
+    public static ResponseReceiver cheatDetectResponseReceiver;
     private static final String TAG = "Gamescreen";
     private SendMessageService sendMessageService = new SendMessageService();
 
@@ -283,5 +281,57 @@ public class GameBoardManager {
             Log.e("GameBoardManager", "User does not exist or has no GameBoard");
         }
         return -1;
+    }
+
+    public void detectCheat(String currentOwner) {
+        String username = Username.user.getUsername();
+        JSONObject msg = JSONService.generateJSONObject(
+                ActionValues.DETECTCHEAT.getValue(), username, null, currentOwner,
+                "");
+        SendMessageService.sendMessage(msg);
+
+        GameBoardManager.cheatDetectResponseReceiver = response -> {
+            boolean success = response.getBoolean(SUCCESS);
+            if (success) {
+                Log.i(TAG, "Detected Cheat successfully");
+            }
+        };
+
+        return;
+
+    }
+
+    public void updateCorrectCheatDetection(String username, String detector, boolean success) {
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+
+        User user = userExists(detector);
+
+        if (user == null) {
+            Log.e("GameBoardManager", "User does not exist: " + detector);
+            return;
+        }
+
+        updateDetectorGameBoard(user, success);
+
+        if (detector.equals(localUsername)) {
+            Log.i("GameBoardManager", "Updating game view for local user");
+            updateGameBoardView(user);
+        }
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + detector);
+        return;
+    }
+
+    private void updateDetectorGameBoard(User user, boolean success) {
+        GameBoard gameBoard = user.getGameBoard();
+        if (gameBoard == null) {
+            return;
+        }
+
+        gameBoard.addRockets(success ? 1 : -1);
+
+
+        user.setGameBoard(gameBoard);
+        return;
     }
 }

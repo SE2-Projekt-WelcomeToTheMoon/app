@@ -86,11 +86,12 @@ public class GameScreen extends Activity {
 
         findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
             Log.e(TAG, String.valueOf(currentOwner));
-            if (currentOwner.equals(localUser)) {
+            if (currentOwner.equals(localUser) && !currentOwner.isEmpty()) {
                 Log.e(TAG, "Cheat");
                 gameBoardManager.cheat();
             } else {
                 Log.e(TAG, "Detect cheat");
+                gameBoardManager.detectCheat(currentOwner);
             }
 
         });
@@ -153,6 +154,7 @@ public class GameScreen extends Activity {
                 String action = response.getString("action");
                 String username = response.getString(TAG_USERNAME);
                 String message = response.getString("message");
+                boolean success = Boolean.parseBoolean(response.getString("success"));
                 switch (action) {
                     case "updateUser":
                         Log.d(TAG, "Received updateUser message {}" + message);
@@ -165,6 +167,15 @@ public class GameScreen extends Activity {
                         Log.d(TAG, "Player {} has cheated" + message);
                         runOnUiThread(() -> {
                             gameBoardManager.updateCheatedUser(username, message);
+                            view = findViewById(R.id.rocket_count);
+                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username))); // Testing purposes
+                        });
+                        break;
+                    case "playerDetectedCheat":
+                        Log.d(TAG, "Player {} has cheated" + message);
+                        runOnUiThread(() -> {
+                            gameBoardManager.updateCorrectCheatDetection(username, message, success);
+
                             view = findViewById(R.id.rocket_count);
                             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username))); // Testing purposes
                         });

@@ -49,6 +49,7 @@ public class PostOffice {
             case "updateUser":
             case "makeMove":
             case "playerHasCheated":
+            case "playerDetectedCheat":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen.");
                 break;

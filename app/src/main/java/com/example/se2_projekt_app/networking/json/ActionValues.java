@@ -15,7 +15,8 @@ public enum ActionValues {
     STARTGAME("startGame"),
     UPDATESIMPLE("updateGameBoardSimple"),
     UPDATEFULL("updateGameBoardFull"),
-    CHEAT("cheat");
+    CHEAT("cheat"),
+    DETECTCHEAT("detectCheat");
 
     private final String value;
     ActionValues(String action){
