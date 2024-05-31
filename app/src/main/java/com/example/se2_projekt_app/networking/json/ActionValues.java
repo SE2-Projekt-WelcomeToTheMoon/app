@@ -14,7 +14,8 @@ public enum ActionValues {
     REQUESTLOBBYUSER("requestLobbyUser"),
     STARTGAME("startGame"),
     UPDATESIMPLE("updateGameBoardSimple"),
-    UPDATEFULL("updateGameBoardFull");
+    UPDATEFULL("updateGameBoardFull"),
+    CHEAT("cheat");
 
     private final String value;
     ActionValues(String action){
