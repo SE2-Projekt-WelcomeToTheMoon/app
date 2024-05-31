@@ -23,12 +23,13 @@ public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
     private Button toggleDrawerButton;
 
-//    private ProgressBar progressBar;
+    //    private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
+    private String currentOwner = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,33 +57,43 @@ public class GameScreen extends Activity {
             gameBoardManager.showGameBoard(localUser);
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(localUser))); // Testing purposes
+            currentOwner = localUser;
         });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player2")))); // Testing purposes
+            currentOwner = playerMap.getOrDefault("Player2", "");
         });
         findViewById(R.id.player3_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player3"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player3")))); // Testing purposes
+            currentOwner = playerMap.getOrDefault("Player3", "");
         });
         findViewById(R.id.player4_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player4"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
+            currentOwner = playerMap.getOrDefault("Player4", "");
         });
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
 
         findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
-                    Log.i(TAG, "Cheat");
-                    gameBoardManager.cheat();
-                });
+            Log.e(TAG, String.valueOf(currentOwner));
+            if (currentOwner.equals(localUser)) {
+                Log.e(TAG, "Cheat");
+                gameBoardManager.cheat();
+            } else {
+                Log.e(TAG, "Detect cheat");
+            }
+
+        });
 
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
