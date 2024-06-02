@@ -13,5 +13,5 @@ public interface ResponseReceiver {
      * @param response Response from server.
      * @throws JSONException Exception for JSON Object.
      */
-    void receiveResponse(JSONObject response) throws JSONException;
+    void receiveResponse(JSONObject response) throws Throwable;
 }

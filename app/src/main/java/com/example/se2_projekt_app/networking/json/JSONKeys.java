@@ -8,7 +8,9 @@ public enum JSONKeys {
     USERNAME("username"),
     SUCCESS("success"),
     MESSAGE("message"),
-    ERROR("error");
+    ERROR("error"),
+    RECONNECT("reconnect"),
+    DISCONNECT("disconnect");
 
 
     private final String value;
