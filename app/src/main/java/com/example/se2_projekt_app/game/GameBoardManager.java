@@ -178,22 +178,11 @@ public class GameBoardManager {
         }
     }
 
-    Field getLastAccessedField(GameBoard gameBoard) {
+    public Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
             return null;
         }
-        int floorIndex = gameBoardView.getLastAccessedFloor();
-        Floor floor = gameBoard.getFloor(floorIndex);
-        int chamberIndex = floor.getLastAccessedChamber();
-        Chamber chamber = floor.getChamber(chamberIndex);
-        int fieldIndex = chamber.getLastAccessedField();
-        Field field = chamber.getField(fieldIndex);
-        if (!field.isFinalized() && field.isChanged()) {
-            this.floorIndex = floorIndex;
-            this.chamberIndex = chamberIndex;
-            this.fieldIndex = fieldIndex;
-            return field;
-        }
+        Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
         Log.e("GameBoardManager", "Field is already finalized, not changed or null");
         return null;
     }
