@@ -30,6 +30,8 @@ public class GameScreen extends Activity {
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
 
+    private DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DrawerLayout drawerLayout;
@@ -71,8 +73,6 @@ public class GameScreen extends Activity {
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 //        progressBar = findViewById(R.id.progressbar);
         //view = findViewById(R.id.rocket_count);
@@ -87,39 +87,7 @@ public class GameScreen extends Activity {
 //                        view.setText(String.valueOf(Username.user.getRockets()));
         });
 
-        toggleDrawerButton.setOnClickListener(v -> {
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
-        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
-
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                // Translate the button with the drawer slide
-                toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
-                toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                toggleDrawerButton.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                toggleDrawerButton.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                // Not used
-            }
-        });
+        setupDrawer();
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
@@ -156,5 +124,44 @@ public class GameScreen extends Activity {
                 }
             }
         }
+    }
+
+    private void setupDrawer() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
+        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
+
+        toggleDrawerButton.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
+
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
+                toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                toggleDrawerButton.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                toggleDrawerButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                // Not used
+            }
+        });
     }
 }
