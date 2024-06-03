@@ -5,7 +5,9 @@ import com.example.se2_projekt_app.views.CardDrawView;
 
 import lombok.Getter;
 
-
+/***
+ * The class responsible for controlling cards. Gets CardDrawView in constructor
+ */
 @Getter
 public class CardController {
     @Getter
@@ -38,8 +40,13 @@ public class CardController {
         }
         currentCombination=combinations;
     }
+
+    /***
+     * Displays current Combination
+     */
     public void displayCurrentCombination(){
         cardDrawView.updateCanvas(currentCombination);
+
     }
 
 
