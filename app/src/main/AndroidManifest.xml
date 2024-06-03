@@ -30,5 +30,6 @@
         <activity android:name=".screens.Multiplayer"/>
         <activity android:name=".screens.GameScreen"/>
         <activity android:name=".screens.MainMenu"/>
+        <activity android:name=".screens.WinnerScreen"/>
     </application>
 </manifest>
