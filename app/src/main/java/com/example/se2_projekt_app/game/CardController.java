@@ -16,6 +16,12 @@ public class CardController {
 
     public CardController(CardDrawView cardDrawView) {
         this.cardDrawView = cardDrawView;
+         currentCombination = new CardCombination[]{
+                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
+         };
+        displayCurrentCombination();
     }
 
     /***
