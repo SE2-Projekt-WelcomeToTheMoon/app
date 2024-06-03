@@ -19,6 +19,8 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.CardCombination;
 
+import lombok.Getter;
+
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback, ScaleGestureDetector.OnScaleGestureListener {
 
     private Bitmap plantBitmap;
@@ -29,6 +31,8 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
     private Bitmap waterBitmap;
     private final int[] xPositions;
     private CardCombination[] currentCombination;
+    @Getter
+    private CardCombination lastClicked;
     private int yHeight;
 
     public CardDrawView(Context context, AttributeSet attrs) {
@@ -79,18 +83,19 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
             if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
-                CardCombination combination1 = currentCombination[0];
-                // Enter code here
+                lastClicked = currentCombination[0];
+
             } else if (event.getX() > xPositions[1] && event.getX() < xPositions[2] && event.getY() < yHeight) {
-                CardCombination combination2 = currentCombination[1];
-                // Enter code here
+                lastClicked = currentCombination[1];
+
             } else if (event.getY() < yHeight) {
-                CardCombination combination3 = currentCombination[2];
-                // Enter code here
+                lastClicked = currentCombination[2];
+
             }
         }
         return true;
     }
+
 
     public void updateCanvas(CardCombination[] combination) {
         this.currentCombination = combination;

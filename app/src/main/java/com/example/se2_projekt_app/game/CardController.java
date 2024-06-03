@@ -54,6 +54,9 @@ public class CardController {
         cardDrawView.updateCanvas(currentCombination);
 
     }
+    public CardCombination getCurrentClicked(){
+        return cardDrawView.getLastClicked();
+    }
 
 
 }
