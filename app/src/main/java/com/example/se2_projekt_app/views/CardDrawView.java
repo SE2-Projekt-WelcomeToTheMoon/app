@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -18,38 +19,49 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.CardCombination;
 
-public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback {
+public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback, ScaleGestureDetector.OnScaleGestureListener {
 
-    private final Bitmap plantBitmap;
-    private final Bitmap robotBitmap;
-    private final Bitmap energyBitmap;
-    private final Bitmap planningBitmap;
-    private final Bitmap spacesuitBitmap;
-    private final Bitmap waterBitmap;
+    private Bitmap plantBitmap;
+    private Bitmap robotBitmap;
+    private Bitmap energyBitmap;
+    private Bitmap planningBitmap;
+    private Bitmap spacesuitBitmap;
+    private Bitmap waterBitmap;
     private final int[] xPositions;
     private CardCombination[] currentCombination;
-    private final int yHeight;
+    private int yHeight;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
-        plantBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plant);
-        robotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-        energyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.energy);
-        planningBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planning);
-        spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
-        waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
-        this.xPositions=new int[3];
-        this.yHeight=getHolder().lockCanvas().getHeight()/5;
-
-        CardCombination[] testCombinations={new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE),new CardCombination(FieldCategory.PLANT,FieldCategory.PLANT, FieldValue.ONE)};
-        updateCanvas(testCombinations);
-
+        setFocusable(true);
+        xPositions = new int[3];
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        updateCanvas(currentCombination);
+        initializeBitmaps();
+        if (currentCombination == null) {
+            CardCombination[] testCombinations = {
+                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
+            };
+            updateCanvas(testCombinations);
+        } else {
+            updateCanvas(currentCombination);
+        }
+    }
+
+    private void initializeBitmaps() {
+
+            plantBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plant);
+            robotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
+            energyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.energy);
+            planningBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.planning);
+            spacesuitBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.spacesuit);
+            waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
+
     }
 
     @Override
@@ -59,34 +71,29 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-        //Had to include this method but dont need it yet
+        // No action needed
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
-
-               if(event.getX()>xPositions[0]&&event.getX()<xPositions[1]&&event.getY()<yHeight){
-                   CardCombination combination1=currentCombination[0];
-                   //Enter code here
-               } else if(event.getX()>xPositions[1]&&event.getX()<xPositions[2]&&event.getY()<yHeight){
-                   CardCombination combination2=currentCombination[1];
-                   //Enter code here
-               } else if(event.getY()<yHeight){
-                   CardCombination combination3=currentCombination[2];
-                   //Enter Code here
-               }
-
-
+            if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
+                CardCombination combination1 = currentCombination[0];
+                // Enter code here
+            } else if (event.getX() > xPositions[1] && event.getX() < xPositions[2] && event.getY() < yHeight) {
+                CardCombination combination2 = currentCombination[1];
+                // Enter code here
+            } else if (event.getY() < yHeight) {
+                CardCombination combination3 = currentCombination[2];
+                // Enter code here
+            }
         }
         return true;
     }
 
-    public void updateCanvas(CardCombination[] combination){
-        this.currentCombination=combination;
+    public void updateCanvas(CardCombination[] combination) {
+        this.currentCombination = combination;
         Canvas canvas = null;
         try {
             canvas = getHolder().lockCanvas();
@@ -103,6 +110,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
                     xPositions[i] = i * (imageWidth + 20); // Adjust spacing as needed
                     drawCombination(canvas, xPositions[i], combination[i], imageWidth, imageHeight);
                 }
+                yHeight = imageHeight;
             }
         } finally {
             if (canvas != null) {
@@ -110,11 +118,14 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
     }
+
     private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight) {
-        if(combination==null||combination.getCurrentNumber()==null||combination.getCurrentSymbol()==null||combination.getNextSymbol()==null)throw new IllegalArgumentException("Cannot draw from empty combination");
-        Bitmap currentSymbol=getBitMapFromElement(combination.getCurrentSymbol());
-        Bitmap nextSymbol=getBitMapFromElement(combination.getNextSymbol());
-        int currentNumber=combination.getCurrentNumber().getValue();
+        if (combination == null || combination.getCurrentNumber() == null || combination.getCurrentSymbol() == null || combination.getNextSymbol() == null) {
+            throw new IllegalArgumentException("Cannot draw from empty combination");
+        }
+        Bitmap currentSymbol = getBitMapFromElement(combination.getCurrentSymbol());
+        Bitmap nextSymbol = getBitMapFromElement(combination.getNextSymbol());
+        int currentNumber = combination.getCurrentNumber().getValue();
 
         // Draw current Symbol
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
@@ -123,8 +134,6 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         int robotWidth = symbolWidth / 3;
         int robotHeight = symbolHeight / 3;
         canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
-
-
 
         // Draw number on top of current Symbol with a white outline
         Paint outlinePaint = new Paint();
@@ -144,18 +153,32 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback 
         textPaint.setColor(Color.BLACK); // Text color
         textPaint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(String.valueOf(currentNumber), outlineNumberX, outlineNumberY, textPaint);
-
-
     }
-    private Bitmap getBitMapFromElement(FieldCategory element){
-        switch(element){
-            case ENERGY:return energyBitmap;
-            case PLANNING:return planningBitmap;
+
+    private Bitmap getBitMapFromElement(FieldCategory element) {
+        switch (element) {
+            case ENERGY: return energyBitmap;
+            case PLANNING: return planningBitmap;
             case SPACESUIT: return spacesuitBitmap;
             case WATER: return waterBitmap;
             case PLANT: return plantBitmap;
             case ROBOT: return robotBitmap;
             default: return null;
         }
+    }
+
+    @Override
+    public boolean onScale(@NonNull ScaleGestureDetector detector) {
+        return false;
+    }
+
+    @Override
+    public boolean onScaleBegin(@NonNull ScaleGestureDetector detector) {
+        return false;
+    }
+
+    @Override
+    public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
+        // No action needed
     }
 }
