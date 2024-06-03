@@ -6,6 +6,7 @@ import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.screens.MainMenu;
 import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
+import com.example.se2_projekt_app.screens.WinnerScreen;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,10 @@ public class PostOffice {
             case "requestLobbyUser":
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
+                break;
+            case "requestUsersForWinningScreen":
+                WinnerScreen.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "gameIsStarted":
                 Multiplayer.startGameResponseReceiver.receiveResponse(response);
