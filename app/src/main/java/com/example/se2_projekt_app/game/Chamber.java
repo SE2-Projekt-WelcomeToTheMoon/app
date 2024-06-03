@@ -113,13 +113,4 @@ public class Chamber implements Clickable {
     public Field getLastAccessedField() {
         return lastAccessedField;
     }
-
-    /**
-     * Just for Testing
-     *
-     * @return
-     */
-    public void setLastAccessedField(Field lastAccessedField) {
-        this.lastAccessedField = lastAccessedField;
-    }
 }

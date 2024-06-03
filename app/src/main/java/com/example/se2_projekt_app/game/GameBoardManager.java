@@ -203,4 +203,8 @@ public class GameBoardManager {
         this.sendMessageService = sendMessageService;
     }
 
+    public Floor getLastAccessedFloor() {
+        return GameBoardView.getLastAccessedFloor();
+    }
+
 }
