@@ -26,6 +26,8 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private float translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
+    private static final int MAX_CLICK_DURATION = 1000;
+    private long pressStartTime;
     private GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
     // will be set by cardview
@@ -109,18 +111,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
         int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
-            float adjustedX = (event.getX() - translateX) / scaleFactor;
-            float adjustedY = (event.getY() - translateY) / scaleFactor;
-
-
-            for (Floor floor : gameboard.getFloors()) {
-                if (floor.handleClick(adjustedX, adjustedY, this, currentSelection)) {
-                    resetPreviousField(floor);
-                    lastAccessedFloor = floor;
-                    break;
-                }
-            }
-
+            pressStartTime = System.currentTimeMillis();
+            pressedX = event.getX();
+            pressedY = event.getY();
             lastTouchX = event.getX();
             lastTouchY = event.getY();
         } else if (action == MotionEvent.ACTION_MOVE && !scaleGestureDetector.isInProgress()) {
@@ -132,6 +125,28 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             lastTouchX = event.getX();
             lastTouchY = event.getY();
             drawGameBoard();
+        } else if (action == MotionEvent.ACTION_UP) {
+            long pressDuration = System.currentTimeMillis() - pressStartTime;
+            if (pressDuration < MAX_CLICK_DURATION){
+                float adjustedX = (event.getX() - translateX) / scaleFactor;
+                float adjustedY = (event.getY() - translateY) / scaleFactor;
+
+                if (lastAccessedFloor != null) {
+                    resetPreviousField(lastAccessedFloor);
+                }
+
+                for (Floor floor : gameboard.getFloors()) {
+                    if (floor.handleClick(adjustedX, adjustedY, this, currentSelection)) {
+                        lastAccessedFloor = floor;
+                        break;
+                    }
+                }
+
+                lastTouchX = event.getX();
+                lastTouchY = event.getY();
+
+                drawGameBoard();
+            }
         }
         return true;
     }
