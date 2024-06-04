@@ -18,6 +18,7 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
@@ -64,21 +65,21 @@ public class GameScreen extends Activity {
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player2")))); // Testing purposes
-            currentOwner = playerMap.getOrDefault("Player2", "");
+            currentOwner = playerMap.size() >= 2 ? playerMap.get("Player2") : "";
         });
         findViewById(R.id.player3_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player3"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player3")))); // Testing purposes
-            currentOwner = playerMap.getOrDefault("Player3", "");
+            currentOwner = playerMap.size() >= 3 ? playerMap.get("Player3") : "";
         });
         findViewById(R.id.player4_button).setOnClickListener(v -> {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player4"));
             view = findViewById(R.id.rocket_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
-            currentOwner = playerMap.getOrDefault("Player4", "");
+            currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
         });
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
@@ -86,14 +87,15 @@ public class GameScreen extends Activity {
 
         findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
             Log.e(TAG, String.valueOf(currentOwner));
-            if (currentOwner.equals(localUser) && !currentOwner.isEmpty()) {
-                Log.e(TAG, "Cheat");
+            if (currentOwner.equals(localUser)) {
+                Log.i(TAG, "Cheat");
                 gameBoardManager.cheat();
             } else {
-                Log.e(TAG, "Detect cheat");
-                gameBoardManager.detectCheat(currentOwner);
+                if(!currentOwner.isEmpty()){
+                    Log.i(TAG, "Detect cheat");
+                    gameBoardManager.detectCheat(currentOwner);
+                }
             }
-
         });
 
         // insert draw on touch values
@@ -168,16 +170,25 @@ public class GameScreen extends Activity {
                         runOnUiThread(() -> {
                             gameBoardManager.updateCheatedUser(username, message);
                             view = findViewById(R.id.rocket_count);
-                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username))); // Testing purposes
+                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
                         });
                         break;
-                    case "playerDetectedCheat":
+                    case "playerDetectedCheatCorrect":
                         Log.d(TAG, "Player {} has cheated" + message);
                         runOnUiThread(() -> {
-                            gameBoardManager.updateCorrectCheatDetection(username, message, success);
+                            gameBoardManager.updateCorrectCheatDetection(username, message, true);
 
                             view = findViewById(R.id.rocket_count);
-                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username))); // Testing purposes
+                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
+                        });
+                        break;
+                    case "playerDetectedCheatWrong":
+                        Log.d(TAG, "Player {} has cheated" + message);
+                        runOnUiThread(() -> {
+                            gameBoardManager.updateCorrectCheatDetection(username, message, false);
+
+                            view = findViewById(R.id.rocket_count);
+                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
                         });
                         break;
                     default:

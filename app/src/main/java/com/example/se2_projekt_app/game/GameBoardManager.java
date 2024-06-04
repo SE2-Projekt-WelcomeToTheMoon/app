@@ -329,7 +329,11 @@ public class GameBoardManager {
         }
 
         gameBoard.addRockets(success ? 1 : -1);
-
+        if(success){
+            Log.i("GameBoardManager", "cheat detect successful");
+        }else {
+            Log.i("GameBoardManager", "cheat detect wrong");
+        }
 
         user.setGameBoard(gameBoard);
         return;
