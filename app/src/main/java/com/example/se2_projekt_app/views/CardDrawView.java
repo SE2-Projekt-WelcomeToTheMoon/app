@@ -111,7 +111,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
                 canvas.drawColor(Color.WHITE);
 
                 // Calculate image dimensions
-                int imageHeight = canvas.getHeight() / 5;
+                int imageHeight = canvas.getHeight() ;
                 int imageWidth = canvas.getWidth() / 3; // Limit width to one third of the screen width
 
                 // Draw the image and number three times with appropriate spacing
@@ -140,9 +140,10 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
 
         // Draw nextSymbol on top of Current symbol at 1/4 the size
-        int robotWidth = symbolWidth / 3;
-        int robotHeight = symbolHeight / 3;
-        canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + robotWidth, robotHeight), null);
+        int nextSymbolWidth = symbolWidth / 3;
+        int nextSymbolHeight = symbolHeight / 3;
+        int nextSymbolTop = symbolHeight - nextSymbolHeight;  // Bottom left position
+        canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, nextSymbolTop, offsetX + nextSymbolWidth, nextSymbolTop + nextSymbolHeight), null);
 
         // Draw number on top of current Symbol with a white outline
         Paint outlinePaint = new Paint();

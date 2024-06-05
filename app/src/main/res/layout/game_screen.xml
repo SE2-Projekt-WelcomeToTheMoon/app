@@ -25,17 +25,32 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:focusable="auto"
-                    android:orientation="horizontal">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <com.example.se2_projekt_app.views.CardDrawView
-                        android:id="@+id/cardDrawView"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal">
+
+                        <com.example.se2_projekt_app.views.CardDrawView
+                            android:id="@+id/cardDrawView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="8"
+                        android:orientation="vertical">
+                        <!-- Other views go here -->
+                    </LinearLayout>
 
                 </LinearLayout>
+
 
 
                 <LinearLayout
