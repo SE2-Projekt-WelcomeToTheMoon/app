@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
@@ -32,6 +33,7 @@ public class GameScreen extends Activity {
     private CardController cardcontroller;
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
+    public CardCombination selectedCombination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class GameScreen extends Activity {
         findViewById(R.id.debug_back).setOnClickListener(v -> finish());
         findViewById(R.id.player1_button).setOnClickListener(v -> gameBoardManager.showGameBoard(localUser));
         findViewById(R.id.player2_button).setOnClickListener(v -> {
+
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
         });
@@ -91,6 +94,7 @@ public class GameScreen extends Activity {
         });
 
         toggleDrawerButton.setOnClickListener(v -> {
+
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
             } else {
@@ -103,6 +107,9 @@ public class GameScreen extends Activity {
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+
+
+
                 // Translate the button with the drawer slide
                 toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
                 toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -127,7 +134,7 @@ public class GameScreen extends Activity {
 
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
-        cardcontroller = new CardController(cardDrawView);
+        cardcontroller = new CardController(cardDrawView,this);
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {

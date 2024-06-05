@@ -1,6 +1,7 @@
 package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.screens.GameScreen;
 import com.example.se2_projekt_app.views.CardDrawView;
 
 import lombok.Getter;
@@ -10,18 +11,24 @@ import lombok.Getter;
  */
 @Getter
 public class CardController {
+    private final GameScreen gameScreen;
     @Getter
     private CardCombination[] currentCombination;
     private final CardDrawView cardDrawView;
 
-    public CardController(CardDrawView cardDrawView) {
+    public CardController(CardDrawView cardDrawView, GameScreen gameScreen) {
+
+
         this.cardDrawView = cardDrawView;
          currentCombination = new CardCombination[]{
-                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                 new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANT, FieldValue.THREE),
                  new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
                  new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
          };
-        displayCurrentCombination();
+
+         this.gameScreen=gameScreen;
+         this.cardDrawView.setGameScreen(this.gameScreen);
+         displayCurrentCombination();
     }
 
     /***
@@ -54,9 +61,7 @@ public class CardController {
         cardDrawView.updateCanvas(currentCombination);
 
     }
-    public CardCombination getCurrentClicked(){
-        return cardDrawView.getLastClicked();
-    }
+
 
 
 }

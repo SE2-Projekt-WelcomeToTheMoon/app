@@ -10,7 +10,7 @@ class CardControllerTest {
     CardController cardController;
     @BeforeEach
     void setup(){
-        cardController=new CardController(null);
+        cardController=new CardController(null,null);
     }
     @Test
     void testExtractCardsFromServerString() {

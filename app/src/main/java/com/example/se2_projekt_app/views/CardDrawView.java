@@ -18,8 +18,7 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.CardCombination;
-
-import lombok.Getter;
+import com.example.se2_projekt_app.screens.GameScreen;
 
 public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback, ScaleGestureDetector.OnScaleGestureListener {
 
@@ -31,9 +30,9 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
     private Bitmap waterBitmap;
     private final int[] xPositions;
     private CardCombination[] currentCombination;
-    @Getter
-    private CardCombination lastClicked;
+
     private int yHeight;
+    private GameScreen gameScreen;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -67,7 +66,11 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
             waterBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water);
 
     }
+    public void setGameScreen(GameScreen gameScreen){
 
+        this.gameScreen=gameScreen;
+
+    }
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
         updateCanvas(currentCombination);
@@ -81,16 +84,17 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
+        if(gameScreen==null){
+            return true;
+        }
         if (action == MotionEvent.ACTION_DOWN) {
             if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
-                lastClicked = currentCombination[0];
-
+                gameScreen.selectedCombination=currentCombination[0];
             } else if (event.getX() > xPositions[1] && event.getX() < xPositions[2] && event.getY() < yHeight) {
-                lastClicked = currentCombination[1];
+                gameScreen.selectedCombination=currentCombination[1];
 
             } else if (event.getY() < yHeight) {
-                lastClicked = currentCombination[2];
-
+                gameScreen.selectedCombination=currentCombination[2];
             }
         }
         return true;
