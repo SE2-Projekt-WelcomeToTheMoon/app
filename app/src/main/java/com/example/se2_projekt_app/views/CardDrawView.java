@@ -33,12 +33,14 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
 
     private int yHeight;
     private GameScreen gameScreen;
+    int selectedCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
         setFocusable(true);
         xPositions = new int[3];
+        selectedCombination=10;
     }
 
     @Override
@@ -90,13 +92,16 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         if (action == MotionEvent.ACTION_DOWN) {
             if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
                 gameScreen.selectedCombination=currentCombination[0];
+                selectedCombination=0;
             } else if (event.getX() > xPositions[1] && event.getX() < xPositions[2] && event.getY() < yHeight) {
                 gameScreen.selectedCombination=currentCombination[1];
-
+                selectedCombination=1;
             } else if (event.getY() < yHeight) {
                 gameScreen.selectedCombination=currentCombination[2];
+                selectedCombination=2;
             }
         }
+        updateCanvas(currentCombination);
         return true;
     }
 
@@ -117,7 +122,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
                 // Draw the image and number three times with appropriate spacing
                 for (int i = 0; i < 3; i++) {
                     xPositions[i] = i * (imageWidth + 20); // Adjust spacing as needed
-                    drawCombination(canvas, xPositions[i], combination[i], imageWidth, imageHeight);
+                    drawCombination(canvas, xPositions[i], combination[i], imageWidth, imageHeight, i == selectedCombination);
                 }
                 yHeight = imageHeight;
             }
@@ -128,7 +133,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
-    private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight) {
+    private void drawCombination(Canvas canvas, int offsetX, CardCombination combination, int symbolWidth, int symbolHeight, boolean selected) {
         if (combination == null || combination.getCurrentNumber() == null || combination.getCurrentSymbol() == null || combination.getNextSymbol() == null) {
             throw new IllegalArgumentException("Cannot draw from empty combination");
         }
@@ -163,6 +168,14 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         textPaint.setColor(Color.BLACK); // Text color
         textPaint.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(String.valueOf(currentNumber), outlineNumberX, outlineNumberY, textPaint);
+        // Draw green outline if selected
+        if (selected) {
+            Paint greenOutlinePaint = new Paint();
+            greenOutlinePaint.setColor(Color.GREEN);
+            greenOutlinePaint.setStyle(Paint.Style.STROKE);
+            greenOutlinePaint.setStrokeWidth(10); // Adjust stroke width as needed
+            canvas.drawRect(new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), greenOutlinePaint);
+        }
     }
 
     private Bitmap getBitMapFromElement(FieldCategory element) {
