@@ -143,12 +143,16 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         int currentNumber = combination.getCurrentNumber().getValue();
 
         // Draw current Symbol
+        //Need to assert Not null because Sonarcloud even though its checked at the start of the method
+        assert currentSymbol != null;
         canvas.drawBitmap(currentSymbol, null, new android.graphics.Rect(offsetX, 0, offsetX + symbolWidth, symbolHeight), null);
 
         // Draw nextSymbol on top of Current symbol at 1/4 the size
         int nextSymbolWidth = symbolWidth / 3;
         int nextSymbolHeight = symbolHeight / 3;
         int nextSymbolTop = symbolHeight - nextSymbolHeight;  // Bottom left position
+        //Need to assert Not null because Sonarcloud even though its checked at the start of the method
+        assert nextSymbol != null;
         canvas.drawBitmap(nextSymbol, null, new android.graphics.Rect(offsetX, nextSymbolTop, offsetX + nextSymbolWidth, nextSymbolTop + nextSymbolHeight), null);
 
         // Draw number on top of current Symbol with a white outline
