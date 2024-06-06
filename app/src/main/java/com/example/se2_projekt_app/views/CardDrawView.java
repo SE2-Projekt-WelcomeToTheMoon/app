@@ -107,6 +107,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
 
 
     public void updateCanvas(CardCombination[] combination) {
+        if(combination==null)throw new IllegalArgumentException("Cannot update on null combination");
         this.currentCombination = combination;
         Canvas canvas = null;
         try {
