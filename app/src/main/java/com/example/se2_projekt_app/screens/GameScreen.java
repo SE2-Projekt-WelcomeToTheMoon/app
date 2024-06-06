@@ -11,6 +11,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
@@ -30,10 +31,9 @@ public class GameScreen extends Activity {
     private TextView view;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
-    private CardController cardcontroller;
+
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
-    public CardCombination selectedCombination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,9 @@ public class GameScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
 
+        CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
-        gameBoardManager = new GameBoardManager(gameBoardView);
+        gameBoardManager = new GameBoardManager(gameBoardView,new CardController(cardDrawView,this));
 
 
         // get local user
@@ -75,7 +76,7 @@ public class GameScreen extends Activity {
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
         // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -133,8 +134,6 @@ public class GameScreen extends Activity {
 
 
 
-        CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
-        cardcontroller = new CardController(cardDrawView,this);
 
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
@@ -151,8 +150,8 @@ public class GameScreen extends Activity {
                         break;
                     case "nextCardDraw":
                         Log.d(TAG, "Updating to show next card drawn with message {}"+message);
-                        cardcontroller.extractCardsFromServerString(message);
-                        cardcontroller.displayCurrentCombination();
+                        gameBoardManager.extractCardsFromServerString(message);
+                        gameBoardManager.displayCurrentCombination();
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
@@ -176,5 +175,8 @@ public class GameScreen extends Activity {
                 }
             }
         }
+    }
+    public void setSelectedCard(CardCombination combination){
+        gameBoardManager.setSelectedCard(combination);
     }
 }

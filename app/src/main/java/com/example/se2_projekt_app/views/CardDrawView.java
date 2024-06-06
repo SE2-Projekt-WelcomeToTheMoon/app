@@ -91,13 +91,13 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
         }
         if (action == MotionEvent.ACTION_DOWN) {
             if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
-                gameScreen.selectedCombination=currentCombination[0];
+                gameScreen.setSelectedCard(currentCombination[0]);
                 selectedCombination=0;
             } else if (event.getX() > xPositions[1] && event.getX() < xPositions[2] && event.getY() < yHeight) {
-                gameScreen.selectedCombination=currentCombination[1];
+                gameScreen.setSelectedCard(currentCombination[1]);
                 selectedCombination=1;
             } else if (event.getY() < yHeight) {
-                gameScreen.selectedCombination=currentCombination[2];
+                gameScreen.setSelectedCard(currentCombination[2]);
                 selectedCombination=2;
             }
         }

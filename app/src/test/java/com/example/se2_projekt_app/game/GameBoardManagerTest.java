@@ -41,7 +41,7 @@ class GameBoardManagerTest {
         MockitoAnnotations.initMocks(this);
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
-        gameBoardManager = new GameBoardManager(mockGameBoardView);
+        gameBoardManager = new GameBoardManager(mockGameBoardView,null);
         gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
