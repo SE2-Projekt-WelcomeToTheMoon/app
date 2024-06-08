@@ -55,6 +55,7 @@ public class PostOffice {
             case "updateUser":
             case "nextCardDraw":
             case "makeMove":
+            case "notifyGameState":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen.");
                 break;

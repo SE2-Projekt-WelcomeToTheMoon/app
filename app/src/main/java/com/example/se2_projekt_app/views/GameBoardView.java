@@ -174,10 +174,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
     private void resetPreviousField(Floor floor) {
         Field field = floor.getLastAccessedChamber().getLastAccessedField();
-        if (field != null) {
+        if (field != null && !field.isFinalized()) {
             field.reset();
         }
-
     }
 
     private void drawFloors(float adjustedY, float adjustedX) {

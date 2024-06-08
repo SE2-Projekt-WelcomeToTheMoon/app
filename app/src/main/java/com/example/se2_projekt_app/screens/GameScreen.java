@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -27,7 +28,7 @@ public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
     private Button toggleDrawerButton;
 
-//    private ProgressBar progressBar;
+    //    private ProgressBar progressBar;
     private TextView view;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
@@ -43,7 +44,7 @@ public class GameScreen extends Activity {
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
-        gameBoardManager = new GameBoardManager(gameBoardView,new CardController(cardDrawView,this));
+        gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
 
 
         // get local user
@@ -76,7 +77,7 @@ public class GameScreen extends Activity {
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
         // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -110,7 +111,6 @@ public class GameScreen extends Activity {
             public void onDrawerSlide(View drawerView, float slideOffset) {
 
 
-
                 // Translate the button with the drawer slide
                 toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
                 toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -133,8 +133,6 @@ public class GameScreen extends Activity {
         });
 
 
-
-
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
@@ -146,9 +144,15 @@ public class GameScreen extends Activity {
                         runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
                     case "nextCardDraw":
-                        Log.d(TAG, "Updating to show next card drawn with message {}"+message);
+                        Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
+                        break;
+                    case "notifyGameState":
+                        Log.d(TAG, "Received notifyGameState message {}" + message);
+                        runOnUiThread(() ->
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show()
+                        );
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
@@ -173,7 +177,8 @@ public class GameScreen extends Activity {
             }
         }
     }
-    public void setSelectedCard(CardCombination combination){
+
+    public void setSelectedCard(CardCombination combination) {
         gameBoardManager.setSelectedCard(combination);
     }
 }
