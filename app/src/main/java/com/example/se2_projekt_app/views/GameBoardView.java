@@ -15,8 +15,12 @@ import androidx.annotation.NonNull;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.Field;
+import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.Floor;
 import com.example.se2_projekt_app.game.GameBoard;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Provides a view that supports scaling and touch interactions to manage and display game elements.
@@ -34,6 +38,10 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     // will be set by cardview
     private FieldValue currentSelection = FieldValue.FIVE;
     private static Floor lastAccessedFloor = null;
+    @Setter
+    private CardCombination currentSelection;
+    @Getter
+    private int lastAccessedFloor = 0;
 
     /**
      * Constructs the game board view with necessary context and attributes.
@@ -141,6 +149,12 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             float adjustedX = (event.getX() - translateX) / scaleFactor;
             float adjustedY = (event.getY() - translateY) / scaleFactor;
 
+            for (int i = 0; i < gameboard.getFloors().size(); i++) {
+                Floor floor = gameboard.getFloors().get(i);
+                if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
+                    lastAccessedFloor = i;
+                    break;
+                }
             if (lastAccessedFloor != null) {
                 resetPreviousField(lastAccessedFloor);
             }
