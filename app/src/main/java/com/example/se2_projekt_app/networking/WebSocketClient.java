@@ -4,7 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.se2_projekt_app.networking.json.JSONKeys;
+import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.responsehandler.PostOffice;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.Username;
 
 import org.json.JSONException;
@@ -12,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
+import lombok.Setter;
 import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,6 +34,10 @@ public class WebSocketClient implements Runnable{
     private WebSocket websocket;
     //ResponseHandler passed when connection to server is being established
     private final PostOffice responseHandler = new PostOffice();
+    private boolean connectionUp = false;
+    @Setter
+    private static boolean disconPurpously = false;
+    private ResponseReceiver response;
 
     /**
      * Establishes connection to server and provides methods to handle it.
@@ -53,6 +62,7 @@ public class WebSocketClient implements Runnable{
             @Override
             public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
                 super.onOpen(webSocket, response);
+                connectionUp = true;
                 Log.i(TAG, "Connection to server established.");
             }
 
@@ -96,6 +106,7 @@ public class WebSocketClient implements Runnable{
             @Override
             public void onClosed(@NonNull WebSocket webSocket, int code, @NonNull String reason) {
                 super.onClosed(webSocket, code, reason);
+                connectionUp = false;
                 Log.i(TAG,"Connection to server closed. Status: " + code);
             }
 
@@ -112,10 +123,13 @@ public class WebSocketClient implements Runnable{
                 super.onFailure(webSocket, t, response);
                 if(checkResponse(response)) Log.w(TAG,"Connection termination unexpected. Error: "
                         + t.getMessage());
+                connectionUp = false;
                 TimeUnit.SECONDS.sleep(2);
-                Log.i(TAG, "Trying to reconnect...");
-                Username.webSocketClient.connectToServer(responseHandler);
-                Log.i(TAG, "Reconnected.");
+                if(!disconPurpously){
+                    Log.i(TAG, "Trying to reconnect...");
+                    if(!connectionUp) reconnectToServer();
+                    Log.i(TAG, "Reconnected.");
+                }
             }
         });
     }
@@ -136,6 +150,7 @@ public class WebSocketClient implements Runnable{
     public void disconnectFromServer() throws Throwable {
         try {
             websocket.close(1000, "Closing");
+            connectionUp = false;
             Log.i(TAG, "Begin closing connection to server...");
         } finally {
             super.finalize();
@@ -155,6 +170,22 @@ public class WebSocketClient implements Runnable{
             Log.i(TAG,"Response received.");
             return false;
         }
+    }
+
+    private boolean reconnectToServer(){
+        Username.webSocketClient.connectToServer(responseHandler);
+        JSONObject message = JSONService.generateJSONObject(
+                JSONKeys.RECONNECT.getValue(), Username.user.getUsername(),
+                true, "", "");
+        SendMessageService.sendMessage(message);
+        response = msg -> {
+            boolean success = msg.getBoolean(JSONKeys.SUCCESS.getValue());
+            if (success) {
+                connectionUp = true;
+            }
+        };
+        if(connectionUp) return true;
+        return false;
     }
 
     /**

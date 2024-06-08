@@ -11,9 +11,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.se2_projekt_app.R;
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
+import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
+import com.example.se2_projekt_app.views.CardDrawView;
 import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
@@ -38,8 +42,9 @@ public class GameScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
 
+        CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
-        gameBoardManager = new GameBoardManager(gameBoardView);
+        gameBoardManager = new GameBoardManager(gameBoardView,new CardController(cardDrawView,this));
 
 
         // get local user
@@ -61,6 +66,7 @@ public class GameScreen extends Activity {
             currentOwner = localUser;
         });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
+
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
@@ -99,7 +105,7 @@ public class GameScreen extends Activity {
         });
 
         // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setFieldValue(FieldValue.getRandomFieldValue()));
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -191,6 +197,11 @@ public class GameScreen extends Activity {
                             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
                         });
                         break;
+                    case "nextCardDraw":
+                        Log.d(TAG, "Updating to show next card drawn with message {}"+message);
+                        gameBoardManager.extractCardsFromServerString(message);
+                        gameBoardManager.displayCurrentCombination();
+                        break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
                 }
@@ -213,5 +224,8 @@ public class GameScreen extends Activity {
                 }
             }
         }
+    }
+    public void setSelectedCard(CardCombination combination){
+        gameBoardManager.setSelectedCard(combination);
     }
 }
