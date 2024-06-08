@@ -25,14 +25,18 @@ public class GameBoardManager {
     private int floorIndex;
     private int chamberIndex;
     private int fieldIndex;
+    private final CardController cardController;
     private ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
     private SendMessageService sendMessageService = new SendMessageService();
 
-    public GameBoardManager(GameBoardView gameBoardView) {
+    public GameBoardManager(GameBoardView gameBoardView,CardController cardController) {
         this.gameBoardView = gameBoardView;
         this.objectMapper = new ObjectMapper();
+        this.cardController=cardController;
     }
+
+
 
     public void addUser(User user) {
         this.users.add(user);
@@ -214,4 +218,14 @@ public class GameBoardManager {
         this.sendMessageService = sendMessageService;
     }
 
+    public void displayCurrentCombination() {
+        cardController.displayCurrentCombination();
+    }
+    public void extractCardsFromServerString(String message) {
+        cardController.extractCardsFromServerString(message);
+    }
+
+    public void setSelectedCard(CardCombination combination) {
+        gameBoardView.setCurrentSelection(combination);
+    }
 }
