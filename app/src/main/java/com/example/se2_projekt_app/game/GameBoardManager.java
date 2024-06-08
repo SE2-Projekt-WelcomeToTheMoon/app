@@ -184,7 +184,7 @@ public class GameBoardManager {
         }
         Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
         Log.e("GameBoardManager", "Field is already finalized, not changed or null");
-        return null;
+        return field;
     }
 
     public String getLocalUsername() {
