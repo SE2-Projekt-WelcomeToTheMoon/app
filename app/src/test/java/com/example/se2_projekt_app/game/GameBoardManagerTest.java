@@ -126,7 +126,7 @@ class GameBoardManagerTest {
 
     @Test
     void testCreatePayload() {
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(0, 0, 0, FieldValue.FIVE, "Player1");
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(0, 0, 0, FieldValue.FIVE, "Player1", null);
         ObjectMapper objectMapper = new ObjectMapper();
         String expected = "";
         try {

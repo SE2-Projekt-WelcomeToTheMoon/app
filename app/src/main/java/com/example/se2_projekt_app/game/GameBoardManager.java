@@ -170,7 +170,8 @@ public class GameBoardManager {
     }
 
     public String createPayload(Field field) {
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername);
+        CardCombination cardCombination = gameBoardView.getCurrentSelection();
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername, cardCombination);
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
         } catch (Exception e) {

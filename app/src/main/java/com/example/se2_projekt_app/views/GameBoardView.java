@@ -54,10 +54,6 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
         //prevent crashing
         this.currentSelection = new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE);
-
-        Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
-        floor.addChamber(5);
-        gameboard.addFloor(floor);
     }
 
     public void setGameBoard(GameBoard gameBoard) {
@@ -207,4 +203,6 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
         // empty because I had to implement it and don't need it yet
     }
+
+
 }
