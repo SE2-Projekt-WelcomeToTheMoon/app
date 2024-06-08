@@ -3,6 +3,7 @@ package com.example.se2_projekt_app.game;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
@@ -158,11 +159,12 @@ public class GameBoardManager {
             return false;
         }
 
+        updateIndex();
         field.setFinalized();
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONObject jsonObject = JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        JSONObject jsonObject = JSONService.generateJSONObject(ActionValues.MAKEMOVE.getValue(), localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
 
         Log.d("GameBoardManager", "Payload: " + payload);
@@ -181,12 +183,18 @@ public class GameBoardManager {
         }
     }
 
+    private void updateIndex() {
+        floorIndex = gameBoardView.getLastAccessedFloorIndex();
+        chamberIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
+        fieldIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
+    }
+
     public Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
+            Log.e("GameBoardManager", "GameBoard is null");
             return null;
         }
         Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
-        Log.e("GameBoardManager", "Field is already finalized, not changed or null");
         return field;
     }
 

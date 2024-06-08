@@ -141,12 +141,9 @@ public class GameScreen extends Activity {
                 String username = response.getString(TAG_USERNAME);
                 String message = response.getString("message");
                 switch (action) {
-                    case "updateUser":
-                        Log.d(TAG, "Received updateUser message {}" + message);
-                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
-                        break;
                     case "makeMove":
-                        //placeholder
+                        Log.d(TAG, "Received makeMove message {}" + message);
+                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
                     case "nextCardDraw":
                         Log.d(TAG, "Updating to show next card drawn with message {}"+message);

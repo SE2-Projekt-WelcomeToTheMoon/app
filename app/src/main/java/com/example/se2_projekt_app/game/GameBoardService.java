@@ -3,6 +3,7 @@ package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.FieldCategory;
 
 public class GameBoardService {
+    int floorIndex = 0;
 
     /**
      * Creates a new game board with predefined floors.

@@ -51,13 +51,9 @@ public class PostOffice {
                 Multiplayer.startGameResponseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
                 break;
-            case "updateUser":
 
-                break;
+            case "updateUser":
             case "nextCardDraw":
-                GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Gamescreen");
-                break;
             case "makeMove":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen.");

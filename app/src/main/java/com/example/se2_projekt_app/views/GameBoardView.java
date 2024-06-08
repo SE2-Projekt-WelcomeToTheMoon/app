@@ -37,7 +37,10 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private ScaleGestureDetector scaleGestureDetector;
     @Getter
     private static Floor lastAccessedFloor = null;
+    @Getter
+    private int lastAccessedFloorIndex = -1;
     @Setter
+    @Getter
     private CardCombination currentSelection;
 
     /**
@@ -178,8 +181,10 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void drawFloors(float adjustedY, float adjustedX) {
-        for (Floor floor : gameboard.getFloors()) {
+        for (int i = 0 ; i < gameboard.getFloors().size() ; i++) {
+            Floor floor = gameboard.getFloors().get(i);
             if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
+                lastAccessedFloorIndex = i;
                 lastAccessedFloor = floor;
                 break;
             }
@@ -203,6 +208,4 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
         // empty because I had to implement it and don't need it yet
     }
-
-
 }
