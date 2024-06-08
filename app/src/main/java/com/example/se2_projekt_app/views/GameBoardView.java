@@ -35,13 +35,10 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private long pressStartTime;
     private GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
-    // will be set by cardview
-    private FieldValue currentSelection = FieldValue.FIVE;
+    @Getter
     private static Floor lastAccessedFloor = null;
     @Setter
     private CardCombination currentSelection;
-    @Getter
-    private int lastAccessedFloor = 0;
 
     /**
      * Constructs the game board view with necessary context and attributes.
@@ -54,6 +51,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
         getHolder().addCallback(this);
         setFocusable(true);
         init(context);
+
+        //prevent crashing
+        this.currentSelection = new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE);
 
         Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
         floor.addChamber(5);
@@ -149,12 +149,6 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             float adjustedX = (event.getX() - translateX) / scaleFactor;
             float adjustedY = (event.getY() - translateY) / scaleFactor;
 
-            for (int i = 0; i < gameboard.getFloors().size(); i++) {
-                Floor floor = gameboard.getFloors().get(i);
-                if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
-                    lastAccessedFloor = i;
-                    break;
-                }
             if (lastAccessedFloor != null) {
                 resetPreviousField(lastAccessedFloor);
             }
@@ -189,13 +183,12 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
     private void drawFloors(float adjustedY, float adjustedX) {
         for (Floor floor : gameboard.getFloors()) {
-            if (floor.handleClick(adjustedX, adjustedY, this, currentSelection)) {
+            if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
                 lastAccessedFloor = floor;
                 break;
             }
         }
     }
-
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
@@ -213,13 +206,5 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
         // empty because I had to implement it and don't need it yet
-    }
-
-    public void setFieldValue(FieldValue fieldValue) {
-        this.currentSelection = fieldValue;
-    }
-
-    public static Floor getLastAccessedFloor() {
-        return lastAccessedFloor;
     }
 }
