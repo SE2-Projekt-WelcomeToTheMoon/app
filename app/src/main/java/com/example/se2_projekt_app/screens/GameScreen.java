@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
@@ -35,6 +36,7 @@ public class GameScreen extends Activity {
 
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
+    private GameState gameState = GameState.INITIAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +76,10 @@ public class GameScreen extends Activity {
             gameBoardManager.showGameBoard(playerMap.get("Player4"));
         });
 
-        findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
+        Button randomButton = findViewById(R.id.game_screen_random_field_button);
+        randomButton.setText(gameState.toString());
 
-        // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
+        findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -132,7 +134,6 @@ public class GameScreen extends Activity {
             }
         });
 
-
         responseReceiver = response -> {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
@@ -150,9 +151,8 @@ public class GameScreen extends Activity {
                         break;
                     case "notifyGameState":
                         Log.d(TAG, "Received notifyGameState message {}" + message);
-                        runOnUiThread(() ->
-                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show()
-                        );
+                        gameState = GameState.valueOf(message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");

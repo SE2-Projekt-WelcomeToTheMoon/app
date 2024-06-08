@@ -3,6 +3,7 @@ package com.example.se2_projekt_app.game;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONService;
@@ -30,6 +31,7 @@ public class GameBoardManager {
     private ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
     private SendMessageService sendMessageService = new SendMessageService();
+    private GameState currentGameState = null;
 
     public GameBoardManager(GameBoardView gameBoardView,CardController cardController) {
         this.gameBoardView = gameBoardView;
@@ -117,7 +119,6 @@ public class GameBoardManager {
         }
     }
 
-
     private void updateGameBoardView(User user) {
         if (user.getUsername().equals(localUsername)) {
             gameBoardView.setGameBoard(user.getGameBoard());
@@ -148,6 +149,13 @@ public class GameBoardManager {
      * If the field is already finalized, not changed or null it will not send the field to the backend.
      */
     public boolean acceptTurn() {
+//        Log.d("GameBoardManager", "Accepting Turn");
+//        if (currentGameState != GameState.ROUND_THREE) {
+//            Log.d("GameBoardManager", "Not in round three, asking for new State from Server");
+//            JSONObject jsonObject = JSONService.generateJSONObject("sendGameState", "", true, "", "");
+//            SendMessageService.sendMessage(jsonObject);
+//            return false;
+//        }
         User user = userExists(localUsername);
         if (user == null) {
             return false;
@@ -227,5 +235,12 @@ public class GameBoardManager {
 
     public void setSelectedCard(CardCombination combination) {
         gameBoardView.setCurrentSelection(combination);
+    }
+
+    public void setGameState(GameState gameState) {
+        this.currentGameState = gameState;
+    }
+    public GameState getGameState() {
+        return currentGameState;
     }
 }
