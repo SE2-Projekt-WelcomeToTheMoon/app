@@ -168,7 +168,6 @@ public class GameBoardManager {
         }
 
         updateIndex();
-        field.setFinalized();
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
