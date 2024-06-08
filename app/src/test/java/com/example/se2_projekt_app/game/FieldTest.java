@@ -5,10 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
@@ -21,8 +19,6 @@ import org.mockito.MockitoAnnotations;
 
 class FieldTest {
     private Field field;
-    @Mock
-    private Field mockedField;
     @Mock
     private GameBoardView boardView;
     @Mock
@@ -102,5 +98,14 @@ class FieldTest {
         assertFalse(field.isChanged());
         field.handleClick(15,30, boardView, FieldValue.FIVE);
         assertTrue(field.isChanged());
+    }
+
+    @Test
+    void testReset(){
+        assertEquals(FieldValue.ONE, field.getNumber());
+        field.setNumber(FieldValue.TWO);
+        assertEquals(FieldValue.TWO, field.getNumber());
+        field.reset();
+        assertEquals(FieldValue.NONE, field.getNumber());
     }
 }
