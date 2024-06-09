@@ -140,6 +140,14 @@
                     android:layout_width="126dp"
                     android:layout_height="500dp"
                     android:layout_gravity="end|center_vertical">
+                    <Button
+                        android:id="@+id/btn_winnerScreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="WinnerScreen"
+                        tools:layout_editor_absoluteX="1dp"
+                        tools:layout_editor_absoluteY="141dp" />
 
                     <TextView
                         android:id="@+id/rocket_count"

@@ -1,6 +1,7 @@
 package com.example.se2_projekt_app.screens;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +42,7 @@ public class GameScreen extends Activity {
         DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
+        Button btn_winner = findViewById(R.id.btn_winnerScreen);
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
@@ -129,6 +131,10 @@ public class GameScreen extends Activity {
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
+        });
+        btn_winner.setOnClickListener(v -> {
+            Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
+            startActivity(intent);
         });
 
         closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
