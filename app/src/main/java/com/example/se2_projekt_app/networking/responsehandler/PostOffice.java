@@ -44,7 +44,7 @@ public class PostOffice {
                 Multiplayer.responseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
                 break;
-            case "requestUsersForWinningScreen":
+            case "winnerScreen":
                 WinnerScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
