@@ -147,7 +147,8 @@
                         android:gravity="end"
                         android:text="WinnerScreen"
                         tools:layout_editor_absoluteX="1dp"
-                        tools:layout_editor_absoluteY="141dp" />
+                        tools:layout_editor_absoluteY="141dp"
+                        tools:ignore="MissingConstraints" />
 
                     <TextView
                         android:id="@+id/rocket_count"
