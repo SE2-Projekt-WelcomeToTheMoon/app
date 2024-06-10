@@ -93,6 +93,7 @@ public class GameScreen extends Activity {
             currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
         });
 
+
         Button randomButton = findViewById(R.id.game_screen_random_field_button);
         randomButton.setText(gameState.toString());
 
