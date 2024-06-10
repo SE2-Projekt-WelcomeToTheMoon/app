@@ -155,11 +155,13 @@ public class Multiplayer extends Activity {
     }
 
     private void joinLobby() {
+        Log.d(TAG, "Joining lobby (Shake)");
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.JOINLOBBY.getValue(), username, null, "",
                 "");
         SendMessageService.sendMessage(msg);
+        Log.d(TAG, "Joined lobby, MSG sent" + msg);
     }
 
     private void leaveLobby() {

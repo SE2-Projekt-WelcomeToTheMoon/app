@@ -176,15 +176,10 @@ public class GameScreen extends Activity {
                 String action = response.getString("action");
                 String username = response.getString(TAG_USERNAME);
                 String message = response.optString("message", "");
-                String message = response.getString("message");
-                boolean success = Boolean.parseBoolean(response.getString("success"));
                 switch (action) {
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
                         runOnUiThread(() -> gameBoardManager.updateUser(username, message));
-                        break;
-                    case "makeMove":
-                        //placeholder
                         break;
                     case "playerHasCheated":
                         Log.d(TAG, "Player {} has cheated" + message);

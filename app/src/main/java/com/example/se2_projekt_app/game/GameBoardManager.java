@@ -179,7 +179,7 @@ public class GameBoardManager {
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONObject jsonObject = JSONService.generateJSONObject(ActionValues.MAKEMOVE.getValue(), localUsername, true, payload, "");
+        JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
 
         Log.d("GameBoardManager", "Payload: " + payload);
