@@ -117,7 +117,7 @@ public class WinnerScreen extends Activity {
             String username = newUserList.get(index).getUsername();
             int points = userMap.get(username);
             if (index == 0) {
-                textView.setText(username + " mit " + points + " Punkten");
+                textView.setText(username + " - " + points + " Pkt.");
             } else if (index == 1 || index == 2 || index == 3) {
                 textView.setText((index+1) + ". " + username + " - " + points + " Pkt.");
             } else {
