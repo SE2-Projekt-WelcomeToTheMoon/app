@@ -203,6 +203,10 @@ public class GameScreen extends Activity {
                             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
                         });
                         break;
+                    case "endGame":
+                        Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
+                        startActivity(intent);
+                        break;
                     case "nextCardDraw":
                         Log.d(TAG, "Updating to show next card drawn with message {}"+message);
                         gameBoardManager.extractCardsFromServerString(message);
