@@ -138,7 +138,7 @@ public class GameScreen extends Activity {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
                 String username = response.getString(TAG_USERNAME);
-                String message = response.getString("message");
+                String message = response.optString("message", "");
                 switch (action) {
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
@@ -158,7 +158,7 @@ public class GameScreen extends Activity {
                     case "invalidMove":
                     case "alreadyMoved":
                         Log.d(TAG, "Received " + action);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
