@@ -38,4 +38,13 @@ class GameBoardTest {
         gameBoard.addFloor(floor);
         assertEquals(floor, gameBoard.getFloor(0), "Floor should be returned");
     }
+
+    @Test
+    public void testAddRockets() {
+        gameBoard.addRockets(5);
+        assertEquals(5, gameBoard.getRockets());
+
+        gameBoard.addRockets(3);
+        assertEquals(8, gameBoard.getRockets());
+    }
 }

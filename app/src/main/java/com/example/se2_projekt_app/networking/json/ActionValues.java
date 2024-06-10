@@ -13,8 +13,10 @@ public enum ActionValues {
     LEAVELOBBY("leaveLobby"),
     REQUESTLOBBYUSER("requestLobbyUser"),
     STARTGAME("startGame"),
-    MAKEMOVE("makeMove");
-
+    UPDATESIMPLE("updateGameBoardSimple"),
+    UPDATEFULL("updateGameBoardFull"),
+    CHEAT("cheat"),
+    DETECTCHEAT("detectCheat");
 
     private final String value;
     ActionValues(String action){
