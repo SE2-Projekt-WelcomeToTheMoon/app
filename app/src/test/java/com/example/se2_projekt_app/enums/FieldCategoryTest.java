@@ -10,7 +10,7 @@ class FieldCategoryTest {
         assertEquals(FieldCategory.PLANT, FieldCategory.getSymbolAndTranslate("PFLANZE"));
         assertEquals(FieldCategory.ENERGY, FieldCategory.getSymbolAndTranslate("ENERGIE"));
         assertEquals(FieldCategory.SPACESUIT, FieldCategory.getSymbolAndTranslate("RAUMANZUG"));
-        assertEquals(FieldCategory.PLANNING, FieldCategory.getSymbolAndTranslate("PLANNUNG"));
+        assertEquals(FieldCategory.PLANNING, FieldCategory.getSymbolAndTranslate("PLANUNG"));
         assertEquals(FieldCategory.WILDCARD, FieldCategory.getSymbolAndTranslate("ANYTHING"));
     }
 
