@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.view.GravityCompat;
@@ -15,6 +16,10 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.GameBoardView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +99,7 @@ public class GameScreen extends Activity {
                 String action = response.getString("action");
                 String username = response.getString(TAG_USERNAME);
                 String message = response.getString("message");
+                String missionDescription = response.getString("missionDescription");
                 switch (action) {
                     case "updateUser":
                         Log.d(TAG, "Received updateUser message {}" + message);
@@ -101,6 +107,14 @@ public class GameScreen extends Activity {
                         break;
                     case "makeMove":
                         //placeholder
+                        break;
+                    case "initialMissionCards":
+                        JSONArray missionCardsArray = response.getJSONArray("missionCards");
+                        runOnUiThread(() -> setupInitialMissionCards(missionCardsArray));
+                        break;
+                    case "missionFlipped":
+                        String finalMissionDescription = response.getString("missionDescription");
+                        runOnUiThread(() -> updateMissionCardImage(finalMissionDescription, true));
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
@@ -128,7 +142,7 @@ public class GameScreen extends Activity {
 
     private void setupDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout);
-        toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
+        Button toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 
         toggleDrawerButton.setOnClickListener(v -> {
@@ -163,5 +177,33 @@ public class GameScreen extends Activity {
                 // Not used
             }
         });
+    }
+
+    public void setupInitialMissionCards(JSONArray missionCardsArray) {
+        for (int i = 0; i < missionCardsArray.length(); i++) {
+            try {
+                JSONObject cardJson = missionCardsArray.getJSONObject(i);
+                String missionDescription = cardJson.getString("missionDescription");
+                boolean isFlipped = cardJson.getBoolean("flipped");
+                updateMissionCardImage(missionDescription, isFlipped);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error setting up initial mission cards: " + e.getMessage());
+            }
+        }
+    }
+
+    public void updateMissionCardImage(String missionDescription, boolean isFlipped) {
+        String cardType = missionDescription.toLowerCase();
+        int imageViewId = getResources().getIdentifier("mission_card_" + cardType.charAt(0), "id", getPackageName());
+        if (imageViewId != 0) {
+            ImageView imageView = findViewById(imageViewId);
+            if (imageView != null) {
+                String resourceName = cardType + (isFlipped ? "_back" : "");
+                int resourceId = getResources().getIdentifier(resourceName, "drawable", getPackageName());
+                if (resourceId != 0) {
+                    imageView.setImageResource(resourceId);
+                }
+            }
+        }
     }
 }
