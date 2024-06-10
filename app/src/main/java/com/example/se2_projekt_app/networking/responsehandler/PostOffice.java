@@ -48,6 +48,10 @@ public class PostOffice {
                 WinnerScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
+            case "endGame":
+                GameScreen.responseReceiver.receiveResponse(response);
+                Log.i(TAG, "Rerouted message to WinnerScreen");
+                break;
             case "gameIsStarted":
                 Multiplayer.startGameResponseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
