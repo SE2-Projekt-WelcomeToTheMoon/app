@@ -98,11 +98,4 @@ class FloorTest {
 
         assertEquals(floor.getChamber(0).getY(), initialY, "First chamber should be at initialY");
     }
-
-    @Test
-    void testGetLastAccessedChamber() {
-        assertEquals(-1, floor.getLastAccessedChamber(), "Last accessed chamber should be -1 initially");
-        floor.setLastAccessedChamber(3);
-        assertEquals(3, floor.getLastAccessedChamber(), "Last accessed chamber should be set correctly");
-    }
 }

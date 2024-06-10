@@ -119,4 +119,9 @@ public class Field implements Clickable {
     public boolean isFinalized() {
         return isFinalized;
     }
+
+    public void reset() {
+        isChanged = false;
+        fieldValue = FieldValue.NONE;
+    }
 }

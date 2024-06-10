@@ -3,10 +3,14 @@ package com.example.se2_projekt_app.game;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
+import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
+import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
+import com.example.se2_projekt_app.screens.Username;
 import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,13 +29,19 @@ public class GameBoardManager {
     private int floorIndex;
     private int chamberIndex;
     private int fieldIndex;
+    private final CardController cardController;
     private ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
+    private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
+    public static ResponseReceiver cheatResponseReceiver;
+    public static ResponseReceiver cheatDetectResponseReceiver;
+    private static final String TAG = "Gamescreen";
     private SendMessageService sendMessageService = new SendMessageService();
 
-    public GameBoardManager(GameBoardView gameBoardView) {
+    public GameBoardManager(GameBoardView gameBoardView,CardController cardController) {
         this.gameBoardView = gameBoardView;
         this.objectMapper = new ObjectMapper();
+        this.cardController=cardController;
     }
 
     public void addUser(User user) {
@@ -178,24 +188,13 @@ public class GameBoardManager {
         }
     }
 
-    Field getLastAccessedField(GameBoard gameBoard) {
+    public Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
             return null;
         }
-        int floorIndex = gameBoardView.getLastAccessedFloor();
-        Floor floor = gameBoard.getFloor(floorIndex);
-        int chamberIndex = floor.getLastAccessedChamber();
-        Chamber chamber = floor.getChamber(chamberIndex);
-        int fieldIndex = chamber.getLastAccessedField();
-        Field field = chamber.getField(fieldIndex);
-        if (!field.isFinalized() && field.isChanged()) {
-            this.floorIndex = floorIndex;
-            this.chamberIndex = chamberIndex;
-            this.fieldIndex = fieldIndex;
-            return field;
-        }
+        Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
         Log.e("GameBoardManager", "Field is already finalized, not changed or null");
-        return null;
+        return field;
     }
 
     public String getLocalUsername() {
@@ -214,4 +213,134 @@ public class GameBoardManager {
         this.sendMessageService = sendMessageService;
     }
 
+    public Floor getLastAccessedFloor() {
+        return GameBoardView.getLastAccessedFloor();
+    }
+
+    public void displayCurrentCombination() {
+        cardController.displayCurrentCombination();
+    }
+    public void extractCardsFromServerString(String message) {
+        cardController.extractCardsFromServerString(message);
+    }
+
+    public void setSelectedCard(CardCombination combination) {
+        gameBoardView.setCurrentSelection(combination);
+    }
+    public boolean cheat() {
+        String username = Username.user.getUsername();
+        JSONObject msg = JSONService.generateJSONObject(
+                ActionValues.CHEAT.getValue(), username, null, "",
+                "");
+        SendMessageService.sendMessage(msg);
+
+        GameBoardManager.cheatResponseReceiver = response -> {
+            boolean success = response.getBoolean(SUCCESS);
+            if (success) {
+                Log.i(TAG, "Cheated successfully");
+            }
+        };
+
+        return true;
+    }
+
+    public void updateCheatedUser(String username, String cheatedUser) {
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+
+        User user = userExists(cheatedUser);
+
+        if (user == null) {
+            Log.e("GameBoardManager", "User does not exist: " + cheatedUser);
+            return;
+        }
+
+        updateCheatGameBoard(user);
+
+        if (cheatedUser.equals(localUsername)) {
+            Log.i("GameBoardManager", "Updating game view for local user");
+            updateGameBoardView(user);
+        }
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + cheatedUser);
+        return;
+    }
+
+    private void updateCheatGameBoard(User user) {
+        GameBoard gameBoard = user.getGameBoard();
+        if (gameBoard == null) {
+            return;
+        }
+
+        gameBoard.addRockets(1);
+
+
+        user.setGameBoard(gameBoard);
+        return;
+    }
+
+    public int getRocketsOfPlayer(String username){
+        User user = userExists(username);
+        if (user != null && user.getGameBoard() != null) {
+            return user.getGameBoard().getRockets();
+        } else {
+            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
+        }
+        return -1;
+    }
+
+    public void detectCheat(String currentOwner) {
+        String username = Username.user.getUsername();
+        JSONObject msg = JSONService.generateJSONObject(
+                ActionValues.DETECTCHEAT.getValue(), username, null, currentOwner,
+                "");
+        SendMessageService.sendMessage(msg);
+
+        GameBoardManager.cheatDetectResponseReceiver = response -> {
+            boolean success = response.getBoolean(SUCCESS);
+            if (success) {
+                Log.i(TAG, "Detected Cheat successfully");
+            }
+        };
+
+        return;
+
+    }
+
+    public void updateCorrectCheatDetection(String username, String detector, boolean success) {
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+
+        User user = userExists(detector);
+
+        if (user == null) {
+            Log.e("GameBoardManager", "User does not exist: " + detector);
+            return;
+        }
+
+        updateDetectorGameBoard(user, success);
+
+        if (detector.equals(localUsername)) {
+            Log.i("GameBoardManager", "Updating game view for local user");
+            updateGameBoardView(user);
+        }
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + detector);
+        return;
+    }
+
+    private void updateDetectorGameBoard(User user, boolean success) {
+        GameBoard gameBoard = user.getGameBoard();
+        if (gameBoard == null) {
+            return;
+        }
+
+        gameBoard.addRockets(success ? 1 : -1);
+        if(success){
+            Log.i("GameBoardManager", "cheat detect successful");
+        }else {
+            Log.i("GameBoardManager", "cheat detect wrong");
+        }
+
+        user.setGameBoard(gameBoard);
+        return;
+    }
 }

@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.screens;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WinnerScreen extends Activity {
     private static final String TAG_USERS = "users";
@@ -28,6 +31,8 @@ public class WinnerScreen extends Activity {
     private TextView txtview_secondPlace;
     private TextView txtview_thirdPlace;
     private TextView txtview_fourthPlace;
+    private final Map<String, Integer> userMap = new HashMap<>();
+
 
 
     @Override
@@ -42,9 +47,12 @@ public class WinnerScreen extends Activity {
         txtview_thirdPlace = findViewById(R.id.textView_3rdPlace);
         txtview_fourthPlace = findViewById(R.id.textView_4thPlace);
 
-        getPlayer();
+        getPlayerWithPoints();
 
-        btn_home.setOnClickListener(v -> finish());
+        btn_home.setOnClickListener(v -> {
+            Intent intent = new Intent(WinnerScreen.this, MainMenu.class);
+            startActivity(intent);
+        });
         btn_share.setOnClickListener(v -> finish()); // ohne Funktion
 
         txtview_firstPlace.setText("");
@@ -55,24 +63,37 @@ public class WinnerScreen extends Activity {
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
-    public void getPlayer() {
+    public void getPlayerWithPoints() {
         String username = Username.user.getUsername();
-        JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("requestUsersForWinningScreen", username, true, "", "");
+        JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("winnerScreen", username, true, "", "");
         SendMessageService.sendMessage(requestLobbyUsersMsg);
 
         responseReceiver = response -> {
             if (response.getBoolean(SUCCESS)) {
-                parseUsers(response.getJSONArray(TAG_USERS));
+                parseUsersAndPoints(response.getJSONArray(TAG_USERS));
                 runOnUiThread(this::updateUI);
             }
         };
     }
 
-    private void parseUsers(JSONArray users) throws JSONException {
-        newUserList.clear();
+    private void parseUsersAndPoints(JSONArray users) throws JSONException {
+        userMap.clear();
         for (int i = 0; i < users.length(); i++) {
-            User playerName = new User(users.getString(i));
-            newUserList.add(playerName);
+            JSONObject userJson = users.getJSONObject(i);
+            String playerName = userJson.getString("username");
+            int points = userJson.getInt("points");
+            userMap.put(playerName, points);
+        }
+        sortUsersByPoints(userMap);
+    }
+    private void sortUsersByPoints(Map<String, Integer> userMap) {
+        List<Map.Entry<String, Integer>> userList = new ArrayList<>(userMap.entrySet());
+
+        userList.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        newUserList.clear();
+        for (Map.Entry<String, Integer> entry : userList) {
+            newUserList.add(new User(entry.getKey()));
         }
     }
 
@@ -83,27 +104,25 @@ public class WinnerScreen extends Activity {
             updateTextView(txtview_thirdPlace, 2, "");
             updateTextView(txtview_fourthPlace, 3, "");
         } catch (IndexOutOfBoundsException e) {
-            clearTextViews();
+            txtview_firstPlace.setText("");
+            txtview_secondPlace.setText("");
+            txtview_thirdPlace.setText("");
+            txtview_fourthPlace.setText("");
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateTextView(TextView textView, int index, String defaultText) {
         if (newUserList.size() > index) {
-            textView.setText(newUserList.get(index).getUsername());
-        } else {
-            textView.setText(defaultText);
+            String username = newUserList.get(index).getUsername();
+            int points = userMap.get(username);
+            if (index == 0) {
+                textView.setText(username + " - " + points + " Pkt.");
+            } else if (index == 1 || index == 2 || index == 3) {
+                textView.setText((index+1) + ". " + username + " - " + points + " Pkt.");
+            } else {
+                textView.setText(defaultText);
+            }
         }
     }
-
-    private void clearTextViews() {
-        txtview_firstPlace.setText("");
-        txtview_secondPlace.setText("");
-        txtview_thirdPlace.setText("");
-        txtview_fourthPlace.setText("");
-    }
-
-    public void sortPlayersByPoints () {
-        //TODO: Sort the player in the List based on their score
-    }
 }
-

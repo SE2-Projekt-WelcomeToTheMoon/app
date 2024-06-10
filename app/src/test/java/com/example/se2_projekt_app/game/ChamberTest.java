@@ -77,13 +77,4 @@ class ChamberTest {
             verify(field, times(2)).draw(mockCanvas);
         }
     }
-
-    @Test
-    void testLastAccessedField() {
-        Chamber chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
-        chamber.getLastAccessedField();
-        assertEquals(-1, chamber.getLastAccessedField(), "Last accessed field should be -1 when no field was accessed");
-        chamber.setLastAccessedField(5);
-        assertEquals(5, chamber.getLastAccessedField(), "Last accessed field should be updated");
-    }
 }

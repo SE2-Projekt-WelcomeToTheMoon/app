@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
@@ -13,8 +14,13 @@ import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.Field;
+import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.Floor;
 import com.example.se2_projekt_app.game.GameBoard;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Provides a view that supports scaling and touch interactions to manage and display game elements.
@@ -25,11 +31,14 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private float translateY = 0f;
     private float lastTouchX;
     private float lastTouchY;
+    private static final int MAX_CLICK_DURATION = 200;
+    private long pressStartTime;
     private GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
-    // will be set by cardview
-    private FieldValue currentSelection = FieldValue.FIVE;
-    private int lastAccessedFloor = 0;
+    @Getter
+    private static Floor lastAccessedFloor = null;
+    @Setter
+    private CardCombination currentSelection;
 
     /**
      * Constructs the game board view with necessary context and attributes.
@@ -42,6 +51,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
         getHolder().addCallback(this);
         setFocusable(true);
         init(context);
+
+        //prevent crashing
+        this.currentSelection = new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE);
 
         Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
         floor.addChamber(5);
@@ -86,7 +98,7 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             try {
                 synchronized (getHolder()) {
                     canvas.save();
-                    canvas.drawColor(Color.WHITE); // Clear with white background
+                    canvas.drawColor(Color.WHITE);
                     canvas.translate(translateX, translateY);
                     canvas.scale(scaleFactor, scaleFactor);
 
@@ -106,31 +118,76 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
 
-        int action = event.getActionMasked();
-        if (action == MotionEvent.ACTION_DOWN) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                handleActionDown(event);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                handleActionMove(event);
+                break;
+            case MotionEvent.ACTION_UP:
+                handleActionUp(event);
+                break;
+            default:
+                Log.d("GameBoardView", "Unhandled action: " + event.getAction());
+                break;
+        }
+        drawGameBoard();
+        return true;
+    }
+
+    private void handleActionDown(MotionEvent event) {
+        pressStartTime = System.currentTimeMillis();
+        lastTouchX = event.getX();
+        lastTouchY = event.getY();
+        drawGameBoard();
+    }
+
+    private void handleActionUp(MotionEvent event) {
+        long pressDuration = System.currentTimeMillis() - pressStartTime;
+        if (pressDuration < MAX_CLICK_DURATION) {
             float adjustedX = (event.getX() - translateX) / scaleFactor;
             float adjustedY = (event.getY() - translateY) / scaleFactor;
 
-            for (int i = 0; i < gameboard.getFloors().size(); i++) {
-                Floor floor = gameboard.getFloors().get(i);
-                if (floor.handleClick(adjustedX, adjustedY, this, currentSelection)) {
-                    lastAccessedFloor = i;
-                    break;
-                }
+            if (lastAccessedFloor != null) {
+                resetPreviousField(lastAccessedFloor);
             }
-            lastTouchX = event.getX();
-            lastTouchY = event.getY();
-        } else if (action == MotionEvent.ACTION_MOVE && !scaleGestureDetector.isInProgress()) {
-            final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
-            final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
 
-            translateX += dx;
-            translateY += dy;
+            drawFloors(adjustedY, adjustedX);
+
             lastTouchX = event.getX();
             lastTouchY = event.getY();
+
             drawGameBoard();
         }
-        return true;
+    }
+
+    private void handleActionMove(MotionEvent event) {
+        final float dx = (event.getX() - lastTouchX) * (1 / scaleFactor);
+        final float dy = (event.getY() - lastTouchY) * (1 / scaleFactor);
+
+        translateX += dx;
+        translateY += dy;
+        lastTouchX = event.getX();
+        lastTouchY = event.getY();
+        drawGameBoard();
+    }
+
+    private void resetPreviousField(Floor floor) {
+        Field field = floor.getLastAccessedChamber().getLastAccessedField();
+        if (field != null) {
+            field.reset();
+        }
+
+    }
+
+    private void drawFloors(float adjustedY, float adjustedX) {
+        for (Floor floor : gameboard.getFloors()) {
+            if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
+                lastAccessedFloor = floor;
+                break;
+            }
+        }
     }
 
     @Override
@@ -149,13 +206,5 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
         // empty because I had to implement it and don't need it yet
-    }
-
-    public void setFieldValue(FieldValue fieldValue) {
-        this.currentSelection = fieldValue;
-    }
-
-    public int getLastAccessedFloor() {
-        return lastAccessedFloor;
     }
 }

@@ -1,13 +1,36 @@
 package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.screens.GameScreen;
+import com.example.se2_projekt_app.views.CardDrawView;
 
 import lombok.Getter;
 
-
+/***
+ * The class responsible for controlling cards. Gets CardDrawView in constructor
+ */
 @Getter
 public class CardController {
+    private final GameScreen gameScreen;
+    @Getter
     private CardCombination[] currentCombination;
+    private final CardDrawView cardDrawView;
+
+    public CardController(CardDrawView cardDrawView, GameScreen gameScreen) {
+
+
+        this.cardDrawView = cardDrawView;
+         currentCombination = new CardCombination[]{
+                 new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANT, FieldValue.THREE),
+                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
+                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
+         };
+
+         this.gameScreen=gameScreen;
+         this.cardDrawView.setGameScreen(this.gameScreen);
+         displayCurrentCombination();
+    }
+
     /***
      * Gets the server String which is composed as follows:
      * data inside the combinations is split by - and ordered CombinationNumber-CurrentSymbol-CurrentNumber-NextSymbol
@@ -30,6 +53,15 @@ public class CardController {
         }
         currentCombination=combinations;
     }
+
+    /***
+     * Displays current Combination
+     */
+    public void displayCurrentCombination(){
+        cardDrawView.updateCanvas(currentCombination);
+
+    }
+
 
 
 }

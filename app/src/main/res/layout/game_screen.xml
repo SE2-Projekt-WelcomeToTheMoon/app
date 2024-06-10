@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_s"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -25,6 +26,36 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:orientation="horizontal">
+
+                        <com.example.se2_projekt_app.views.CardDrawView
+                            android:id="@+id/cardDrawView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="8"
+                        android:orientation="vertical">
+                        <!-- Other views go here -->
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:orientation="horizontal">
@@ -34,46 +65,61 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Back" />
+
                     <Button
                         android:id="@+id/game_screen_accept_turn_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Accept Turn" />
+
                     <Button
                         android:id="@+id/game_screen_random_field_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Random" />
+
+                    <Button
+                        android:id="@+id/game_screen_cheat_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Cheat" />
+
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:orientation="horizontal">
+
                     <Button
                         android:id="@+id/player1_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Player 1"/>
+                        android:text="Player 1" />
+
                     <Button
                         android:id="@+id/player2_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Player 2"/>
+                        android:text="Player 2" />
+
                     <Button
                         android:id="@+id/player3_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Player 3"/>
+                        android:text="Player 3" />
+
                     <Button
                         android:id="@+id/player4_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Player 4"/>
+                        android:text="Player 4" />
                 </LinearLayout>
 
 
@@ -94,6 +140,15 @@
                     android:layout_width="126dp"
                     android:layout_height="500dp"
                     android:layout_gravity="end|center_vertical">
+                    <Button
+                        android:id="@+id/btn_winnerScreen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="WinnerScreen"
+                        tools:layout_editor_absoluteX="1dp"
+                        tools:layout_editor_absoluteY="141dp"
+                        tools:ignore="MissingConstraints" />
 
                     <TextView
                         android:id="@+id/rocket_count"

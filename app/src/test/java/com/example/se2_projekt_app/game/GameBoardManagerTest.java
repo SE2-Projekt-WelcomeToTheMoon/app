@@ -41,7 +41,7 @@ class GameBoardManagerTest {
         MockitoAnnotations.initMocks(this);
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
-        gameBoardManager = new GameBoardManager(mockGameBoardView);
+        gameBoardManager = new GameBoardManager(mockGameBoardView,null);
         gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
@@ -135,21 +135,5 @@ class GameBoardManagerTest {
             e.printStackTrace();
         }
         assertEquals(expected, gameBoardManager.createPayload(new Field(0, 0, 0, FieldCategory.ENERGY, FieldValue.FIVE)));
-    }
-
-    @Test
-    void testGetLastAccessedField() {
-        assertNull(gameBoardManager.getLastAccessedField(null));
-        GameBoard gameBoard = new GameBoard();
-        Floor floor = new Floor(0, 0, FieldCategory.ENERGY);
-        floor.addChamber(1);
-        gameBoard.addFloor(floor);
-
-        floor.handleClick(0,0,mockGameBoardView, FieldValue.FIFTEEN);
-
-        Field field = gameBoardManager.getLastAccessedField(gameBoard);
-        Field field2 = gameBoard.getFloor(0).getChamber(0).getField(0);
-
-        assertEquals(field2, field);
     }
 }
