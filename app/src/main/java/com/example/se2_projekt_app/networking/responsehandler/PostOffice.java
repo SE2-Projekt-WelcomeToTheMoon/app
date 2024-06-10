@@ -56,6 +56,9 @@ public class PostOffice {
             case "nextCardDraw":
             case "makeMove":
             case "notifyGameState":
+            case "invalidCombination":
+            case "invalidMove":
+            case "alreadyMoved":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen.");
                 break;

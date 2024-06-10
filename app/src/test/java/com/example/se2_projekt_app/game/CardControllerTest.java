@@ -31,7 +31,7 @@ class CardControllerTest {
     }
     @Test
     void testExtractCardsFromServerString() {
-        String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANNUNG";
+        String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANUNG";
         cardController.extractCardsFromServerString(serverString);
         CardCombination[] combinations=cardController.getCurrentCombination();
         assertEquals(FieldCategory.ROBOT, combinations[0].getCurrentSymbol());

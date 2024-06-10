@@ -154,6 +154,12 @@ public class GameScreen extends Activity {
                         gameState = GameState.valueOf(message);
                         runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
                         break;
+                    case "invalidCombination":
+                    case "invalidMove":
+                    case "alreadyMoved":
+                        Log.d(TAG, "Received " + action);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+                        break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
                 }
