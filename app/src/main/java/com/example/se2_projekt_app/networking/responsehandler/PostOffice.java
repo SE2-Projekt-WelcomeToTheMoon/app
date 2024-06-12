@@ -59,6 +59,7 @@ public class PostOffice {
 
             case "updateUser":
             case "nextCardDraw":
+            case "updateCurrentCards":
             case "makeMove":
             case "notifyGameState":
             case "invalidCombination":
@@ -68,7 +69,7 @@ public class PostOffice {
             case "playerDetectedCheatCorrect":
             case "playerDetectedCheatWrong":
                 GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to GameScreen.");
+                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was"+action);
                 break;
 
             case "cheat":
@@ -82,6 +83,7 @@ public class PostOffice {
                 break;
             default:
                 Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
+                Log.w(ERROR,"Response Action from server: "+action);
         }
     }
 }

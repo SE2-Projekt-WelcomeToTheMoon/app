@@ -5,7 +5,6 @@ import android.util.Log;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.networking.json.ActionValues;
-import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
 import com.example.se2_projekt_app.networking.json.JSONService;
@@ -238,6 +237,15 @@ public class GameBoardManager {
     }
     public void extractCardsFromServerString(String message) {
         cardController.extractCardsFromServerString(message);
+    }
+
+    /***
+     * Updates Current Carddraw
+     */
+    public void updateCurrentCardDraw(){
+
+        JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
+        SendMessageService.sendMessage(jsonObject);
     }
 
     public void setSelectedCard(CardCombination combination) {
