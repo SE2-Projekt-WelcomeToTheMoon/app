@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
-import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.screens.GameScreen;
 
@@ -33,7 +32,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
 
     private int yHeight;
     private GameScreen gameScreen;
-    int selectedCombination;
+    public int selectedCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,14 +46,8 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
         initializeBitmaps();
         if (currentCombination == null) {
-            CardCombination[] testCombinations = {
-                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
-                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
-                    new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
-            };
-            updateCanvas(testCombinations);
-        } else {
-            updateCanvas(currentCombination);
+            gameScreen.updateCards();
+
         }
     }
 

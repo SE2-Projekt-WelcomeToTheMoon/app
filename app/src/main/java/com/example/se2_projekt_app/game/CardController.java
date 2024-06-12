@@ -21,15 +21,7 @@ public class CardController {
     private final CardDrawView cardDrawView;
 
     public CardController(CardDrawView cardDrawView, GameScreen gameScreen) {
-
-
         this.cardDrawView = cardDrawView;
-         currentCombination = new CardCombination[]{
-                 new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANT, FieldValue.THREE),
-                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
-                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
-         };
-
          this.gameScreen=gameScreen;
          this.cardDrawView.setGameScreen(this.gameScreen);
 
@@ -56,6 +48,7 @@ public class CardController {
             FieldCategory nextSymbol=FieldCategory.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
+        cardDrawView.selectedCombination=-1;
         currentCombination=combinations;
     }
 
