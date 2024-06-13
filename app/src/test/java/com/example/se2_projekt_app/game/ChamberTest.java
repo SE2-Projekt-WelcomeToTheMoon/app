@@ -32,6 +32,7 @@ class ChamberTest {
         MockitoAnnotations.initMocks(this);
     }
 
+
     @Test
     void testProperInitialization() {
         chamber = new Chamber(initialX, initialY, 5, FieldCategory.ENERGY);
@@ -42,7 +43,7 @@ class ChamberTest {
 
     @Test
     void testHandleClick() {
-        Chamber chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
+        chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
 
         chamber.addField(mockField);
         chamber.addField(mockField);
@@ -62,7 +63,7 @@ class ChamberTest {
 
     @Test
     void testDraw() {
-        Chamber chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
+        chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
 
         chamber.addField(mockField);
         chamber.addField(mockField);
@@ -72,5 +73,22 @@ class ChamberTest {
         for (Field field : chamber.getFields()) {
             verify(field, times(2)).draw(mockCanvas);
         }
+    }
+
+    @Test
+    void testGetLastAccessedChamber(){
+        chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
+        chamber.addField(mockField);
+        when(mockField.handleClick(anyFloat(), anyFloat(), any(), any())).thenReturn(true);
+
+        //assert standard values of null and -1
+        assertNull(chamber.getLastAccessedField());
+        assertEquals(-1, chamber.getLastAccessedFieldIndex());
+
+        chamber.handleClick(initialX,initialY, null, null);
+
+        // assert the first field was clicked
+        assertEquals(mockField, chamber.getLastAccessedField());
+        assertEquals(0, chamber.getLastAccessedFieldIndex());
     }
 }
