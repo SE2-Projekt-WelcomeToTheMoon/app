@@ -40,11 +40,10 @@ public class GameBoardManager {
     private SendMessageService sendMessageService = new SendMessageService();
     private GameState currentGameState = null;
 
-    public GameBoardManager(GameBoardView gameBoardView,CardController cardController) {
+    public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
         this.gameBoardView = gameBoardView;
         this.objectMapper = new ObjectMapper();
-        this.cardController=cardController;
-        updateCurrentCardDraw();
+        this.cardController = cardController;
     }
 
     public void addUser(User user) {
@@ -157,13 +156,6 @@ public class GameBoardManager {
      * If the field is already finalized, not changed or null it will not send the field to the backend.
      */
     public boolean acceptTurn() {
-//        Log.d("GameBoardManager", "Accepting Turn");
-//        if (currentGameState != GameState.ROUND_THREE) {
-//            Log.d("GameBoardManager", "Not in round three, asking for new State from Server");
-//            JSONObject jsonObject = JSONService.generateJSONObject("sendGameState", "", true, "", "");
-//            SendMessageService.sendMessage(jsonObject);
-//            return false;
-//        }
         User user = userExists(localUsername);
         if (user == null) {
             return false;
@@ -224,6 +216,7 @@ public class GameBoardManager {
     public int getNumberOfUsers() {
         return users.size();
     }
+
     // for testing only
     public void setSendMessageService(SendMessageService sendMessageService) {
         this.sendMessageService = sendMessageService;
@@ -236,6 +229,7 @@ public class GameBoardManager {
     public void displayCurrentCombination() {
         cardController.displayCurrentCombination();
     }
+
     public void extractCardsFromServerString(String message) {
         cardController.extractCardsFromServerString(message);
     }
@@ -243,7 +237,7 @@ public class GameBoardManager {
     /***
      * Updates Current Carddraw
      */
-    public void updateCurrentCardDraw(){
+    public void updateCurrentCardDraw() {
         JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
         SendMessageService.sendMessage(jsonObject);
     }
@@ -251,6 +245,7 @@ public class GameBoardManager {
     public void setSelectedCard(CardCombination combination) {
         gameBoardView.setCurrentSelection(combination);
     }
+
     public boolean cheat() {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
@@ -302,7 +297,7 @@ public class GameBoardManager {
         return;
     }
 
-    public int getRocketsOfPlayer(String username){
+    public int getRocketsOfPlayer(String username) {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getRockets();
@@ -358,9 +353,9 @@ public class GameBoardManager {
         }
 
         gameBoard.addRockets(success ? 1 : -1);
-        if(success){
+        if (success) {
             Log.i("GameBoardManager", "cheat detect successful");
-        }else {
+        } else {
             Log.i("GameBoardManager", "cheat detect wrong");
         }
 
@@ -371,6 +366,7 @@ public class GameBoardManager {
     public void setGameState(GameState gameState) {
         this.currentGameState = gameState;
     }
+
     public GameState getGameState() {
         return currentGameState;
     }
