@@ -179,6 +179,7 @@ public class GameScreen extends Activity {
                 switch (action) {
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
+
                         runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
                     case "playerHasCheated":
@@ -255,5 +256,9 @@ public class GameScreen extends Activity {
 
     public void setSelectedCard(CardCombination combination) {
         gameBoardManager.setSelectedCard(combination);
+    }
+
+    public void updateCards() {
+        gameBoardManager.updateCurrentCardDraw();
     }
 }

@@ -44,6 +44,7 @@ public class GameBoardManager {
         this.gameBoardView = gameBoardView;
         this.objectMapper = new ObjectMapper();
         this.cardController=cardController;
+        updateCurrentCardDraw();
     }
 
     public void addUser(User user) {
@@ -243,7 +244,6 @@ public class GameBoardManager {
      * Updates Current Carddraw
      */
     public void updateCurrentCardDraw(){
-
         JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
         SendMessageService.sendMessage(jsonObject);
     }
