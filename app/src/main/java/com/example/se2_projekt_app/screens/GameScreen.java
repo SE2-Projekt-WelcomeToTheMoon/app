@@ -32,6 +32,7 @@ public class GameScreen extends Activity {
 
     //    private ProgressBar progressBar;
     private TextView view;
+    private TextView txtview_syserror;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
@@ -44,12 +45,17 @@ public class GameScreen extends Activity {
         DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
-        Button btn_winner = findViewById(R.id.btn_winnerScreen);
+        //Button btn_winner = findViewById(R.id.btn_winnerScreen);
+
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
         gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
 
+        /*runOnUiThread(() -> {
+            txtview_syserror = findViewById(R.id.error_count);
+            txtview_syserror.setText(String.valueOf(4));
+        });*/
 
         // get local user
         String localUser = getIntent().getStringExtra(TAG_USERNAME);
@@ -66,6 +72,7 @@ public class GameScreen extends Activity {
         findViewById(R.id.player1_button).setOnClickListener(v -> {
             gameBoardManager.showGameBoard(localUser);
             view = findViewById(R.id.rocket_count);
+            txtview_syserror = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(localUser))); // Testing purposes
             currentOwner = localUser;
         });
@@ -74,6 +81,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
+            txtview_syserror = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player2")))); // Testing purposes
             currentOwner = playerMap.size() >= 2 ? playerMap.get("Player2") : "";
         });
@@ -81,6 +89,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player3"));
             view = findViewById(R.id.rocket_count);
+            txtview_syserror = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player3")))); // Testing purposes
             currentOwner = playerMap.size() >= 3 ? playerMap.get("Player3") : "";
         });
@@ -88,6 +97,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player4"));
             view = findViewById(R.id.rocket_count);
+            txtview_syserror = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
             currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
         });
@@ -138,10 +148,11 @@ public class GameScreen extends Activity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        btn_winner.setOnClickListener(v -> {
-            Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
-            startActivity(intent);
-        });
+       /* btn_winner.setOnClickListener(v -> {
+            //Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
+            //startActivity(intent);
+            SendMessageService.sendMessage(JSONService.generateJSONObject("systemError", localUser, true, "", ""));
+        });*/
 
         closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
@@ -218,6 +229,7 @@ public class GameScreen extends Activity {
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
                         break;
+
                     case "notifyGameState":
                         Log.d(TAG, "Received notifyGameState message {}" + message);
                         gameState = GameState.valueOf(message);
@@ -228,6 +240,17 @@ public class GameScreen extends Activity {
                     case "alreadyMoved":
                         Log.d(TAG, "Received " + action);
                         runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
+                        break;
+                    case "systemError":
+                        Log.i(TAG, "GameScreen case SystemError errichet!: " + response);
+                        int errorCount = response.getInt("points");
+                        runOnUiThread(() -> {
+                            gameBoardManager.updateSysErrorUser(username, errorCount);
+                            txtview_syserror = findViewById(R.id.error_count);
+                            int sysError = gameBoardManager.getSysErrorOfPlayer(username);
+                            txtview_syserror.setText(String.valueOf(sysError));
+                            Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
+                        });
                         break;
                     default:
                         Log.w(TAG, "Server response has invalid or no sender. Response not routed.");

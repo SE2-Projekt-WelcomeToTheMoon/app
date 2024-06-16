@@ -284,14 +284,34 @@ public class GameBoardManager {
         return;
     }
 
+    public void updateSysErrorUser(String username, int sysError) {
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+
+        User user = userExists(username);
+
+        updateSysErrorGameBoard(user, sysError);
+
+        Log.i("GameBoardManager", "GameBoard updated for User: " + username);
+        return;
+    }
+
+
     private void updateCheatGameBoard(User user) {
         GameBoard gameBoard = user.getGameBoard();
         if (gameBoard == null) {
             return;
         }
-
         gameBoard.addRockets(1);
-
+        user.setGameBoard(gameBoard);
+        return;
+    }
+    private void updateSysErrorGameBoard(User user, int sysError){
+        GameBoard gameBoard = user.getGameBoard();
+        if (gameBoard == null) {
+            return;
+        }
+        //gameBoard.addSysError(1);
+        gameBoard.setSysError(sysError);
 
         user.setGameBoard(gameBoard);
         return;
@@ -301,6 +321,16 @@ public class GameBoardManager {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getRockets();
+        } else {
+            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
+        }
+        return -1;
+    }
+
+    public int getSysErrorOfPlayer(String username){
+        User user = userExists(username);
+        if (user != null && user.getGameBoard() != null) {
+            return user.getGameBoard().getSysError();
         } else {
             Log.e("GameBoardManager", "User does not exist or has no GameBoard");
         }
