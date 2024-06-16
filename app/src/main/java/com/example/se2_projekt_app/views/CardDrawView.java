@@ -32,7 +32,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
 
     private int yHeight;
     private GameScreen gameScreen;
-    public int selectedCombination;
+    private int selectedCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
