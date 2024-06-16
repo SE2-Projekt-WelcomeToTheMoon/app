@@ -40,11 +40,22 @@ class GameBoardTest {
     }
 
     @Test
-    public void testAddRockets() {
+    void testAddRockets() {
         gameBoard.addRockets(5);
         assertEquals(5, gameBoard.getRockets());
 
         gameBoard.addRockets(3);
         assertEquals(8, gameBoard.getRockets());
+    }
+    @Test
+    void testSysError() {
+        gameBoard.addSysError(5);
+        assertEquals(5, gameBoard.getSysError());
+
+        gameBoard.addSysError(3);
+        assertEquals(8, gameBoard.getSysError());
+
+        gameBoard.setSysError(7);
+        assertEquals(7, gameBoard.getSysError());
     }
 }

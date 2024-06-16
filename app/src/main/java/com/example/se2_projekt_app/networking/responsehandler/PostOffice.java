@@ -67,6 +67,7 @@ public class PostOffice {
             case "alreadyMoved":
             case "playerHasCheated":
             case "playerDetectedCheatCorrect":
+            case "systemError":
             case "playerDetectedCheatWrong":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was"+action);
