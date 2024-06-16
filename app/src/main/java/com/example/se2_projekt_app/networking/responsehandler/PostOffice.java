@@ -56,20 +56,21 @@ public class PostOffice {
                 Multiplayer.startGameResponseReceiver.receiveResponse(response);
                 Log.i(TAG, MULTIPLAYER);
                 break;
-            case "updateUser":
 
-                break;
+            case "updateUser":
             case "nextCardDraw":
-                GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to Gamescreen");
-                break;
+            case "updateCurrentCards":
             case "makeMove":
+            case "notifyGameState":
+            case "invalidCombination":
+            case "invalidMove":
+            case "alreadyMoved":
             case "playerHasCheated":
             case "playerDetectedCheatCorrect":
             case "systemError":
             case "playerDetectedCheatWrong":
                 GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to GameScreen.");
+                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was"+action);
                 break;
 
             case "cheat":
@@ -83,6 +84,7 @@ public class PostOffice {
                 break;
             default:
                 Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
+                Log.w(ERROR,"Response Action from server: "+action);
         }
     }
 }

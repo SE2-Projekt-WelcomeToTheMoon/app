@@ -3,6 +3,7 @@ package com.example.se2_projekt_app.game;
 import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
@@ -37,11 +38,12 @@ public class GameBoardManager {
     public static ResponseReceiver cheatDetectResponseReceiver;
     private static final String TAG = "Gamescreen";
     private SendMessageService sendMessageService = new SendMessageService();
+    private GameState currentGameState = null;
 
-    public GameBoardManager(GameBoardView gameBoardView,CardController cardController) {
+    public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
         this.gameBoardView = gameBoardView;
         this.objectMapper = new ObjectMapper();
-        this.cardController=cardController;
+        this.cardController = cardController;
     }
 
     public void addUser(User user) {
@@ -124,7 +126,6 @@ public class GameBoardManager {
         }
     }
 
-
     private void updateGameBoardView(User user) {
         if (user.getUsername().equals(localUsername)) {
             gameBoardView.setGameBoard(user.getGameBoard());
@@ -166,11 +167,11 @@ public class GameBoardManager {
             return false;
         }
 
-        field.setFinalized();
+        updateIndex();
         Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONObject jsonObject = JSONService.generateJSONObject("updateUser", localUsername, true, payload, "");
+        JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
 
         Log.d("GameBoardManager", "Payload: " + payload);
@@ -178,7 +179,8 @@ public class GameBoardManager {
     }
 
     public String createPayload(Field field) {
-        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername);
+        CardCombination cardCombination = gameBoardView.getCurrentSelection();
+        FieldUpdateMessage fieldUpdateMessage = new FieldUpdateMessage(floorIndex, chamberIndex, fieldIndex, field.getNumber(), localUsername, cardCombination);
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
         } catch (Exception e) {
@@ -188,12 +190,18 @@ public class GameBoardManager {
         }
     }
 
+    private void updateIndex() {
+        floorIndex = gameBoardView.getLastAccessedFloorIndex();
+        chamberIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
+        fieldIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
+    }
+
     public Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
+            Log.e("GameBoardManager", "GameBoard is null");
             return null;
         }
         Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
-        Log.e("GameBoardManager", "Field is already finalized, not changed or null");
         return field;
     }
 
@@ -208,6 +216,7 @@ public class GameBoardManager {
     public int getNumberOfUsers() {
         return users.size();
     }
+
     // for testing only
     public void setSendMessageService(SendMessageService sendMessageService) {
         this.sendMessageService = sendMessageService;
@@ -220,13 +229,23 @@ public class GameBoardManager {
     public void displayCurrentCombination() {
         cardController.displayCurrentCombination();
     }
+
     public void extractCardsFromServerString(String message) {
         cardController.extractCardsFromServerString(message);
+    }
+
+    /***
+     * Updates Current Carddraw
+     */
+    public void updateCurrentCardDraw() {
+        JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
+        SendMessageService.sendMessage(jsonObject);
     }
 
     public void setSelectedCard(CardCombination combination) {
         gameBoardView.setCurrentSelection(combination);
     }
+
     public boolean cheat() {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
@@ -298,7 +317,7 @@ public class GameBoardManager {
         return;
     }
 
-    public int getRocketsOfPlayer(String username){
+    public int getRocketsOfPlayer(String username) {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getRockets();
@@ -364,13 +383,21 @@ public class GameBoardManager {
         }
 
         gameBoard.addRockets(success ? 1 : -1);
-        if(success){
+        if (success) {
             Log.i("GameBoardManager", "cheat detect successful");
-        }else {
+        } else {
             Log.i("GameBoardManager", "cheat detect wrong");
         }
 
         user.setGameBoard(gameBoard);
         return;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.currentGameState = gameState;
+    }
+
+    public GameState getGameState() {
+        return currentGameState;
     }
 }

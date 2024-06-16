@@ -43,7 +43,7 @@ public enum FieldCategory {
                 return FieldCategory.ENERGY;
             case "RAUMANZUG":
                 return FieldCategory.SPACESUIT;
-            case "PLANNUNG":
+            case "PLANUNG":
                 return FieldCategory.PLANNING;
             case "ANYTHING":
                 return FieldCategory.WILDCARD;

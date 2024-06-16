@@ -37,7 +37,10 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private ScaleGestureDetector scaleGestureDetector;
     @Getter
     private static Floor lastAccessedFloor = null;
+    @Getter
+    private int lastAccessedFloorIndex = -1;
     @Setter
+    @Getter
     private CardCombination currentSelection;
 
     /**
@@ -54,10 +57,6 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
         //prevent crashing
         this.currentSelection = new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE);
-
-        Floor floor = new Floor(0, 0, FieldCategory.PLANNING);
-        floor.addChamber(5);
-        gameboard.addFloor(floor);
     }
 
     public void setGameBoard(GameBoard gameBoard) {
@@ -175,15 +174,16 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
     private void resetPreviousField(Floor floor) {
         Field field = floor.getLastAccessedChamber().getLastAccessedField();
-        if (field != null) {
+        if (field != null && !field.isFinalized()) {
             field.reset();
         }
-
     }
 
     private void drawFloors(float adjustedY, float adjustedX) {
-        for (Floor floor : gameboard.getFloors()) {
+        for (int i = 0 ; i < gameboard.getFloors().size() ; i++) {
+            Floor floor = gameboard.getFloors().get(i);
             if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
+                lastAccessedFloorIndex = i;
                 lastAccessedFloor = floor;
                 break;
             }

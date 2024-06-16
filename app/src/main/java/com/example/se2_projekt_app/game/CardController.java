@@ -1,4 +1,8 @@
 package com.example.se2_projekt_app.game;
+import static java.util.jar.Pack200.Packer.ERROR;
+
+import android.util.Log;
+
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.screens.GameScreen;
@@ -17,18 +21,10 @@ public class CardController {
     private final CardDrawView cardDrawView;
 
     public CardController(CardDrawView cardDrawView, GameScreen gameScreen) {
-
-
         this.cardDrawView = cardDrawView;
-         currentCombination = new CardCombination[]{
-                 new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANT, FieldValue.THREE),
-                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE),
-                 new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE)
-         };
-
          this.gameScreen=gameScreen;
          this.cardDrawView.setGameScreen(this.gameScreen);
-         displayCurrentCombination();
+
     }
 
     /***
@@ -39,6 +35,7 @@ public class CardController {
      * @param serverString The String with the currentDrawData from the Server
      */
     public void extractCardsFromServerString(String serverString){
+        Log.w(ERROR, "Extracting cards");
         if(serverString.isEmpty())throw new IllegalArgumentException("String cannot be empty");
         String[] splitString =serverString.split(";");
         if(splitString.length!=3)throw new IllegalArgumentException("String must Contain data about 3 Combinations");
@@ -51,6 +48,7 @@ public class CardController {
             FieldCategory nextSymbol=FieldCategory.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
+        cardDrawView.setSelectedCombination(-1);
         currentCombination=combinations;
     }
 

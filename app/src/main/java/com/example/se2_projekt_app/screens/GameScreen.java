@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -14,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
@@ -23,7 +25,6 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
@@ -36,6 +37,7 @@ public class GameScreen extends Activity {
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
+    private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
 
     @Override
@@ -48,7 +50,7 @@ public class GameScreen extends Activity {
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
-        gameBoardManager = new GameBoardManager(gameBoardView,new CardController(cardDrawView,this));
+        gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
 
         /*runOnUiThread(() -> {
             txtview_syserror = findViewById(R.id.error_count);
@@ -99,6 +101,10 @@ public class GameScreen extends Activity {
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
             currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
         });
+
+
+        Button randomButton = findViewById(R.id.game_screen_random_field_button);
+        randomButton.setText(gameState.toString());
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
@@ -153,6 +159,8 @@ public class GameScreen extends Activity {
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+
+
                 // Translate the button with the drawer slide
                 toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
                 toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -178,15 +186,12 @@ public class GameScreen extends Activity {
             if (response.getBoolean("success")) {
                 String action = response.getString("action");
                 String username = response.getString(TAG_USERNAME);
-                String message = response.getString("message");
-                boolean success = Boolean.parseBoolean(response.getString("success"));
+                String message = response.optString("message", "");
                 switch (action) {
-                    case "updateUser":
-                        Log.d(TAG, "Received updateUser message {}" + message);
-                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
-                        break;
                     case "makeMove":
-                        //placeholder
+                        Log.d(TAG, "Received makeMove message {}" + message);
+
+                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
                     case "playerHasCheated":
                         Log.d(TAG, "Player {} has cheated" + message);
@@ -218,10 +223,23 @@ public class GameScreen extends Activity {
                         Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
                         startActivity(intent);
                         break;
+                    case "updateCurrentCards":
                     case "nextCardDraw":
-                        Log.d(TAG, "Updating to show next card drawn with message {}"+message);
+                        Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
+                        break;
+
+                    case "notifyGameState":
+                        Log.d(TAG, "Received notifyGameState message {}" + message);
+                        gameState = GameState.valueOf(message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+                        break;
+                    case "invalidCombination":
+                    case "invalidMove":
+                    case "alreadyMoved":
+                        Log.d(TAG, "Received " + action);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
                         break;
                     case "systemError":
                         Log.i(TAG, "GameScreen case SystemError errichet!: " + response);
@@ -239,6 +257,7 @@ public class GameScreen extends Activity {
                 }
             }
         };
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     void initUsers(ArrayList<String> users) {
@@ -257,7 +276,12 @@ public class GameScreen extends Activity {
             }
         }
     }
-    public void setSelectedCard(CardCombination combination){
+
+    public void setSelectedCard(CardCombination combination) {
         gameBoardManager.setSelectedCard(combination);
+    }
+
+    public void updateCards() {
+        gameBoardManager.updateCurrentCardDraw();
     }
 }

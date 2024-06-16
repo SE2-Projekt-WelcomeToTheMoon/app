@@ -21,6 +21,7 @@ public class Chamber implements Clickable {
     private final int y;
     int boxSize = 200;
     private Field lastAccessedField = null;
+    private int lastAccessedFieldIndex = -1;
 
     /**
      * Constructs a Section with a specified origin.
@@ -101,8 +102,10 @@ public class Chamber implements Clickable {
      */
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
-        for (Field field : fields) {
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
             if (field.handleClick(x, y, boardView, fieldValue)) {
+                lastAccessedFieldIndex = i;
                 lastAccessedField = field;
                 return true;
             }
@@ -112,5 +115,8 @@ public class Chamber implements Clickable {
 
     public Field getLastAccessedField() {
         return lastAccessedField;
+    }
+    public int getLastAccessedFieldIndex() {
+        return lastAccessedFieldIndex;
     }
 }

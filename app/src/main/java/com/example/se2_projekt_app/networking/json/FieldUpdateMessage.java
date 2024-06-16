@@ -1,6 +1,7 @@
 package com.example.se2_projekt_app.networking.json;
 
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.CardCombination;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.Getter;
@@ -17,59 +18,48 @@ public class FieldUpdateMessage {
     private int field;
     private FieldValue fieldValue;
     private String userOwner;
+    private CardCombination cardCombination;
 
-    public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value, String userOwner) {
+    public FieldUpdateMessage(int floor, int chamber, int field, FieldValue value, String userOwner, CardCombination cardCombination) {
         this.floor = floor;
         this.chamber = chamber;
         this.field = field;
         this.fieldValue = value;
         this.userOwner = userOwner;
+        this.cardCombination = cardCombination;
     }
+
     @JsonCreator
-    public FieldUpdateMessage(){
+    public FieldUpdateMessage() {
         this.floor = 0;
         this.chamber = 0;
         this.field = 0;
         this.fieldValue = FieldValue.NONE;
         this.userOwner = "";
+        this.cardCombination = null;
     }
 
     public void setFloor(int floor) {
         this.floor = floor;
     }
 
-    public int getFloor() {
-        return this.floor;
-    }
-
     public void setChamber(int chamber) {
         this.chamber = chamber;
-    }
-
-    public int getChamber() {
-        return this.chamber;
     }
 
     public void setField(int field) {
         this.field = field;
     }
 
-    public int getField() {
-        return this.field;
-    }
-
     public void setFieldValue(FieldValue fieldValue) {
         this.fieldValue = fieldValue;
-    }
-
-    public FieldValue getFieldValue() {
-        return this.fieldValue;
     }
 
     public void setUserOwner(String userOwner) {
         this.userOwner = userOwner;
     }
-    public String getUserOwner() {
-        return userOwner;
+
+    public void setCardCombination(CardCombination cardCombination) {
+        this.cardCombination = cardCombination;
     }
 }
