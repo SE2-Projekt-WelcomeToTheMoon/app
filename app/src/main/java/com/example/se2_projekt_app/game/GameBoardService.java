@@ -19,7 +19,7 @@ public class GameBoardService {
         createAndAddFloor(board, -200, 400, FieldCategory.WATER, new int[]{2, 3});
         createAndAddFloor(board, -200, 600, FieldCategory.ROBOT, new int[]{2, 3});
         createAndAddFloor(board, -200, 800, FieldCategory.ROBOT, new int[]{5});
-        createAndAddFloor(board, -700, 1000, FieldCategory.PLANNING, new int[]{5, 2, 3});
+        createAndAddFloor(board, -300, 1000, FieldCategory.PLANNING, new int[]{6});
         createAndAddFloor(board, -700, 1200, FieldCategory.ENERGY, new int[]{5, 2, 3});
         createAndAddFloor(board, -500, 1400, FieldCategory.PLANT, new int[]{2, 2, 2, 2});
         createAndAddFloor(board, -500, 1600, FieldCategory.WILDCARD, new int[]{2, 2, 2, 2});
