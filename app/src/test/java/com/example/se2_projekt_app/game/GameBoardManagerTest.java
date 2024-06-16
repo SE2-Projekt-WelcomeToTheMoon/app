@@ -41,11 +41,11 @@ class GameBoardManagerTest {
         MockitoAnnotations.initMocks(this);
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
-        gameBoardManager = new GameBoardManager(mockGameBoardView,null);
+        gameBoardManager = new GameBoardManager(mockGameBoardView, null);
         gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
-        }
+    }
 
     @Test
     void testUserOperations() {
@@ -56,7 +56,6 @@ class GameBoardManagerTest {
 
         gameBoardManager.removeUser(mockUser);
         assertEquals(1, gameBoardManager.getNumberOfUsers(), "User should be removed from list");
-
 
         User user = gameBoardManager.userExists("Player2");
         assertEquals(mockUser2, user, "User should be found in list");
@@ -120,7 +119,7 @@ class GameBoardManagerTest {
     }
 
     @Test
-    void testGetLocalUsername(){
+    void testGetLocalUsername() {
         assertEquals("Player1", gameBoardManager.getLocalUsername());
     }
 

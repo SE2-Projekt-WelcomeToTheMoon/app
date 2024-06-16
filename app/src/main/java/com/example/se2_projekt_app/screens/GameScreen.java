@@ -25,7 +25,6 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
@@ -180,6 +179,7 @@ public class GameScreen extends Activity {
                 switch (action) {
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
+
                         runOnUiThread(() -> gameBoardManager.updateUser(username, message));
                         break;
                     case "playerHasCheated":
@@ -212,6 +212,7 @@ public class GameScreen extends Activity {
                         Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
                         startActivity(intent);
                         break;
+                    case "updateCurrentCards":
                     case "nextCardDraw":
                         Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
@@ -233,6 +234,7 @@ public class GameScreen extends Activity {
                 }
             }
         };
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     void initUsers(ArrayList<String> users) {
@@ -254,5 +256,9 @@ public class GameScreen extends Activity {
 
     public void setSelectedCard(CardCombination combination) {
         gameBoardManager.setSelectedCard(combination);
+    }
+
+    public void updateCards() {
+        gameBoardManager.updateCurrentCardDraw();
     }
 }
