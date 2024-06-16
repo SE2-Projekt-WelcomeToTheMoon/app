@@ -48,7 +48,7 @@ public class CardController {
             FieldCategory nextSymbol=FieldCategory.getSymbolAndTranslate(combinationStringParts[3]);
             combinations[combinationNumber]=new CardCombination(currentSymbol,nextSymbol,currentNumber);
         }
-        cardDrawView.selectedCombination=-1;
+        cardDrawView.setSelectedCombination(-1);
         currentCombination=combinations;
     }
 

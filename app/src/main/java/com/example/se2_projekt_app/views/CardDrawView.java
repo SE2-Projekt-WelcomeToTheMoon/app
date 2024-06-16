@@ -13,6 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
+import lombok.Setter;
 
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
@@ -32,6 +33,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
 
     private int yHeight;
     private GameScreen gameScreen;
+    @Setter
     private int selectedCombination;
 
     public CardDrawView(Context context, AttributeSet attrs) {
