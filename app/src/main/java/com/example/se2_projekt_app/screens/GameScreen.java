@@ -3,6 +3,8 @@ package com.example.se2_projekt_app.screens;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -77,7 +79,6 @@ public class GameScreen extends Activity {
             currentOwner = localUser;
         });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
-
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
@@ -121,6 +122,10 @@ public class GameScreen extends Activity {
                 }
             }
         });
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.postDelayed(this::updateCards, 2000);
 
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
