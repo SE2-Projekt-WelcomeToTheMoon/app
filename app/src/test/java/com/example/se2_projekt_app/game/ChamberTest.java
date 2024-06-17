@@ -68,7 +68,7 @@ class ChamberTest {
         chamber.addField(mockField);
         chamber.addField(mockField);
 
-        chamber.draw(mockCanvas);
+        chamber.draw(mockCanvas, null);
 
         for (Field field : chamber.getFields()) {
             verify(field, times(2)).draw(mockCanvas);

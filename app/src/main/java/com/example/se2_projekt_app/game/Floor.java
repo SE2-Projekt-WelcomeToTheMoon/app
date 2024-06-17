@@ -1,5 +1,6 @@
 package com.example.se2_projekt_app.game;
 
+import android.content.Context;
 import android.graphics.Canvas;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import lombok.Getter;
 public class Floor implements Clickable {
     private final int y;
     // cause we only move laterally, and don't need to store Y
+    @Getter
     private int nextX;
     @Getter
     private final FieldCategory category;
@@ -55,9 +57,9 @@ public class Floor implements Clickable {
     /**
      * @param canvas
      */
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, Context context) {
         for (Chamber chamber : chambers) {
-            chamber.draw(canvas);
+            chamber.draw(canvas, context);
         }
     }
 

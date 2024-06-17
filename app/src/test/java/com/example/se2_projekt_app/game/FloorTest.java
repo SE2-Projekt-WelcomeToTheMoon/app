@@ -78,10 +78,10 @@ class FloorTest {
         floor.addChamber(mockChamber);
         floor.addChamber(mockChamber);
 
-        floor.draw(mockCanvas);
+        floor.draw(mockCanvas, null);
 
         for (Chamber chamber : floor.getChambers()) {
-            verify(chamber, times(2)).draw(mockCanvas);
+            verify(chamber, times(2)).draw(mockCanvas, null);
         }
 
     }
