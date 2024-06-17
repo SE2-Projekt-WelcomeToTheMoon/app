@@ -124,18 +124,6 @@ public class GameScreen extends Activity {
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
-//        progressBar = findViewById(R.id.progressbar);
-        //view = findViewById(R.id.rocket_count);
-//        view.setText("22"); // Testing purposes
-//        progressBar.setMax(57);
-//        progressBar.setProgress(15);
-//        final int[] progress = {0};
-
-//                progress[0] += user.getRockets;
-        new Thread(() -> {
-//                        progressBar.setProgress(progress[0], true);
-//                        view.setText(String.valueOf(Username.user.getRockets()));
-        });
 
         toggleDrawerButton.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -144,11 +132,6 @@ public class GameScreen extends Activity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-       /* btn_winner.setOnClickListener(v -> {
-            //Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
-            //startActivity(intent);
-            SendMessageService.sendMessage(JSONService.generateJSONObject("systemError", localUser, true, "", ""));
-        });*/
 
         closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
@@ -191,11 +174,10 @@ public class GameScreen extends Activity {
 
                         // THIS IS TEMPORARY
                         runOnUiThread(() -> {
-                            gameBoardManager.updateSysErrorUser(username, Integer.parseInt(message));
+                            gameBoardManager.updateSysErrorUser(username, 1);
                             txtview_syserror = findViewById(R.id.error_count);
                             int sysError = gameBoardManager.getSysErrorOfPlayer(username);
                             txtview_syserror.setText(String.valueOf(sysError));
-                            Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
                         });
                         // VERY VERY TEMPORARY
                         break;
