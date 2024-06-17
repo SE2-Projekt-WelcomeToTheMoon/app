@@ -295,6 +295,15 @@ public class GameBoardManager {
         return;
     }
 
+    public void addRocketUser(String username, int rocketCount) {
+        // TODO: UPDATE UI SOMEHOW
+        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        User user = userExists(username);
+        user.getGameBoard().addRockets(rocketCount);
+        Log.i("GameBoardManager", "GameBoard updated for User: " + username);
+        return;
+    }
+
 
     private void updateCheatGameBoard(User user) {
         GameBoard gameBoard = user.getGameBoard();
@@ -305,7 +314,8 @@ public class GameBoardManager {
         user.setGameBoard(gameBoard);
         return;
     }
-    private void updateSysErrorGameBoard(User user, int sysError){
+
+    private void updateSysErrorGameBoard(User user, int sysError) {
         GameBoard gameBoard = user.getGameBoard();
         if (gameBoard == null) {
             return;
@@ -327,7 +337,7 @@ public class GameBoardManager {
         return -1;
     }
 
-    public int getSysErrorOfPlayer(String username){
+    public int getSysErrorOfPlayer(String username) {
         User user = userExists(username);
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getSysError();

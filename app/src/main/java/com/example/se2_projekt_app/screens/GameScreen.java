@@ -31,8 +31,6 @@ import java.util.HashMap;
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
     private Button toggleDrawerButton;
-
-    //    private ProgressBar progressBar;
     private TextView view;
     private TextView txtview_syserror;
     private GameBoardManager gameBoardManager;
@@ -47,17 +45,10 @@ public class GameScreen extends Activity {
         DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
-        //Button btn_winner = findViewById(R.id.btn_winnerScreen);
-
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
         gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
-
-        /*runOnUiThread(() -> {
-            txtview_syserror = findViewById(R.id.error_count);
-            txtview_syserror.setText(String.valueOf(4));
-        });*/
 
         // get local user
         String localUser = getIntent().getStringExtra(TAG_USERNAME);
@@ -193,6 +184,26 @@ public class GameScreen extends Activity {
                 String username = response.getString(TAG_USERNAME);
                 String message = response.optString("message", "");
                 switch (action) {
+                    case "addSystemError":
+                        Log.d(TAG, "Received addSystemError message {}" + message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added a System Error", Toast.LENGTH_SHORT).show());
+                        gameBoardManager.updateSysErrorUser(username, 1);
+
+                        // THIS IS TEMPORARY
+                        runOnUiThread(() -> {
+                            gameBoardManager.updateSysErrorUser(username, Integer.parseInt(message));
+                            txtview_syserror = findViewById(R.id.error_count);
+                            int sysError = gameBoardManager.getSysErrorOfPlayer(username);
+                            txtview_syserror.setText(String.valueOf(sysError));
+                            Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
+                        });
+                        // VERY VERY TEMPORARY
+                        break;
+                    case "addRocket":
+                        Log.d(TAG, "Received addRocket message {}" + message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added"+ Integer.parseInt(message) + "Rockets", Toast.LENGTH_SHORT).show());
+                        gameBoardManager.addRocketUser(username, Integer.parseInt(message));
+                        break;
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
 

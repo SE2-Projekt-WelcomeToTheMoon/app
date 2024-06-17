@@ -69,8 +69,10 @@ public class PostOffice {
             case "playerDetectedCheatCorrect":
             case "systemError":
             case "playerDetectedCheatWrong":
+            case "addRocket":
+            case "addSystemError":
                 GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was"+action);
+                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was" + action);
                 break;
 
             case "cheat":
@@ -84,7 +86,7 @@ public class PostOffice {
                 break;
             default:
                 Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
-                Log.w(ERROR,"Response Action from server: "+action);
+                Log.w(ERROR, "Response Action from server: " + action);
         }
     }
 }
