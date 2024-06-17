@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -15,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
@@ -30,7 +32,6 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
@@ -43,6 +44,7 @@ public class GameScreen extends Activity {
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
     private static final String TAG_USERNAME = "username";
+    private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
     private DrawerLayout drawerLayout;
 
@@ -54,7 +56,6 @@ public class GameScreen extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
         //Button btn_winner = findViewById(R.id.btn_winnerScreen);
@@ -62,7 +63,7 @@ public class GameScreen extends Activity {
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
-        gameBoardManager = new GameBoardManager(gameBoardView,new CardController(cardDrawView,this));
+        gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
 
         /*runOnUiThread(() -> {
             txtview_syserror = findViewById(R.id.error_count);
@@ -114,6 +115,10 @@ public class GameScreen extends Activity {
             currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
         });
 
+
+        Button randomButton = findViewById(R.id.game_screen_random_field_button);
+        randomButton.setText(gameState.toString());
+
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
 
@@ -133,9 +138,6 @@ public class GameScreen extends Activity {
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
-        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 //        progressBar = findViewById(R.id.progressbar);
         //view = findViewById(R.id.rocket_count);
 //        view.setText("22"); // Testing purposes
@@ -163,7 +165,6 @@ public class GameScreen extends Activity {
                 String username = response.getString(TAG_USERNAME);
                 String message = response.getString("message");
                 boolean success = Boolean.parseBoolean(response.getString("success"));
-
                 switch (action) {
                     case "updateUser":
                         Log.d(TAG, "Received updateUser message {}" + message);
@@ -202,10 +203,23 @@ public class GameScreen extends Activity {
                         Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
                         startActivity(intent);
                         break;
+                    case "updateCurrentCards":
                     case "nextCardDraw":
-                        Log.d(TAG, "Updating to show next card drawn with message {}"+message);
+                        Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
+                        break;
+
+                    case "notifyGameState":
+                        Log.d(TAG, "Received notifyGameState message {}" + message);
+                        gameState = GameState.valueOf(message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+                        break;
+                    case "invalidCombination":
+                    case "invalidMove":
+                    case "alreadyMoved":
+                        Log.d(TAG, "Received " + action);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
                         break;
                     case "systemError":
                         Log.i(TAG, "GameScreen case SystemError errichet!: " + response);
@@ -239,6 +253,7 @@ public class GameScreen extends Activity {
                 }
             }
         };
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     void initUsers(ArrayList<String> users) {
@@ -257,8 +272,13 @@ public class GameScreen extends Activity {
             }
         }
     }
-    public void setSelectedCard(CardCombination combination){
+
+    public void setSelectedCard(CardCombination combination) {
         gameBoardManager.setSelectedCard(combination);
+    }
+
+    public void updateCards() {
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     private void setupDrawer() {
@@ -317,44 +337,35 @@ public class GameScreen extends Activity {
         Log.d(TAG, "Updating mission card image: " + missionDescription + ", flipped: " + isFlipped);
 
         int resourceId = 0;
+        int imageViewId = 0;
+
         switch (missionDescription.toLowerCase()) {
             case "a1":
                 resourceId = isFlipped ? R.drawable.a1_back : R.drawable.a1;
+                imageViewId = R.id.mission_card_a;
                 break;
             case "a2":
                 resourceId = isFlipped ? R.drawable.a2_back : R.drawable.a2;
+                imageViewId = R.id.mission_card_a;
                 break;
             case "b1":
                 resourceId = isFlipped ? R.drawable.b1_back : R.drawable.b1;
+                imageViewId = R.id.mission_card_b;
                 break;
             case "b2":
                 resourceId = isFlipped ? R.drawable.b2_back : R.drawable.b2;
+                imageViewId = R.id.mission_card_b;
                 break;
             case "c1":
                 resourceId = isFlipped ? R.drawable.c1_back : R.drawable.c1;
+                imageViewId = R.id.mission_card_c;
                 break;
             case "c2":
                 resourceId = isFlipped ? R.drawable.c2_back : R.drawable.c2;
-                break;
-            default:
-                Log.e(TAG, "Invalid mission description: " + missionDescription);
-                return;
-        }
-
-        char missionType = missionDescription.toLowerCase().charAt(0); // a, b, or c
-        int imageViewId = 0;
-        switch (missionType) {
-            case 'a':
-                imageViewId = R.id.mission_card_a;
-                break;
-            case 'b':
-                imageViewId = R.id.mission_card_b;
-                break;
-            case 'c':
                 imageViewId = R.id.mission_card_c;
                 break;
             default:
-                Log.e(TAG, "Invalid mission type: " + missionType);
+                Log.e(TAG, "Invalid mission description: " + missionDescription);
                 return;
         }
 

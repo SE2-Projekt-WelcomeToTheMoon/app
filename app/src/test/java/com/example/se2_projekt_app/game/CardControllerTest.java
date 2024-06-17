@@ -31,7 +31,7 @@ class CardControllerTest {
     }
     @Test
     void testExtractCardsFromServerString() {
-        String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANNUNG";
+        String serverString = "0-ROBOTER-2-WASSER;1-PFLANZE-3-ENERGIE;2-RAUMANZUG-4-PLANUNG";
         cardController.extractCardsFromServerString(serverString);
         CardCombination[] combinations=cardController.getCurrentCombination();
         assertEquals(FieldCategory.ROBOT, combinations[0].getCurrentSymbol());
@@ -63,7 +63,14 @@ class CardControllerTest {
         assertThrows(IllegalArgumentException.class,()->cardController.displayCurrentCombination());
     }
     @Test
-    void testUpdateCanvasDoesNotThrowExceptionWhenNonNullParameter(){
+    void testUpdateCanvasDoesNotThrowExceptionWhenNonNullParameter() throws NoSuchFieldException, IllegalAccessException {
+        Field field = cardController.getClass().getDeclaredField("currentCombination");
+        field.setAccessible(true);
+        CardCombination[] combinations= {
+                new CardCombination(FieldCategory.ENERGY,FieldCategory.ENERGY,FieldValue.ELEVEN),
+                new CardCombination(FieldCategory.ENERGY,FieldCategory.ENERGY,FieldValue.ELEVEN),
+                new CardCombination(FieldCategory.ENERGY,FieldCategory.ENERGY,FieldValue.ELEVEN)};
+        field.set(cardController, combinations);
         assertDoesNotThrow(()->cardController.displayCurrentCombination());
     }
 

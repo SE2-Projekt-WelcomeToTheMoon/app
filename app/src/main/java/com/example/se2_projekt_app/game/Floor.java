@@ -10,6 +10,8 @@ import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
+import lombok.Getter;
+
 public class Floor implements Clickable {
     private final int y;
     // cause we only move laterally, and don't need to store Y
@@ -17,7 +19,10 @@ public class Floor implements Clickable {
     private final FieldCategory category;
     private final List<Chamber> chambers;
     int boxSize = 200;
+    @Getter
     private Chamber lastAccessedChamber = null;
+    @Getter
+    private int lastAccessedChamberIndex = -1;
 
     public Floor(int x, int y, FieldCategory category) {
         this.y = y;
@@ -33,7 +38,6 @@ public class Floor implements Clickable {
      */
     public void addChamber(int count) {
         Chamber chamber = new Chamber(nextX, y, count, category);
-        // shift to the right for the next chamber why doesn't it work with 200????
         this.nextX += count * boxSize;
         chambers.add(chamber);
     }
@@ -68,16 +72,14 @@ public class Floor implements Clickable {
 
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
-        for (Chamber chamber : chambers) {
+        for (int i = 0 ; i < chambers.size() ; i++) {
+            Chamber chamber = chambers.get(i);
             if (chamber.handleClick(x, y, boardView, fieldValue)) {
+                lastAccessedChamberIndex = i;
                 lastAccessedChamber = chamber;
                 return true;
             }
         }
         return false;
-    }
-
-    public Chamber getLastAccessedChamber() {
-        return lastAccessedChamber;
     }
 }
