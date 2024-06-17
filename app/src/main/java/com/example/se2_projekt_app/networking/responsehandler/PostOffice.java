@@ -9,7 +9,6 @@ import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 import com.example.se2_projekt_app.screens.WinnerScreen;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -28,7 +27,7 @@ public class PostOffice {
      * @param response Response to route.
      */
     @SneakyThrows
-    public void routeResponse(JSONObject response) throws JSONException {
+    public void routeResponse(JSONObject response) {
 
         String action = response.getString("action");
 
@@ -71,6 +70,7 @@ public class PostOffice {
             case "playerDetectedCheatWrong":
             case "addRocket":
             case "addSystemError":
+            case "rewardChange":
                 GameScreen.responseReceiver.receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was" + action);
                 break;
