@@ -23,6 +23,9 @@ public class Chamber implements Clickable {
     private Field lastAccessedField = null;
     private int lastAccessedFieldIndex = -1;
     private Paint outlinePaint;
+    private Paint rewardBoxPaint;
+    private Paint rewardBoxBackgroundPaint;
+    private Paint textPaint;
 
     /**
      * Constructs a Section with a specified origin.
@@ -33,7 +36,7 @@ public class Chamber implements Clickable {
     public Chamber(int x, int y, int count, FieldCategory category) {
         this.fields = new ArrayList<>();
 
-        initOutlinePaint();
+        initPaint();
 
         for (int i = 0; i < count; i++) {
             fields.add(new Field(x + (i * boxSize), y, boxSize, category, FieldValue.NONE));
@@ -49,11 +52,25 @@ public class Chamber implements Clickable {
         this.fields.add(field);
     }
 
-    private void initOutlinePaint() {
+    private void initPaint() {
         outlinePaint = new Paint();
         outlinePaint.setColor(Color.BLACK);
         outlinePaint.setStyle(Paint.Style.STROKE);
         outlinePaint.setStrokeWidth(10);
+
+        rewardBoxPaint = new Paint();
+        rewardBoxPaint.setColor(Color.BLACK);
+        rewardBoxPaint.setStyle(Paint.Style.STROKE);
+        rewardBoxPaint.setStrokeWidth(10);
+
+        rewardBoxBackgroundPaint = new Paint();
+        rewardBoxBackgroundPaint.setColor(Color.GRAY);
+        rewardBoxBackgroundPaint.setStyle(Paint.Style.FILL);
+
+        textPaint = new Paint();
+        textPaint.setColor(0xFFFFFFFF);
+        textPaint.setTextSize(40);
+        textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     /**
@@ -67,10 +84,29 @@ public class Chamber implements Clickable {
             field.draw(canvas);
         }
 
-        // drawing the chamber AFTER the fields, so the outline is on top of the fields
+        float offset = 100;
+        float rewardBoxLeft = x;
+        float rewardBoxTop = y - offset;
+        float rewardBoxRight = x + boxSize * fields.size();
+        float rewardBoxBottom = y;
+
+        canvas.drawRect(rewardBoxLeft, rewardBoxTop, rewardBoxRight, rewardBoxBottom, rewardBoxPaint);
+        canvas.drawRect(rewardBoxLeft, rewardBoxTop, rewardBoxRight, rewardBoxBottom, rewardBoxBackgroundPaint);
+
+        float rewardBoxCenterX = rewardBoxLeft + (rewardBoxRight - rewardBoxLeft) / 2;
+        float rewardBoxCenterY = rewardBoxTop + (rewardBoxBottom - rewardBoxTop) / 2;
+
+        String value1 = "RocketCount";
+        String value2 = "ErrorCount";
+        canvas.drawText(value1, rewardBoxCenterX + 100, rewardBoxCenterY + 20, textPaint);
+        canvas.drawText(value2, rewardBoxCenterX - 100, rewardBoxCenterY + 20, textPaint);
+
         canvas.drawRect(x, y, (float) x + boxSize * fields.size(), (float) y + boxSize, outlinePaint);
 
     }
+
+
+
 
     public void setActive() {
         outlinePaint.setColor(Color.GREEN);

@@ -19,8 +19,6 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.game.CardCombination;
-import com.example.se2_projekt_app.game.Floor;
-import com.example.se2_projekt_app.game.GameBoard;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
@@ -29,7 +27,6 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
