@@ -22,6 +22,7 @@ public class Chamber implements Clickable {
     int boxSize = 200;
     private Field lastAccessedField = null;
     private int lastAccessedFieldIndex = -1;
+    private  Paint outlinePaint;
 
     /**
      * Constructs a Section with a specified origin.
@@ -31,6 +32,8 @@ public class Chamber implements Clickable {
      */
     public Chamber(int x, int y, int count, FieldCategory category) {
         this.fields = new ArrayList<>();
+
+        initOutlinePaint();
 
         for (int i = 0; i < count; i++) {
             fields.add(new Field(x + (i * boxSize), y, boxSize, category, FieldValue.NONE));
@@ -47,7 +50,6 @@ public class Chamber implements Clickable {
     }
 
     private void initOutlinePaint() {
-        Paint outlinePaint;
         outlinePaint = new Paint();
         outlinePaint.setColor(Color.BLACK);
         outlinePaint.setStyle(Paint.Style.STROKE);
@@ -60,11 +62,22 @@ public class Chamber implements Clickable {
      * @param canvas The canvas on which to draw the boxes.
      */
     public void draw(Canvas canvas) {
-        initOutlinePaint();
 
         for (Field field : fields) {
             field.draw(canvas);
         }
+
+        // drawing the chamber AFTER the fields, so the outline is on top of the fields
+        canvas.drawRect(x,y, (float) x + boxSize * fields.size(), (float) y + boxSize, outlinePaint);
+
+    }
+
+    /**
+     * to change outline color for knowing where you are allowed to place
+     * @param color
+     */
+    public void setOutlineColor(int color) {
+        outlinePaint.setColor(color);
     }
 
     public Field getField(int index) {

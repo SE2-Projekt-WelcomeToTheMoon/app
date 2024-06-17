@@ -49,7 +49,7 @@ public class Field implements Clickable {
         textPaint.setTextAlign(Paint.Align.CENTER);
 
         outlinePaint = new Paint();
-        outlinePaint.setColor(0xFF000000);
+        outlinePaint.setColor(Color.GRAY);
         outlinePaint.setStyle(Paint.Style.STROKE);
         outlinePaint.setStrokeWidth(5);
     }
@@ -60,8 +60,8 @@ public class Field implements Clickable {
      * @param canvas The canvas on which to draw the translated box.
      */
     public void draw(Canvas canvas) {
-        canvas.drawRect(x, y, x + size, y + size, paint);
-        canvas.drawRect(x, y, x + size, y + size, outlinePaint);
+        canvas.drawRect(x, y, (float) x + size, (float) y + size, paint);
+        canvas.drawRect(x, y, (float) x + size, (float) y + size, outlinePaint);
         drawNumber(canvas, x, y);
     }
 
