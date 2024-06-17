@@ -16,14 +16,14 @@ public class GameBoardService {
 
         // Add floors to the game board
         createAndAddFloor(board, 0, 0, FieldCategory.SPACESUIT, new int[]{3});
-        createAndAddFloor(board, 0, 200, FieldCategory.SPACESUIT, new int[]{3});
-        createAndAddFloor(board, -200, 400, FieldCategory.WATER, new int[]{2, 3});
-        createAndAddFloor(board, -200, 600, FieldCategory.ROBOT, new int[]{2, 3});
-        createAndAddFloor(board, -200, 800, FieldCategory.ROBOT, new int[]{5});
-        createAndAddFloor(board, -300, 1000, FieldCategory.PLANNING, new int[]{6});
-        createAndAddFloor(board, -700, 1200, FieldCategory.ENERGY, new int[]{5, 2, 3});
-        createAndAddFloor(board, -500, 1400, FieldCategory.PLANT, new int[]{2, 2, 2, 2});
-        createAndAddFloor(board, -500, 1600, FieldCategory.WILDCARD, new int[]{2, 2, 2, 2});
+        createAndAddFloor(board, 0, 250, FieldCategory.SPACESUIT, new int[]{3});
+        createAndAddFloor(board, -200, 500, FieldCategory.WATER, new int[]{2, 3});
+        createAndAddFloor(board, -200, 750, FieldCategory.ROBOT, new int[]{2, 3});
+        createAndAddFloor(board, -200, 1000, FieldCategory.ROBOT, new int[]{5});
+        createAndAddFloor(board, -300, 1250, FieldCategory.PLANNING, new int[]{6});
+        createAndAddFloor(board, -700, 1500, FieldCategory.ENERGY, new int[]{5, 2, 3});
+        createAndAddFloor(board, -500, 1750, FieldCategory.PLANT, new int[]{2, 2, 2, 2});
+        createAndAddFloor(board, -500, 2000, FieldCategory.WILDCARD, new int[]{2, 2, 2, 2});
 
         return board;
     }

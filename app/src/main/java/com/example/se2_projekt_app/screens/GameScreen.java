@@ -170,23 +170,9 @@ public class GameScreen extends Activity {
                 String username = response.getString(TAG_USERNAME);
                 String message = response.optString("message", "");
                 switch (action) {
-                    case "addSystemError":
-                        Log.d(TAG, "Received addSystemError message {}" + message);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added a System Error", Toast.LENGTH_SHORT).show());
-                        gameBoardManager.updateSysErrorUser(username, 1);
-
-                        // THIS IS TEMPORARY
-                        runOnUiThread(() -> {
-                            gameBoardManager.updateSysErrorUser(username, 1);
-                            txtview_syserror = findViewById(R.id.error_count);
-                            int sysError = gameBoardManager.getSysErrorOfPlayer(username);
-                            txtview_syserror.setText(String.valueOf(sysError));
-                        });
-                        // VERY VERY TEMPORARY
-                        break;
                     case "addRocket":
                         Log.d(TAG, "Received addRocket message {}" + message);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added" + Integer.parseInt(message) + "Rockets", Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added " + Integer.parseInt(message) + " Rockets", Toast.LENGTH_SHORT).show());
                         gameBoardManager.addRocketUser(username, Integer.parseInt(message));
                         break;
                     case "makeMove":
