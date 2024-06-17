@@ -2,6 +2,7 @@ package com.example.se2_projekt_app.game;
 
 import android.util.Log;
 
+import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.networking.json.ActionValues;
@@ -19,10 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("all")
+import lombok.Getter;
+
 public class GameBoardManager {
+
+    @Getter
     private final List<User> users = new ArrayList<>();
     private final GameBoardView gameBoardView;
     // this username is the username choosen by the local device
@@ -201,8 +208,7 @@ public class GameBoardManager {
             Log.e("GameBoardManager", "GameBoard is null");
             return null;
         }
-        Field field = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
-        return field;
+        return GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
     }
 
     public String getLocalUsername() {
@@ -281,7 +287,6 @@ public class GameBoardManager {
         }
 
         Log.i("GameBoardManager", "GameBoard updated for User: " + cheatedUser);
-        return;
     }
 
     public void updateSysErrorUser(String username, int sysError) {
@@ -292,7 +297,6 @@ public class GameBoardManager {
         updateSysErrorGameBoard(user, sysError);
 
         Log.i("GameBoardManager", "GameBoard updated for User: " + username);
-        return;
     }
 
     public void addRocketUser(String username, int rocketCount) {
@@ -301,7 +305,6 @@ public class GameBoardManager {
         User user = userExists(username);
         user.getGameBoard().addRockets(rocketCount);
         Log.i("GameBoardManager", "GameBoard updated for User: " + username);
-        return;
     }
 
 
@@ -312,7 +315,6 @@ public class GameBoardManager {
         }
         gameBoard.addRockets(1);
         user.setGameBoard(gameBoard);
-        return;
     }
 
     private void updateSysErrorGameBoard(User user, int sysError) {
@@ -324,7 +326,6 @@ public class GameBoardManager {
         gameBoard.setSysError(sysError);
 
         user.setGameBoard(gameBoard);
-        return;
     }
 
     public int getRocketsOfPlayer(String username) {
@@ -360,9 +361,6 @@ public class GameBoardManager {
                 Log.i(TAG, "Detected Cheat successfully");
             }
         };
-
-        return;
-
     }
 
     public void updateCorrectCheatDetection(String username, String detector, boolean success) {
@@ -383,7 +381,6 @@ public class GameBoardManager {
         }
 
         Log.i("GameBoardManager", "GameBoard updated for User: " + detector);
-        return;
     }
 
     private void updateDetectorGameBoard(User user, boolean success) {
@@ -400,7 +397,6 @@ public class GameBoardManager {
         }
 
         user.setGameBoard(gameBoard);
-        return;
     }
 
     public void setGameState(GameState gameState) {
@@ -410,4 +406,31 @@ public class GameBoardManager {
     public GameState getGameState() {
         return currentGameState;
     }
+
+    public void updateChamberOutline() {
+        // Convert currentCombination to a Set of FieldCategory
+        Set<FieldCategory> activeCategories = Arrays.stream(cardController.getCurrentCombination())
+                .map(CardCombination::getCurrentSymbol)
+                .collect(Collectors.toSet());
+
+        // Iterate over users
+        for (User user : users) {
+            // Iterate over floors in the user's game board
+            for (Floor floor : user.getGameBoard().getFloors()) {
+                // Deactivate all chambers
+                for (Chamber chamber : floor.getChambers()) {
+                    chamber.setInactive();
+                }
+
+                // Activate chambers if the floor's category is in activeCategories
+                if (activeCategories.contains(floor.getCategory())) {
+                    for (Chamber chamber : floor.getChambers()) {
+                        chamber.setActive();
+                    }
+                }
+            }
+        }
+    }
+
+
 }

@@ -19,6 +19,8 @@ import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.game.CardCombination;
+import com.example.se2_projekt_app.game.Floor;
+import com.example.se2_projekt_app.game.GameBoard;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
@@ -27,6 +29,7 @@ import com.example.se2_projekt_app.views.GameBoardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
@@ -107,7 +110,7 @@ public class GameScreen extends Activity {
                 Log.i(TAG, "Cheat");
                 gameBoardManager.cheat();
             } else {
-                if(!currentOwner.isEmpty()){
+                if (!currentOwner.isEmpty()) {
                     Log.i(TAG, "Detect cheat");
                     gameBoardManager.detectCheat(currentOwner);
                 }
@@ -119,7 +122,7 @@ public class GameScreen extends Activity {
         handler.postDelayed(this::updateCards, 2000);
 
         // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
@@ -183,7 +186,7 @@ public class GameScreen extends Activity {
                         break;
                     case "addRocket":
                         Log.d(TAG, "Received addRocket message {}" + message);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added"+ Integer.parseInt(message) + "Rockets", Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added" + Integer.parseInt(message) + "Rockets", Toast.LENGTH_SHORT).show());
                         gameBoardManager.addRocketUser(username, Integer.parseInt(message));
                         break;
                     case "makeMove":
@@ -226,6 +229,7 @@ public class GameScreen extends Activity {
                         Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
+                        updateChamberOutline();
                         break;
 
                     case "notifyGameState":
@@ -281,5 +285,9 @@ public class GameScreen extends Activity {
 
     public void updateCards() {
         gameBoardManager.updateCurrentCardDraw();
+    }
+
+    public void updateChamberOutline() {
+        gameBoardManager.updateChamberOutline();
     }
 }

@@ -16,6 +16,7 @@ public class Floor implements Clickable {
     private final int y;
     // cause we only move laterally, and don't need to store Y
     private int nextX;
+    @Getter
     private final FieldCategory category;
     private final List<Chamber> chambers;
     int boxSize = 200;
@@ -44,6 +45,7 @@ public class Floor implements Clickable {
 
     /**
      * Just for Testing
+     *
      * @param chamber
      */
     public void addChamber(Chamber chamber) {
@@ -66,13 +68,10 @@ public class Floor implements Clickable {
     public List<Chamber> getChambers() {
         return new ArrayList<>(this.chambers);
     }
-    public int getNextX() {
-        return this.nextX;
-    }
 
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
-        for (int i = 0 ; i < chambers.size() ; i++) {
+        for (int i = 0; i < chambers.size(); i++) {
             Chamber chamber = chambers.get(i);
             if (chamber.handleClick(x, y, boardView, fieldValue)) {
                 lastAccessedChamberIndex = i;
