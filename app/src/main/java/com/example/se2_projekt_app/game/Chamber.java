@@ -20,6 +20,7 @@ public class Chamber implements Clickable {
     private final int x;
     private final int y;
     int boxSize = 200;
+    public List<Reward> rewards;
     private Field lastAccessedField = null;
     private int lastAccessedFieldIndex = -1;
 
@@ -37,6 +38,7 @@ public class Chamber implements Clickable {
         }
         this.x = x;
         this.y = y;
+        this.rewards=new ArrayList<>();
     }
 
     /**

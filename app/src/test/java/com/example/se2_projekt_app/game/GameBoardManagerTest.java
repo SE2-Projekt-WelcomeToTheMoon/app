@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.RewardCategory;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
@@ -134,5 +135,13 @@ class GameBoardManagerTest {
             e.printStackTrace();
         }
         assertEquals(expected, gameBoardManager.createPayload(new Field(0, 0, 0, FieldCategory.ENERGY, FieldValue.FIVE)));
+    }
+
+    @Test
+    void testInjectGameBoard(){
+        GameBoard board=GameBoardService.createGameBoard();
+        assertEquals(RewardCategory.ROCKET,board.getFloors().get(0).getChamber(0).rewards.get(0).getCategory());
+        assertEquals(3,board.getFloors().get(0).getChamber(0).rewards.get(0).getNumberRockets());
+
     }
 }
