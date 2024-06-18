@@ -142,16 +142,19 @@ public class Reward {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,4));
-        list.add(firstChamber);
+
         ArrayList<Reward> secondChamber=new ArrayList<>();
         secondChamber.add(new Reward(RewardCategory.ROCKET,2));
-        list.add(secondChamber);
+
         ArrayList<Reward> thirdChamber=new ArrayList<>();
         thirdChamber.add(new Reward(RewardCategory.ROCKET,4));
-        list.add(thirdChamber);
+
         ArrayList<Reward> fourthChamber=new ArrayList<>();
         fourthChamber.add(new Reward(RewardCategory.ROCKET,1));
         fourthChamber.add(new Reward(RewardCategory.SYSTEMERROR));
+        list.add(firstChamber);
+        list.add(secondChamber);
+        list.add(thirdChamber);
         list.add(fourthChamber);
         return list;
     }
