@@ -87,7 +87,7 @@ public class Floor implements Clickable {
      * Each ArrayList of ArrayLists is for a chamber, each ArrayList of Rewards are the rewards in that chamber
      * @param rewardList The Rewards to be injected
      */
-    public void injectRewards(ArrayList<ArrayList<Reward>> rewardList){
+    public void injectRewards(List<ArrayList<Reward>> rewardList){
         if(rewardList==null||rewardList.size()!=chambers.size())throw new IllegalArgumentException("Rewards size must be equal to chambers size");
         int count=0;
         for (Chamber chamber:chambers) {

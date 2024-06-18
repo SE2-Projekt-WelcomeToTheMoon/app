@@ -3,6 +3,7 @@ package com.example.se2_projekt_app.game;
 import com.example.se2_projekt_app.enums.RewardCategory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 
@@ -35,7 +36,7 @@ public class Reward {
      * Top Floor 1 Chamber 3 Rockets
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getFirstFloorRewards() {
+    public static List<ArrayList<Reward>> getFirstFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,3));
@@ -47,7 +48,7 @@ public class Reward {
      * Second Floor 1 Chamber 4 Rockets 1 SysError
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getSecondFloorRewards() {
+    public static List<ArrayList<Reward>> getSecondFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,4));
@@ -60,7 +61,7 @@ public class Reward {
      * Third Floor 2 Chambers first 2 Rocket 1 SysError second 6 Rockets
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getThirdFloorRewards() {
+    public static List<ArrayList<Reward>> getThirdFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,2));
@@ -76,7 +77,7 @@ public class Reward {
      * Fourth Floor 2 Chamber first 2 Rockets second 3 Rockets
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getFourthFloorRewards() {
+    public static List<ArrayList<Reward>> getFourthFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,2));
@@ -91,7 +92,7 @@ public class Reward {
      * Fifth floor 1 chamber 3 Rockets 2 SysError
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getFifthFloorRewards() {
+    public static List<ArrayList<Reward>> getFifthFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,3));
@@ -105,7 +106,7 @@ public class Reward {
      * Sixth Floor 1 Chamber 8 Rockets 1 SysError
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getSixthFloorRewards() {
+    public static List<ArrayList<Reward>> getSixthFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,8));
@@ -118,7 +119,7 @@ public class Reward {
      * Seventh Floor 3 Chamber first 4 Rockets 2 SysErrors second 3 Rockets third 2 Rockets
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getSeventhFloorRewards() {
+    public static List<ArrayList<Reward>> getSeventhFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,4));
@@ -138,7 +139,7 @@ public class Reward {
      * Eighth Floor 4 chambers first and third 4 rockets second 2 rockets fourth 1 rocket 1 SysError
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getEighthFloorRewards() {
+    public static List<ArrayList<Reward>> getEighthFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,4));
@@ -163,7 +164,7 @@ public class Reward {
      * Ninth floor 4 chambers all 2 Rockets
      * @return the created List
      */
-    public static ArrayList<ArrayList<Reward>> getNinthFloorRewards() {
+    public static List<ArrayList<Reward>> getNinthFloorRewards() {
         ArrayList<ArrayList<Reward>> list=new ArrayList<>();
         ArrayList<Reward> firstChamber=new ArrayList<>();
         firstChamber.add(new Reward(RewardCategory.ROCKET,2));
