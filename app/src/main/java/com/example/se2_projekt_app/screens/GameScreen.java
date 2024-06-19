@@ -25,6 +25,9 @@ import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.CardDrawView;
 import com.example.se2_projekt_app.views.GameBoardView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,6 +42,11 @@ public class GameScreen extends Activity {
     private static final String TAG_USERNAME = "username";
     private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
+    private static final String PLAYER_1 = "Player1";
+    private static final String PLAYER_2 = "Player2";
+    private static final String PLAYER_3 = "Player3";
+    private static final String PLAYER_4 = "Player4";
+    private static final String PLAYER_HAS_CHEATED = "Player {} has cheated";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,27 +79,27 @@ public class GameScreen extends Activity {
         });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
             assert playerMap != null;
-            gameBoardManager.showGameBoard(playerMap.get("Player2"));
+            gameBoardManager.showGameBoard(playerMap.get(PLAYER_2));
             view = findViewById(R.id.rocket_count);
             txtview_syserror = findViewById(R.id.error_count);
-            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player2")))); // Testing purposes
-            currentOwner = playerMap.size() >= 2 ? playerMap.get("Player2") : "";
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_2)))); // Testing purposes
+            currentOwner = playerMap.size() >= 2 ? playerMap.get(PLAYER_2) : "";
         });
         findViewById(R.id.player3_button).setOnClickListener(v -> {
             assert playerMap != null;
-            gameBoardManager.showGameBoard(playerMap.get("Player3"));
+            gameBoardManager.showGameBoard(playerMap.get(PLAYER_3));
             view = findViewById(R.id.rocket_count);
             txtview_syserror = findViewById(R.id.error_count);
-            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player3")))); // Testing purposes
-            currentOwner = playerMap.size() >= 3 ? playerMap.get("Player3") : "";
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_3)))); // Testing purposes
+            currentOwner = playerMap.size() >= 3 ? playerMap.get(PLAYER_3) : "";
         });
         findViewById(R.id.player4_button).setOnClickListener(v -> {
             assert playerMap != null;
-            gameBoardManager.showGameBoard(playerMap.get("Player4"));
+            gameBoardManager.showGameBoard(playerMap.get(PLAYER_4));
             view = findViewById(R.id.rocket_count);
             txtview_syserror = findViewById(R.id.error_count);
-            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get("Player4")))); // Testing purposes
-            currentOwner = playerMap.size() >= 4 ? playerMap.get("Player4") : "";
+            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_4)))); // Testing purposes
+            currentOwner = playerMap.size() >= 4 ? playerMap.get(PLAYER_4) : "";
         });
 
 
@@ -100,19 +108,7 @@ public class GameScreen extends Activity {
 
         findViewById(R.id.game_screen_accept_turn_button).setOnClickListener(v -> gameBoardManager.acceptTurn());
 
-
-        findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
-            Log.e(TAG, String.valueOf(currentOwner));
-            if (currentOwner.equals(localUser)) {
-                Log.i(TAG, "Cheat");
-                gameBoardManager.cheat();
-            } else {
-                if (!currentOwner.isEmpty()) {
-                    Log.i(TAG, "Detect cheat");
-                    gameBoardManager.detectCheat(currentOwner);
-                }
-            }
-        });
+        setupCheatButton(localUser);
 
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -160,96 +156,109 @@ public class GameScreen extends Activity {
                 // Not used
             }
         });
+        responseReceiver = this::handleResponse;
+        //gameBoardManager.updateCurrentCardDraw();
+    }
 
-        responseReceiver = response -> {
-            if (response.getBoolean("success")) {
-                String action = response.getString("action");
-                String username = response.getString(TAG_USERNAME);
-                String message = response.optString("message", "");
-                switch (action) {
-                    case "addRocket":
-                        Log.d(TAG, "Received addRocket message {}" + message);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added " + Integer.parseInt(message) + " Rockets", Toast.LENGTH_SHORT).show());
-                        gameBoardManager.addRocketUser(username, Integer.parseInt(message));
-                        break;
-                    case "makeMove":
-                        Log.d(TAG, "Received makeMove message {}" + message);
-
-                        runOnUiThread(() -> gameBoardManager.updateUser(username, message));
-                        break;
-                    case "playerHasCheated":
-                        Log.d(TAG, "Player {} has cheated" + message);
-                        runOnUiThread(() -> {
-                            gameBoardManager.updateCheatedUser(username, message);
-                            view = findViewById(R.id.rocket_count);
-                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
-                        });
-                        break;
-                    case "playerDetectedCheatCorrect":
-                        Log.d(TAG, "Player {} has cheated" + message);
-                        runOnUiThread(() -> {
-                            gameBoardManager.updateCorrectCheatDetection(username, message, true);
-
-                            view = findViewById(R.id.rocket_count);
-                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
-                        });
-                        break;
-                    case "playerDetectedCheatWrong":
-                        Log.d(TAG, "Player {} has cheated" + message);
-                        runOnUiThread(() -> {
-                            gameBoardManager.updateCorrectCheatDetection(username, message, false);
-
-                            view = findViewById(R.id.rocket_count);
-                            view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
-                        });
-                        break;
-                    case "endGame":
-                        Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
-                        startActivity(intent);
-                        break;
-                    case "updateCurrentCards":
-                    case "nextCardDraw":
-                        Log.d(TAG, "Updating to show next card drawn with message {}" + message);
-                        gameBoardManager.extractCardsFromServerString(message);
-                        gameBoardManager.displayCurrentCombination();
-                        updateChamberOutline();
-                        break;
-
-                    case "notifyGameState":
-                        Log.d(TAG, "Received notifyGameState message {}" + message);
-                        gameState = GameState.valueOf(message);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
-                        break;
-                    case "invalidCombination":
-                    case "invalidMove":
-                    case "alreadyMoved":
-                        Log.d(TAG, "Received " + action);
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
-                        break;
-                    case "systemError":
-                        Log.i(TAG, "GameScreen case SystemError errichet!: " + response);
-                        int errorCount = response.getInt("points");
-                        runOnUiThread(() -> {
-                            gameBoardManager.updateSysErrorUser(username, errorCount);
-                            txtview_syserror = findViewById(R.id.error_count);
-                            int sysError = gameBoardManager.getSysErrorOfPlayer(username);
-                            txtview_syserror.setText(String.valueOf(sysError));
-                            Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
-                        });
-                        break;
-                    default:
-                        Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
+    private void setupCheatButton(String localUser) {
+        findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
+            Log.e(TAG, String.valueOf(currentOwner));
+            if (currentOwner.equals(localUser)) {
+                Log.i(TAG, "Cheat");
+                gameBoardManager.cheat();
+            } else {
+                if (!currentOwner.isEmpty()) {
+                    Log.i(TAG, "Detect cheat");
+                    gameBoardManager.detectCheat(currentOwner);
                 }
             }
-        };
-        gameBoardManager.updateCurrentCardDraw();
+        });
+    }
+
+    private void handleResponse(JSONObject response) throws JSONException {
+        if (response.getBoolean("success")) {
+            String action = response.getString("action");
+            String username = response.getString(TAG_USERNAME);
+            String message = response.optString("message", "");
+            switch (action) {
+                case "addRocket":
+                    Log.d(TAG, "Received addRocket message {}" + message);
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added " + Integer.parseInt(message) + " Rockets", Toast.LENGTH_SHORT).show());
+                    gameBoardManager.addRocketUser(username, Integer.parseInt(message));
+                    break;
+                case "makeMove":
+                    Log.d(TAG, "Received makeMove message {}" + message);
+                    runOnUiThread(() -> gameBoardManager.updateUser(username, message));
+                    break;
+                case "playerHasCheated":
+                    Log.d(TAG, PLAYER_HAS_CHEATED + message);
+                    runOnUiThread(() -> {
+                        gameBoardManager.updateCheatedUser(username, message);
+                        view = findViewById(R.id.rocket_count);
+                        view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
+                    });
+                    break;
+                case "playerDetectedCheatCorrect":
+                    Log.d(TAG, PLAYER_HAS_CHEATED + message);
+                    runOnUiThread(() -> {
+                        gameBoardManager.updateCorrectCheatDetection(username, message, true);
+                        view = findViewById(R.id.rocket_count);
+                        view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
+                    });
+                    break;
+                case "playerDetectedCheatWrong":
+                    Log.d(TAG, PLAYER_HAS_CHEATED + message);
+                    runOnUiThread(() -> {
+                        gameBoardManager.updateCorrectCheatDetection(username, message, false);
+                        view = findViewById(R.id.rocket_count);
+                        view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(username)));
+                    });
+                    break;
+                case "endGame":
+                    Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
+                    startActivity(intent);
+                    break;
+                case "updateCurrentCards":
+                case "nextCardDraw":
+                    Log.d(TAG, "Updating to show next card drawn with message {}" + message);
+                    gameBoardManager.extractCardsFromServerString(message);
+                    gameBoardManager.displayCurrentCombination();
+                    updateChamberOutline();
+                    break;
+                case "notifyGameState":
+                    Log.d(TAG, "Received notifyGameState message {}" + message);
+                    gameState = GameState.valueOf(message);
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+                    break;
+                case "invalidCombination":
+                case "invalidMove":
+                case "alreadyMoved":
+                    Log.d(TAG, "Received " + action);
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), action, Toast.LENGTH_SHORT).show());
+                    break;
+                case "systemError":
+                    Log.i(TAG, "GameScreen case SystemError errichet!: " + response);
+                    int errorCount = response.getInt("points");
+                    runOnUiThread(() -> {
+                        gameBoardManager.updateSysErrorUser(username, errorCount);
+                        txtview_syserror = findViewById(R.id.error_count);
+                        int sysError = gameBoardManager.getSysErrorOfPlayer(username);
+                        txtview_syserror.setText(String.valueOf(sysError));
+                        Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
+                    });
+                    break;
+                default:
+                    Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
+            }
+        }        gameBoardManager.updateCurrentCardDraw();
+
     }
 
     void initUsers(ArrayList<String> users) {
         String localUser = getIntent().getStringExtra(TAG_USERNAME);
         if (users != null && !users.isEmpty()) {
             playerMap = new HashMap<>();
-            playerMap.put("Player1", localUser);
+            playerMap.put(PLAYER_1, localUser);
             Log.i(TAG, "Player 1 is " + localUser);
             int count = 2;
             for (String user : users) {
