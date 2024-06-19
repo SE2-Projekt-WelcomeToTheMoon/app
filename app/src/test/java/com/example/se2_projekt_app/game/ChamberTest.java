@@ -119,7 +119,7 @@ class ChamberTest {
 
     @Test
     void testTestConstructor() {
-        chamber = new Chamber(0, 0, 1, FieldCategory.ENERGY);
+        chamber = new Chamber(0, 0, 1, FieldCategory.ENERGY, mockRocketIcon, mockErrorIcon, mockPaint);
 
         assertEquals(1, chamber.getSize());
     }
