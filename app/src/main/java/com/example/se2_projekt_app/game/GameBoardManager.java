@@ -249,7 +249,7 @@ public class GameBoardManager {
         gameBoardView.setCurrentSelection(combination);
     }
 
-    public void cheat() {
+    public static void cheat() {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.CHEAT.getValue(), username, null, "",
@@ -341,7 +341,7 @@ public class GameBoardManager {
         return -1;
     }
 
-    public void detectCheat(String currentOwner) {
+    public static void detectCheat(String currentOwner) {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.DETECTCHEAT.getValue(), username, null, currentOwner,
