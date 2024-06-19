@@ -157,7 +157,7 @@ public class GameScreen extends Activity {
             }
         });
         responseReceiver = this::handleResponse;
-        //gameBoardManager.updateCurrentCardDraw();
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     private void setupCheatButton(String localUser) {
@@ -250,8 +250,7 @@ public class GameScreen extends Activity {
                 default:
                     Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
             }
-        }        gameBoardManager.updateCurrentCardDraw();
-
+        }
     }
 
     void initUsers(ArrayList<String> users) {
