@@ -7,7 +7,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 
@@ -22,6 +25,14 @@ class ChamberTest {
     private Field mockField;
     @Mock
     private Canvas mockCanvas;
+    @Mock
+    private Context mockContext;
+    @Mock
+    private Drawable mockRocketIcon;
+    @Mock
+    private Drawable mockErrorIcon;
+    @Mock
+    private Paint mockPaint;
 
     private final int initialX = 0;
     private final int initialY = 0;
@@ -30,6 +41,8 @@ class ChamberTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(mockContext.getResources()).thenReturn(null);
+        when(mockPaint.measureText("test")).thenReturn(5F);
     }
 
 
@@ -63,12 +76,12 @@ class ChamberTest {
 
     @Test
     void testDraw() {
-        chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
+        chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY, mockRocketIcon, mockErrorIcon, mockPaint);
 
         chamber.addField(mockField);
         chamber.addField(mockField);
 
-        chamber.draw(mockCanvas);
+        chamber.draw(mockCanvas, mockContext);
 
         for (Field field : chamber.getFields()) {
             verify(field, times(2)).draw(mockCanvas);
@@ -76,7 +89,7 @@ class ChamberTest {
     }
 
     @Test
-    void testGetLastAccessedChamber(){
+    void testGetLastAccessedChamber() {
         chamber = new Chamber(initialX, initialY, 0, FieldCategory.ENERGY);
         chamber.addField(mockField);
         when(mockField.handleClick(anyFloat(), anyFloat(), any(), any())).thenReturn(true);
@@ -85,10 +98,36 @@ class ChamberTest {
         assertNull(chamber.getLastAccessedField());
         assertEquals(-1, chamber.getLastAccessedFieldIndex());
 
-        chamber.handleClick(initialX,initialY, null, null);
+        chamber.handleClick(initialX, initialY, null, null);
 
         // assert the first field was clicked
         assertEquals(mockField, chamber.getLastAccessedField());
         assertEquals(0, chamber.getLastAccessedFieldIndex());
+    }
+
+    @Test
+    void testSetActiveField() {
+        chamber = new Chamber(initialX, initialY, 1, FieldCategory.ENERGY);
+        chamber.addField(mockField);
+
+        chamber.setActive();
+        assertTrue(chamber.isActive());
+
+        chamber.setInactive();
+        assertFalse(chamber.isActive());
+    }
+
+    @Test
+    void testTestConstructor() {
+        chamber = new Chamber(0, 0, 1, FieldCategory.ENERGY, mockRocketIcon, mockErrorIcon, mockPaint);
+
+        assertEquals(1, chamber.getSize());
+    }
+
+    @Test
+    void testGetY(){
+        chamber = new Chamber(initialX, initialY, 1, FieldCategory.ENERGY);
+
+        assertEquals(initialY, chamber.getY());
     }
 }

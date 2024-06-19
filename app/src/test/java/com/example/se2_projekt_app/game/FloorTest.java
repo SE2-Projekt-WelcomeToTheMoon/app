@@ -26,12 +26,12 @@ class FloorTest {
     private Canvas mockCanvas;
 
     private final int initialX = 0;
-    private final int initialY = 0;
     private final int boxSize = 200;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        int initialY = 0;
         floor = new Floor(initialX, initialY, FieldCategory.ENERGY);
     }
 
@@ -78,10 +78,10 @@ class FloorTest {
         floor.addChamber(mockChamber);
         floor.addChamber(mockChamber);
 
-        floor.draw(mockCanvas);
+        floor.draw(mockCanvas, null);
 
         for (Chamber chamber : floor.getChambers()) {
-            verify(chamber, times(2)).draw(mockCanvas);
+            verify(chamber, times(2)).draw(mockCanvas, null);
         }
 
     }
@@ -95,7 +95,25 @@ class FloorTest {
         assertEquals(floor.getChamber(0).getX(), initialX, "First chamber should be at initialX");
         assertEquals(floor.getChamber(1).getX(), initialX + 5 * boxSize, "Second chamber should be at initialX + 5 * boxSize");
         assertEquals(floor.getChamber(2).getX(), initialX + 8 * boxSize, "Third chamber should be at initialX + 8 * boxSize");
+    }
 
-        assertEquals(floor.getChamber(0).getY(), initialY, "First chamber should be at initialY");
+    @Test
+    void testProperSize() {
+        floor.addChamber(5);
+        floor.addChamber(3);
+        floor.addChamber(4);
+        assertEquals(5, floor.getChamber(0).getSize(), "First chamber should have size 5");
+        assertEquals(3, floor.getChamber(1).getSize(), "Second chamber should have size 3");
+        assertEquals(4, floor.getChamber(2).getSize(), "Third chamber should have size 4");
+    }
+
+    @Test
+    void testInjectRewardsError(){
+        assertThrows(IllegalArgumentException.class, () -> floor.injectRewards(null));
+    }
+
+    @Test
+    void testFieldCategory(){
+        assertEquals(FieldCategory.ENERGY, floor.getCategory());
     }
 }

@@ -3,6 +3,8 @@ package com.example.se2_projekt_app.screens;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,8 +31,6 @@ import java.util.HashMap;
 public class GameScreen extends Activity {
     public static ResponseReceiver responseReceiver;
     private Button toggleDrawerButton;
-
-    //    private ProgressBar progressBar;
     private TextView view;
     private TextView txtview_syserror;
     private GameBoardManager gameBoardManager;
@@ -45,17 +45,10 @@ public class GameScreen extends Activity {
         DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
-        //Button btn_winner = findViewById(R.id.btn_winnerScreen);
-
 
         CardDrawView cardDrawView = findViewById(R.id.cardDrawView);
         GameBoardView gameBoardView = findViewById(R.id.gameBoardView);
         gameBoardManager = new GameBoardManager(gameBoardView, new CardController(cardDrawView, this));
-
-        /*runOnUiThread(() -> {
-            txtview_syserror = findViewById(R.id.error_count);
-            txtview_syserror.setText(String.valueOf(4));
-        });*/
 
         // get local user
         String localUser = getIntent().getStringExtra(TAG_USERNAME);
@@ -77,7 +70,6 @@ public class GameScreen extends Activity {
             currentOwner = localUser;
         });
         findViewById(R.id.player2_button).setOnClickListener(v -> {
-
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get("Player2"));
             view = findViewById(R.id.rocket_count);
@@ -115,31 +107,23 @@ public class GameScreen extends Activity {
                 Log.i(TAG, "Cheat");
                 gameBoardManager.cheat();
             } else {
-                if(!currentOwner.isEmpty()){
+                if (!currentOwner.isEmpty()) {
                     Log.i(TAG, "Detect cheat");
                     gameBoardManager.detectCheat(currentOwner);
                 }
             }
         });
 
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.postDelayed(this::updateCards, 2000);
+
         // insert draw on touch values
-        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY,FieldCategory.PLANNING,FieldValue.getRandomFieldValue())));
+        findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
-//        progressBar = findViewById(R.id.progressbar);
-        //view = findViewById(R.id.rocket_count);
-//        view.setText("22"); // Testing purposes
-//        progressBar.setMax(57);
-//        progressBar.setProgress(15);
-//        final int[] progress = {0};
-
-//                progress[0] += user.getRockets;
-        new Thread(() -> {
-//                        progressBar.setProgress(progress[0], true);
-//                        view.setText(String.valueOf(Username.user.getRockets()));
-        });
 
         toggleDrawerButton.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -148,11 +132,6 @@ public class GameScreen extends Activity {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-       /* btn_winner.setOnClickListener(v -> {
-            //Intent intent = new Intent(GameScreen.this, WinnerScreen.class);
-            //startActivity(intent);
-            SendMessageService.sendMessage(JSONService.generateJSONObject("systemError", localUser, true, "", ""));
-        });*/
 
         closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
@@ -188,6 +167,11 @@ public class GameScreen extends Activity {
                 String username = response.getString(TAG_USERNAME);
                 String message = response.optString("message", "");
                 switch (action) {
+                    case "addRocket":
+                        Log.d(TAG, "Received addRocket message {}" + message);
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Added " + Integer.parseInt(message) + " Rockets", Toast.LENGTH_SHORT).show());
+                        gameBoardManager.addRocketUser(username, Integer.parseInt(message));
+                        break;
                     case "makeMove":
                         Log.d(TAG, "Received makeMove message {}" + message);
 
@@ -228,6 +212,7 @@ public class GameScreen extends Activity {
                         Log.d(TAG, "Updating to show next card drawn with message {}" + message);
                         gameBoardManager.extractCardsFromServerString(message);
                         gameBoardManager.displayCurrentCombination();
+                        updateChamberOutline();
                         break;
 
                     case "notifyGameState":
@@ -283,5 +268,9 @@ public class GameScreen extends Activity {
 
     public void updateCards() {
         gameBoardManager.updateCurrentCardDraw();
+    }
+
+    public void updateChamberOutline() {
+        gameBoardManager.updateChamberOutline();
     }
 }

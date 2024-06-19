@@ -102,7 +102,7 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
                     canvas.scale(scaleFactor, scaleFactor);
 
                     for (Floor floor : gameboard.getFloors()) {
-                        floor.draw(canvas);
+                        floor.draw(canvas, getContext());
                     }
 
                     canvas.restore();

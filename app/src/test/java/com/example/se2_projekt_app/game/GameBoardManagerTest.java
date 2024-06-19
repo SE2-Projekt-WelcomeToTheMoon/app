@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+
 class GameBoardManagerTest {
     private GameBoardManager gameBoardManager;
     @Mock
@@ -43,7 +45,6 @@ class GameBoardManagerTest {
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
         gameBoardManager = new GameBoardManager(mockGameBoardView, null);
-        gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
     }
@@ -138,10 +139,10 @@ class GameBoardManagerTest {
     }
 
     @Test
-    void testInjectGameBoard(){
-        GameBoard board=GameBoardService.createGameBoard();
-        assertEquals(RewardCategory.ROCKET,board.getFloors().get(0).getChamber(0).rewards.get(0).getCategory());
-        assertEquals(3,board.getFloors().get(0).getChamber(0).rewards.get(0).getNumberRockets());
-
+    void testInjectGameBoard() {
+        GameBoard board = GameBoardService.createGameBoard();
+        List<Reward> rewards = board.getFloors().get(0).getChamber(0).getRewards();
+        assertEquals(RewardCategory.ROCKET, rewards.get(0).getCategory());
+        assertEquals(3, rewards.get(0).getNumberRockets());
     }
 }
