@@ -149,7 +149,7 @@ public class Chamber implements Clickable {
         float offset = 100;
         float rewardBoxLeft = x;
         float rewardBoxTop = y - offset;
-        float rewardBoxRight = x + boxSize * fields.size();
+        float rewardBoxRight = (float) x + boxSize * fields.size();
         float rewardBoxBottom = y;
 
         canvas.drawRect(rewardBoxLeft, rewardBoxTop, rewardBoxRight, rewardBoxBottom, rewardBoxPaint);
@@ -158,7 +158,7 @@ public class Chamber implements Clickable {
 
     public void drawIcons(Canvas canvas) {
         float rewardBoxCenterX = x + (float) boxSize * fields.size() / 2;
-        float rewardBoxCenterY = y - 50;
+        float rewardBoxCenterY = (float) y - 50;
 
         int iconSpacing = 10;
         int maxIconSize = 90;
@@ -175,13 +175,13 @@ public class Chamber implements Clickable {
         int iconHeight = Math.min(icon.getIntrinsicHeight(), maxSize);
 
         int iconLeft = (int) (textX + textPaint.measureText(text) + spacing);
-        int iconTop = (int) (centerY - iconHeight / 2);
+        int iconTop = (int) (centerY - (float) iconHeight / 2);
         icon.setBounds(iconLeft, iconTop, iconLeft + iconWidth, iconTop + iconHeight);
         icon.draw(canvas);
     }
 
     private void drawOutline(Canvas canvas) {
-        canvas.drawRect(x, y, x + boxSize * fields.size(), y + boxSize, outlinePaint);
+        canvas.drawRect(x, y, (float) x + boxSize * fields.size(), (float) y + boxSize, outlinePaint);
     }
 
     public void setActive() {
