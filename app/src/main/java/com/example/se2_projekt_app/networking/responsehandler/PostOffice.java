@@ -48,7 +48,7 @@ public class PostOffice {
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "endGame":
-                GameScreen.responseReceiver.receiveResponse(response);
+                GameScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "gameIsStarted":
@@ -71,7 +71,7 @@ public class PostOffice {
             case "addRocket":
             case "addSystemError":
             case "rewardChange":
-                GameScreen.responseReceiver.receiveResponse(response);
+                GameScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was" + action);
                 break;
 

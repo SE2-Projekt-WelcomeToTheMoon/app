@@ -31,11 +31,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class GameScreen extends Activity {
-    public static ResponseReceiver responseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver responseReceiver;
     private Button toggleDrawerButton;
     private TextView view;
-    private TextView txtview_syserror;
+    private TextView txtViewSysError;
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
@@ -73,7 +78,7 @@ public class GameScreen extends Activity {
         findViewById(R.id.player1_button).setOnClickListener(v -> {
             gameBoardManager.showGameBoard(localUser);
             view = findViewById(R.id.rocket_count);
-            txtview_syserror = findViewById(R.id.error_count);
+            txtViewSysError = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(localUser))); // Testing purposes
             currentOwner = localUser;
         });
@@ -81,7 +86,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get(PLAYER_2));
             view = findViewById(R.id.rocket_count);
-            txtview_syserror = findViewById(R.id.error_count);
+            txtViewSysError = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_2)))); // Testing purposes
             currentOwner = playerMap.size() >= 2 ? playerMap.get(PLAYER_2) : "";
         });
@@ -89,7 +94,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get(PLAYER_3));
             view = findViewById(R.id.rocket_count);
-            txtview_syserror = findViewById(R.id.error_count);
+            txtViewSysError = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_3)))); // Testing purposes
             currentOwner = playerMap.size() >= 3 ? playerMap.get(PLAYER_3) : "";
         });
@@ -97,7 +102,7 @@ public class GameScreen extends Activity {
             assert playerMap != null;
             gameBoardManager.showGameBoard(playerMap.get(PLAYER_4));
             view = findViewById(R.id.rocket_count);
-            txtview_syserror = findViewById(R.id.error_count);
+            txtViewSysError = findViewById(R.id.error_count);
             view.setText(String.valueOf(gameBoardManager.getRocketsOfPlayer(playerMap.get(PLAYER_4)))); // Testing purposes
             currentOwner = playerMap.size() >= 4 ? playerMap.get(PLAYER_4) : "";
         });
@@ -156,9 +161,12 @@ public class GameScreen extends Activity {
                 // Not used
             }
         });
-        responseReceiver = this::handleResponse;
+        setResponseReceiver(this::handleResponse);
         gameBoardManager.updateCurrentCardDraw();
+
     }
+
+
 
     private void setupCheatButton(String localUser) {
         findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
@@ -241,9 +249,9 @@ public class GameScreen extends Activity {
                     int errorCount = response.getInt("points");
                     runOnUiThread(() -> {
                         gameBoardManager.updateSysErrorUser(username, errorCount);
-                        txtview_syserror = findViewById(R.id.error_count);
+                        txtViewSysError = findViewById(R.id.error_count);
                         int sysError = gameBoardManager.getSysErrorOfPlayer(username);
-                        txtview_syserror.setText(String.valueOf(sysError));
+                        txtViewSysError.setText(String.valueOf(sysError));
                         Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
                     });
                     break;
