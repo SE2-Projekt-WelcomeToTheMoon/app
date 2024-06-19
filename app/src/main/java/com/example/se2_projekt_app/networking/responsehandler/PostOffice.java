@@ -44,7 +44,7 @@ public class PostOffice {
                 Log.i(TAG, MULTIPLAYER);
                 break;
             case "winnerScreen":
-                WinnerScreen.responseReceiver.receiveResponse(response);
+                WinnerScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "endGame":
@@ -81,7 +81,7 @@ public class PostOffice {
                 break;
 
             case "disconnect":
-                MainMenu.responseReceiver.receiveResponse(response);
+                MainMenu.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to MainMenu.");
                 break;
             default:
