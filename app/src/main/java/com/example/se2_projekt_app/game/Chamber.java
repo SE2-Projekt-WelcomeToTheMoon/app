@@ -30,7 +30,8 @@ public class Chamber implements Clickable {
     @Getter
     private final int y;
     int boxSize = 200;
-    public List<Reward> rewards;
+    @Getter
+    private List<Reward> rewards;
     @Getter
     private Field lastAccessedField = null;
     @Getter
@@ -43,6 +44,8 @@ public class Chamber implements Clickable {
     private Drawable errorIcon;
     private int errorCount;
     private int rocketCount;
+    @Getter
+    private boolean isActive = false;
 
     /**
      * Constructs a Section with a specified origin.
@@ -64,6 +67,28 @@ public class Chamber implements Clickable {
         this.y = y;
         this.rewards = new ArrayList<>();
     }
+
+    /**
+     * Constructor for TESTING purposes
+     */
+    public Chamber(int x, int y, int count, FieldCategory category, Drawable rocketIcon, Drawable errorIcon, Paint paint) {
+        this.fields = new ArrayList<>();
+        this.x = x;
+        this.y = y;
+        this.rewards = new ArrayList<>();
+        this.rocketIcon = rocketIcon;
+        this.errorIcon = errorIcon;
+        this.textPaint = paint;
+        this.rewardBoxPaint = paint;
+        this.rewardBoxBackgroundPaint = paint;
+        this.outlinePaint = paint;
+
+        // Initialize fields
+        for (int i = 0; i < count; i++) {
+            fields.add(new Field(x + (i * boxSize), y, boxSize, category, FieldValue.NONE));
+        }
+    }
+
 
     /**
      * For Testing purposes
@@ -108,10 +133,19 @@ public class Chamber implements Clickable {
             errorIcon = ContextCompat.getDrawable(context, R.drawable.system_error_logo);
         }
 
+        drawFields(canvas);
+        drawRewardBox(canvas);
+        drawIcons(canvas);
+        drawOutline(canvas);
+    }
+
+    public void drawFields(Canvas canvas) {
         for (Field field : fields) {
             field.draw(canvas);
         }
+    }
 
+    public void drawRewardBox(Canvas canvas) {
         float offset = 100;
         float rewardBoxLeft = x;
         float rewardBoxTop = y - offset;
@@ -120,57 +154,43 @@ public class Chamber implements Clickable {
 
         canvas.drawRect(rewardBoxLeft, rewardBoxTop, rewardBoxRight, rewardBoxBottom, rewardBoxPaint);
         canvas.drawRect(rewardBoxLeft, rewardBoxTop, rewardBoxRight, rewardBoxBottom, rewardBoxBackgroundPaint);
+    }
 
-        float rewardBoxCenterX = rewardBoxLeft + (rewardBoxRight - rewardBoxLeft) / 2;
-        float rewardBoxCenterY = rewardBoxTop + (rewardBoxBottom - rewardBoxTop) / 2;
+    public void drawIcons(Canvas canvas) {
+        float rewardBoxCenterX = x + (float) boxSize * fields.size() / 2;
+        float rewardBoxCenterY = y - 50;
 
         int iconSpacing = 10;
         int maxIconSize = 90;
 
-        String rockets = String.valueOf(rocketCount);
-        String errors = String.valueOf(errorCount);
+        drawIconAndText(canvas, rocketIcon, rocketCount, rewardBoxCenterX + 50, rewardBoxCenterY, iconSpacing, maxIconSize);
+        drawIconAndText(canvas, errorIcon, errorCount, rewardBoxCenterX - 50 - textPaint.measureText(String.valueOf(errorCount)), rewardBoxCenterY, iconSpacing, maxIconSize);
+    }
 
-        int rocketIconWidth = Math.min(rocketIcon.getIntrinsicWidth(), maxIconSize);
-        int rocketIconHeight = Math.min(rocketIcon.getIntrinsicHeight(), maxIconSize);
+    private void drawIconAndText(Canvas canvas, Drawable icon, int count, float textX, float centerY, int spacing, int maxSize) {
+        String text = String.valueOf(count);
+        canvas.drawText(text, textX, centerY + 20, textPaint);
 
-        float value1X = rewardBoxCenterX + 50;
-        canvas.drawText(rockets, value1X, rewardBoxCenterY + 20, textPaint);
+        int iconWidth = Math.min(icon.getIntrinsicWidth(), maxSize);
+        int iconHeight = Math.min(icon.getIntrinsicHeight(), maxSize);
 
-        int rocketIconLeft = (int) (value1X + textPaint.measureText(rockets) + iconSpacing);
-        int rocketIconTop = (int) (rewardBoxCenterY - rocketIconHeight / 2);
-        rocketIcon.setBounds(
-                rocketIconLeft,
-                rocketIconTop,
-                rocketIconLeft + rocketIconWidth,
-                rocketIconTop + rocketIconHeight
-        );
-        rocketIcon.draw(canvas);
+        int iconLeft = (int) (textX + textPaint.measureText(text) + spacing);
+        int iconTop = (int) (centerY - iconHeight / 2);
+        icon.setBounds(iconLeft, iconTop, iconLeft + iconWidth, iconTop + iconHeight);
+        icon.draw(canvas);
+    }
 
-        int errorIconWidth = Math.min(errorIcon.getIntrinsicWidth(), maxIconSize);
-        int errorIconHeight = Math.min(errorIcon.getIntrinsicHeight(), maxIconSize);
-
-        float value2X = rewardBoxCenterX - 50 - textPaint.measureText(errors); // Reduced spacing from center
-        canvas.drawText(errors, value2X, rewardBoxCenterY + 20, textPaint);
-
-        int errorIconLeft = (int) (value2X + textPaint.measureText(errors) + iconSpacing);
-        int errorIconTop = (int) (rewardBoxCenterY - errorIconHeight / 2);
-        errorIcon.setBounds(
-                errorIconLeft,
-                errorIconTop,
-                errorIconLeft + errorIconWidth,
-                errorIconTop + errorIconHeight
-        );
-        errorIcon.draw(canvas);
-
-        canvas.drawRect(x, y, (float) x + boxSize * fields.size(), (float) y + boxSize, outlinePaint);
-
+    private void drawOutline(Canvas canvas) {
+        canvas.drawRect(x, y, x + boxSize * fields.size(), y + boxSize, outlinePaint);
     }
 
     public void setActive() {
+        this.isActive = true;
         outlinePaint.setColor(Color.GREEN);
     }
 
     public void setInactive() {
+        this.isActive = false;
         outlinePaint.setColor(Color.BLACK);
     }
 
@@ -184,8 +204,6 @@ public class Chamber implements Clickable {
 
     /**
      * For Testing purposes
-     *
-     * @return
      */
     public int getSize() {
         return fields.size();
