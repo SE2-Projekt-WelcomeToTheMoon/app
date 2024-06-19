@@ -44,8 +44,12 @@ public class GameBoardManager {
     private final ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
-    public static ResponseReceiver cheatResponseReceiver;
-    public static ResponseReceiver cheatDetectResponseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver cheatResponseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver cheatDetectResponseReceiver;
     // Improved naming for log tag constants
 
 
@@ -62,6 +66,7 @@ public class GameBoardManager {
         this.objectMapper = new ObjectMapper();
         this.cardController = cardController;
     }
+
 
     public void addUser(User user) {
         this.users.add(user);
@@ -249,19 +254,19 @@ public class GameBoardManager {
         gameBoardView.setCurrentSelection(combination);
     }
 
-    public static void cheat() {
+    public void cheat() {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.CHEAT.getValue(), username, null, "",
                 "");
         SendMessageService.sendMessage(msg);
 
-        GameBoardManager.cheatResponseReceiver = response -> {
+        setCheatResponseReceiver(response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
                 Log.i(TAG_GAMESCREEN, "Cheated successfully");
             }
-        };
+        });
     }
 
     public void updateCheatedUser(String username, String cheatedUser) {
@@ -341,19 +346,19 @@ public class GameBoardManager {
         return -1;
     }
 
-    public static void detectCheat(String currentOwner) {
+    public void detectCheat(String currentOwner) {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.DETECTCHEAT.getValue(), username, null, currentOwner,
                 "");
         SendMessageService.sendMessage(msg);
 
-        GameBoardManager.cheatDetectResponseReceiver = response -> {
+        setCheatDetectResponseReceiver(response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
                 Log.i(TAG_GAMESCREEN, "Detected Cheat successfully");
             }
-        };
+        });
     }
 
     public void updateCorrectCheatDetection(String username, String detector, boolean success) {
@@ -415,6 +420,4 @@ public class GameBoardManager {
             }
         }
     }
-
-
 }

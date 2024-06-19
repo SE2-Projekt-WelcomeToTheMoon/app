@@ -76,7 +76,7 @@ public class PostOffice {
                 break;
 
             case "cheat":
-                GameBoardManager.cheatResponseReceiver.receiveResponse(response);
+                GameBoardManager.getCheatResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted cheat message to GameBoardManager.");
                 break;
 
