@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.RewardCategory;
 import com.example.se2_projekt_app.game_interface.Clickable;
 import com.example.se2_projekt_app.views.GameBoardView;
 
@@ -40,8 +41,8 @@ public class Chamber implements Clickable {
     private Paint textPaint;
     private Drawable rocketIcon;
     private Drawable errorIcon;
-    private String errorCount;
-    private String rocketCount;
+    private int errorCount;
+    private int rocketCount;
 
     /**
      * Constructs a Section with a specified origin.
@@ -51,8 +52,8 @@ public class Chamber implements Clickable {
      */
     public Chamber(int x, int y, int count, FieldCategory category) {
         this.fields = new ArrayList<>();
-        errorCount = "1";
-        rocketCount = "2";
+        errorCount = 0;
+        rocketCount = 0;
 
         initPaint();
 
@@ -61,7 +62,7 @@ public class Chamber implements Clickable {
         }
         this.x = x;
         this.y = y;
-        this.rewards=new ArrayList<>();
+        this.rewards = new ArrayList<>();
     }
 
     /**
@@ -123,18 +124,19 @@ public class Chamber implements Clickable {
         float rewardBoxCenterX = rewardBoxLeft + (rewardBoxRight - rewardBoxLeft) / 2;
         float rewardBoxCenterY = rewardBoxTop + (rewardBoxBottom - rewardBoxTop) / 2;
 
-        int iconSpacing = 10; // Reduced space between icon and text
+        int iconSpacing = 10;
         int maxIconSize = 90;
 
-        // --- Rocket Icon Positioning and Scaling ---
+        String rockets = String.valueOf(rocketCount);
+        String errors = String.valueOf(errorCount);
+
         int rocketIconWidth = Math.min(rocketIcon.getIntrinsicWidth(), maxIconSize);
         int rocketIconHeight = Math.min(rocketIcon.getIntrinsicHeight(), maxIconSize);
 
-        // Position text first, then icon to its right
-        float value1X = rewardBoxCenterX + 50; // Reduced spacing from center
-        canvas.drawText(errorCount, value1X, rewardBoxCenterY + 20, textPaint);
+        float value1X = rewardBoxCenterX + 50;
+        canvas.drawText(rockets, value1X, rewardBoxCenterY + 20, textPaint);
 
-        int rocketIconLeft = (int) (value1X + textPaint.measureText(errorCount) + iconSpacing);
+        int rocketIconLeft = (int) (value1X + textPaint.measureText(rockets) + iconSpacing);
         int rocketIconTop = (int) (rewardBoxCenterY - rocketIconHeight / 2);
         rocketIcon.setBounds(
                 rocketIconLeft,
@@ -144,15 +146,13 @@ public class Chamber implements Clickable {
         );
         rocketIcon.draw(canvas);
 
-        // --- Error Icon Positioning and Scaling ---
         int errorIconWidth = Math.min(errorIcon.getIntrinsicWidth(), maxIconSize);
         int errorIconHeight = Math.min(errorIcon.getIntrinsicHeight(), maxIconSize);
 
-        // Position text first, then icon to its right
-        float value2X = rewardBoxCenterX - 50 - textPaint.measureText(rocketCount); // Reduced spacing from center
-        canvas.drawText(rocketCount, value2X, rewardBoxCenterY + 20, textPaint);
+        float value2X = rewardBoxCenterX - 50 - textPaint.measureText(errors); // Reduced spacing from center
+        canvas.drawText(errors, value2X, rewardBoxCenterY + 20, textPaint);
 
-        int errorIconLeft = (int) (value2X + textPaint.measureText(rocketCount) + iconSpacing);
+        int errorIconLeft = (int) (value2X + textPaint.measureText(errors) + iconSpacing);
         int errorIconTop = (int) (rewardBoxCenterY - errorIconHeight / 2);
         errorIcon.setBounds(
                 errorIconLeft,
@@ -191,11 +191,6 @@ public class Chamber implements Clickable {
         return fields.size();
     }
 
-    void setChamberReward(int rockets, int errors) {
-        this.rocketCount = String.valueOf(rockets);
-        this.errorCount = String.valueOf(errors);
-    }
-
     /**
      * Handles click events within the section, checks if a click is within any GameBox,
      * and updates the box color and number if clicked.
@@ -215,5 +210,16 @@ public class Chamber implements Clickable {
             }
         }
         return false;
+    }
+
+    public void setRewards(List<Reward> rewards) {
+        this.rewards = rewards;
+        for (Reward reward : rewards) {
+            if (reward.getCategory() == RewardCategory.ROCKET) {
+                rocketCount += reward.getNumberRockets();
+            } else if (reward.getCategory() == RewardCategory.SYSTEMERROR) {
+                errorCount++;
+            }
+        }
     }
 }
