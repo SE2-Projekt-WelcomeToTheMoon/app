@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
-import com.example.se2_projekt_app.enums.GameState;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
@@ -26,26 +25,37 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class GameBoardManager {
 
+    public static final String TAG_UPDATING_GAME_VIEW_FOR_LOCAL_USER = "Updating game view for local user";
     @Getter
     private final List<User> users = new ArrayList<>();
     private final GameBoardView gameBoardView;
-    // this username is the username choosen by the local device
+    // this username is the username chosen by the local device
+    @Setter
+    @Getter
     private String localUsername = "Player1";
     private int floorIndex;
     private int chamberIndex;
     private int fieldIndex;
     private final CardController cardController;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
     public static ResponseReceiver cheatResponseReceiver;
     public static ResponseReceiver cheatDetectResponseReceiver;
-    private static final String TAG = "Gamescreen";
-    private SendMessageService sendMessageService = new SendMessageService();
-    private GameState currentGameState = null;
+    // Improved naming for log tag constants
+
+
+    private static final String TAG_GAMESCREEN = "Gamescreen";
+    private static final String TAG_GAMEBOARDMANAGER = "GameBoardManager";
+    private static final String TAG_GAMEBOARD_UPDATED = "GameBoard updated for User: ";
+    private static final String TAG_NO_USER_OR_GAMEBOARD = "User does not exist or has no GameBoard";
+    private static final String TAG_NO_USER_EXISTS = "User does not exist: ";
+    private static final String TAG_UPDATE_GAMEBOARD = "Updating game board for User: ";
+
 
     public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
         this.gameBoardView = gameBoardView;
@@ -72,12 +82,12 @@ public class GameBoardManager {
 
     public void initGameBoard(User user) {
         if (userExists(user.getUsername()) != null) {
-            Log.e("GameBoardManager", "User already exists");
+            Log.e(TAG_GAMEBOARDMANAGER, "User already exists");
             return;
         }
         if (user.getLocalUser()) {
             this.localUsername = user.getUsername();
-            Log.d("GameBoardManager", "Local User set to: " + localUsername);
+            Log.d(TAG_GAMEBOARDMANAGER, "Local User set to: " + localUsername);
         }
 
         GameBoard gameBoard = GameBoardService.createGameBoard();
@@ -95,30 +105,35 @@ public class GameBoardManager {
             gameBoardView.setGameBoard(user.getGameBoard());
         } else {
             gameBoardView.setGameBoard(emptyBoard);
-            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_OR_GAMEBOARD);
         }
     }
 
     public boolean updateUser(String username, String response) {
-        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATE_GAMEBOARD + username);
         FieldUpdateMessage fieldUpdateMessage = parseFieldUpdateMessage(response);
+
+        if (fieldUpdateMessage == null) {
+            Log.e(TAG_GAMEBOARDMANAGER, "FieldUpdateMessage is null");
+            return false;
+        }
 
         String workingUsername = fieldUpdateMessage.getUserOwner();
         User user = userExists(workingUsername);
 
         if (user == null) {
-            Log.e("GameBoardManager", "User does not exist: " + workingUsername);
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_EXISTS + workingUsername);
             return false;
         }
 
         updateGameBoard(user, fieldUpdateMessage);
 
         if (workingUsername.equals(localUsername)) {
-            Log.i("GameBoardManager", "Updating game view for local user");
+            Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATING_GAME_VIEW_FOR_LOCAL_USER);
             updateGameBoardView(user);
         }
 
-        Log.i("GameBoardManager", "GameBoard updated for User: " + workingUsername);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_GAMEBOARD_UPDATED + workingUsername);
         return true;
 
 
@@ -129,7 +144,7 @@ public class GameBoardManager {
             return objectMapper.readValue(response, FieldUpdateMessage.class);
         } catch (JsonProcessingException e) {
             Log.e("JSON Parsing Error", "Detailed Error: " + e.getOriginalMessage());
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -175,13 +190,13 @@ public class GameBoardManager {
         }
 
         updateIndex();
-        Log.d("GameBoardManager", "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
+        Log.d(TAG_GAMEBOARDMANAGER, "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
         JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
 
-        Log.d("GameBoardManager", "Payload: " + payload);
+        Log.d(TAG_GAMEBOARDMANAGER, "Payload: " + payload);
         return true;
     }
 
@@ -191,45 +206,27 @@ public class GameBoardManager {
         try {
             return objectMapper.writeValueAsString(fieldUpdateMessage);
         } catch (Exception e) {
-            Log.e("GameBoardManager", "Error while converting FieldUpdateMessage to JSON");
-            e.printStackTrace();
+            Log.e(TAG_GAMEBOARDMANAGER, "Error while converting FieldUpdateMessage to JSON");
             return "";
         }
     }
 
     private void updateIndex() {
         floorIndex = gameBoardView.getLastAccessedFloorIndex();
-        chamberIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
-        fieldIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
+        chamberIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
+        fieldIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
     }
 
     public Field getLastAccessedField(GameBoard gameBoard) {
         if (gameBoard == null) {
-            Log.e("GameBoardManager", "GameBoard is null");
+            Log.e(TAG_GAMEBOARDMANAGER, "GameBoard is null");
             return null;
         }
         return GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
     }
 
-    public String getLocalUsername() {
-        return localUsername;
-    }
-
-    public void setLocalUsername(String localUsername) {
-        this.localUsername = localUsername;
-    }
-
     public int getNumberOfUsers() {
         return users.size();
-    }
-
-    // for testing only
-    public void setSendMessageService(SendMessageService sendMessageService) {
-        this.sendMessageService = sendMessageService;
-    }
-
-    public Floor getLastAccessedFloor() {
-        return GameBoardView.getLastAccessedFloor();
     }
 
     public void displayCurrentCombination() {
@@ -241,7 +238,7 @@ public class GameBoardManager {
     }
 
     /***
-     * Updates Current Carddraw
+     * Updates Current Card draw
      */
     public void updateCurrentCardDraw() {
         JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
@@ -252,7 +249,7 @@ public class GameBoardManager {
         gameBoardView.setCurrentSelection(combination);
     }
 
-    public boolean cheat() {
+    public void cheat() {
         String username = Username.user.getUsername();
         JSONObject msg = JSONService.generateJSONObject(
                 ActionValues.CHEAT.getValue(), username, null, "",
@@ -262,49 +259,46 @@ public class GameBoardManager {
         GameBoardManager.cheatResponseReceiver = response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
-                Log.i(TAG, "Cheated successfully");
+                Log.i(TAG_GAMESCREEN, "Cheated successfully");
             }
         };
-
-        return true;
     }
 
     public void updateCheatedUser(String username, String cheatedUser) {
-        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATE_GAMEBOARD + username);
 
         User user = userExists(cheatedUser);
 
         if (user == null) {
-            Log.e("GameBoardManager", "User does not exist: " + cheatedUser);
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_EXISTS + cheatedUser);
             return;
         }
 
         updateCheatGameBoard(user);
 
         if (cheatedUser.equals(localUsername)) {
-            Log.i("GameBoardManager", "Updating game view for local user");
+            Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATING_GAME_VIEW_FOR_LOCAL_USER);
             updateGameBoardView(user);
         }
 
-        Log.i("GameBoardManager", "GameBoard updated for User: " + cheatedUser);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_GAMEBOARD_UPDATED + cheatedUser);
     }
 
     public void updateSysErrorUser(String username, int sysError) {
-        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATE_GAMEBOARD + username);
 
         User user = userExists(username);
 
         updateSysErrorGameBoard(user, sysError);
 
-        Log.i("GameBoardManager", "GameBoard updated for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_GAMEBOARD_UPDATED + username);
     }
 
     public void addRocketUser(String username, int rocketCount) {
-        // TODO: UPDATE UI SOMEHOW
-        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATE_GAMEBOARD+ username);
         User user = userExists(username);
         user.getGameBoard().addRockets(rocketCount);
-        Log.i("GameBoardManager", "GameBoard updated for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_GAMEBOARD_UPDATED + username);
     }
 
 
@@ -322,7 +316,6 @@ public class GameBoardManager {
         if (gameBoard == null) {
             return;
         }
-        //gameBoard.addSysError(1);
         gameBoard.setSysError(sysError);
 
         user.setGameBoard(gameBoard);
@@ -333,7 +326,7 @@ public class GameBoardManager {
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getRockets();
         } else {
-            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_OR_GAMEBOARD);
         }
         return -1;
     }
@@ -343,7 +336,7 @@ public class GameBoardManager {
         if (user != null && user.getGameBoard() != null) {
             return user.getGameBoard().getSysError();
         } else {
-            Log.e("GameBoardManager", "User does not exist or has no GameBoard");
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_OR_GAMEBOARD);
         }
         return -1;
     }
@@ -358,29 +351,29 @@ public class GameBoardManager {
         GameBoardManager.cheatDetectResponseReceiver = response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
-                Log.i(TAG, "Detected Cheat successfully");
+                Log.i(TAG_GAMESCREEN, "Detected Cheat successfully");
             }
         };
     }
 
     public void updateCorrectCheatDetection(String username, String detector, boolean success) {
-        Log.i("GameBoardManager", "Updating game board for User: " + username);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATE_GAMEBOARD + username);
 
         User user = userExists(detector);
 
         if (user == null) {
-            Log.e("GameBoardManager", "User does not exist: " + detector);
+            Log.e(TAG_GAMEBOARDMANAGER, TAG_NO_USER_EXISTS + detector);
             return;
         }
 
         updateDetectorGameBoard(user, success);
 
         if (detector.equals(localUsername)) {
-            Log.i("GameBoardManager", "Updating game view for local user");
+            Log.i(TAG_GAMEBOARDMANAGER, TAG_UPDATING_GAME_VIEW_FOR_LOCAL_USER);
             updateGameBoardView(user);
         }
 
-        Log.i("GameBoardManager", "GameBoard updated for User: " + detector);
+        Log.i(TAG_GAMEBOARDMANAGER, TAG_GAMEBOARD_UPDATED + detector);
     }
 
     private void updateDetectorGameBoard(User user, boolean success) {
@@ -391,20 +384,12 @@ public class GameBoardManager {
 
         gameBoard.addRockets(success ? 1 : -1);
         if (success) {
-            Log.i("GameBoardManager", "cheat detect successful");
+            Log.i(TAG_GAMEBOARDMANAGER, "cheat detect successful");
         } else {
-            Log.i("GameBoardManager", "cheat detect wrong");
+            Log.i(TAG_GAMEBOARDMANAGER, "cheat detect wrong");
         }
 
         user.setGameBoard(gameBoard);
-    }
-
-    public void setGameState(GameState gameState) {
-        this.currentGameState = gameState;
-    }
-
-    public GameState getGameState() {
-        return currentGameState;
     }
 
     public void updateChamberOutline() {
@@ -421,7 +406,6 @@ public class GameBoardManager {
                 for (Chamber chamber : floor.getChambers()) {
                     chamber.setInactive();
                 }
-
                 // Activate chambers if the floor's category is in activeCategories
                 if (activeCategories.contains(floor.getCategory())) {
                     for (Chamber chamber : floor.getChambers()) {
