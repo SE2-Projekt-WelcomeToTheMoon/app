@@ -82,7 +82,7 @@ public class CardDrawView extends SurfaceView implements SurfaceHolder.Callback,
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
         if(gameScreen==null){
-            return true;
+            return false;
         }
         if (action == MotionEvent.ACTION_DOWN) {
             if (event.getX() > xPositions[0] && event.getX() < xPositions[1] && event.getY() < yHeight) {
