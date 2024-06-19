@@ -26,12 +26,12 @@ class FloorTest {
     private Canvas mockCanvas;
 
     private final int initialX = 0;
-    private final int initialY = 0;
     private final int boxSize = 200;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        int initialY = 0;
         floor = new Floor(initialX, initialY, FieldCategory.ENERGY);
     }
 
@@ -110,5 +110,10 @@ class FloorTest {
     @Test
     void testInjectRewardsError(){
         assertThrows(IllegalArgumentException.class, () -> floor.injectRewards(null));
+    }
+
+    @Test
+    void testFieldCategory(){
+        assertEquals(FieldCategory.ENERGY, floor.getCategory());
     }
 }

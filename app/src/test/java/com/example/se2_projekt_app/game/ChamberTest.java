@@ -123,4 +123,11 @@ class ChamberTest {
 
         assertEquals(1, chamber.getSize());
     }
+
+    @Test
+    void testGetY(){
+        chamber = new Chamber(initialX, initialY, 1, FieldCategory.ENERGY);
+
+        assertEquals(initialY, chamber.getY());
+    }
 }
