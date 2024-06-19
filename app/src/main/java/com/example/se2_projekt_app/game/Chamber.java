@@ -29,6 +29,7 @@ public class Chamber implements Clickable {
     @Getter
     private final int y;
     int boxSize = 200;
+    public List<Reward> rewards;
     @Getter
     private Field lastAccessedField = null;
     @Getter
@@ -60,6 +61,7 @@ public class Chamber implements Clickable {
         }
         this.x = x;
         this.y = y;
+        this.rewards=new ArrayList<>();
     }
 
     /**

@@ -24,7 +24,7 @@ public class GameBoardService {
         createAndAddFloor(board, -700, 1800, FieldCategory.ENERGY, new int[]{5, 2, 3});
         createAndAddFloor(board, -500, 2100, FieldCategory.PLANT, new int[]{2, 2, 2, 2});
         createAndAddFloor(board, -500, 2400, FieldCategory.WILDCARD, new int[]{2, 2, 2, 2});
-
+        injectRewards(board);
         return board;
     }
 
@@ -43,6 +43,22 @@ public class GameBoardService {
             floor.addChamber(chamber);
         }
         board.addFloor(floor);
+    }
+
+    /**
+     * Updates the Chambers so each one has the same rewards as the Serverside
+     * @param gameBoard
+     */
+    private static void injectRewards(GameBoard gameBoard){
+        gameBoard.getFloors().get(0).injectRewards(Reward.getFirstFloorRewards());
+        gameBoard.getFloors().get(1).injectRewards(Reward.getSecondFloorRewards());
+        gameBoard.getFloors().get(2).injectRewards(Reward.getThirdFloorRewards());
+        gameBoard.getFloors().get(3).injectRewards(Reward.getFourthFloorRewards());
+        gameBoard.getFloors().get(4).injectRewards(Reward.getFifthFloorRewards());
+        gameBoard.getFloors().get(5).injectRewards(Reward.getSixthFloorRewards());
+        gameBoard.getFloors().get(6).injectRewards(Reward.getSeventhFloorRewards());
+        gameBoard.getFloors().get(7).injectRewards(Reward.getEighthFloorRewards());
+        gameBoard.getFloors().get(8).injectRewards(Reward.getNinthFloorRewards());
     }
 
 }
