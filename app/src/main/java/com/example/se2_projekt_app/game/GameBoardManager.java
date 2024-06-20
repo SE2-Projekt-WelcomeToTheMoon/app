@@ -44,8 +44,12 @@ public class GameBoardManager {
     private final ObjectMapper objectMapper;
     private final GameBoard emptyBoard = new GameBoard();
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
-    public static ResponseReceiver cheatResponseReceiver;
-    public static ResponseReceiver cheatDetectResponseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver cheatResponseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver cheatDetectResponseReceiver;
     // Improved naming for log tag constants
 
 
@@ -62,6 +66,7 @@ public class GameBoardManager {
         this.objectMapper = new ObjectMapper();
         this.cardController = cardController;
     }
+
 
     public void addUser(User user) {
         this.users.add(user);
@@ -213,8 +218,8 @@ public class GameBoardManager {
 
     private void updateIndex() {
         floorIndex = gameBoardView.getLastAccessedFloorIndex();
-        chamberIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
-        fieldIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
+        chamberIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
+        fieldIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
     }
 
     public Field getLastAccessedField(GameBoard gameBoard) {
@@ -222,7 +227,10 @@ public class GameBoardManager {
             Log.e(TAG_GAMEBOARDMANAGER, "GameBoard is null");
             return null;
         }
-        return GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
+        return gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
+    }
+    public void setLastAccessedFloor(Floor floor) {
+        gameBoardView.setLastAccessedFloor(floor);
     }
 
     public int getNumberOfUsers() {
@@ -256,12 +264,12 @@ public class GameBoardManager {
                 "");
         SendMessageService.sendMessage(msg);
 
-        GameBoardManager.cheatResponseReceiver = response -> {
+        setCheatResponseReceiver(response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
                 Log.i(TAG_GAMESCREEN, "Cheated successfully");
             }
-        };
+        });
     }
 
     public void updateCheatedUser(String username, String cheatedUser) {
@@ -348,12 +356,12 @@ public class GameBoardManager {
                 "");
         SendMessageService.sendMessage(msg);
 
-        GameBoardManager.cheatDetectResponseReceiver = response -> {
+        setCheatDetectResponseReceiver(response -> {
             boolean success = response.getBoolean(SUCCESS);
             if (success) {
                 Log.i(TAG_GAMESCREEN, "Detected Cheat successfully");
             }
-        };
+        });
     }
 
     public void updateCorrectCheatDetection(String username, String detector, boolean success) {
@@ -415,6 +423,4 @@ public class GameBoardManager {
             }
         }
     }
-
-
 }

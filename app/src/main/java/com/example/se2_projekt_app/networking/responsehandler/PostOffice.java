@@ -44,11 +44,11 @@ public class PostOffice {
                 Log.i(TAG, MULTIPLAYER);
                 break;
             case "winnerScreen":
-                WinnerScreen.responseReceiver.receiveResponse(response);
+                WinnerScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "endGame":
-                GameScreen.responseReceiver.receiveResponse(response);
+                GameScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "gameIsStarted":
@@ -71,17 +71,17 @@ public class PostOffice {
             case "addRocket":
             case "addSystemError":
             case "rewardChange":
-                GameScreen.responseReceiver.receiveResponse(response);
+                GameScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was" + action);
                 break;
 
             case "cheat":
-                GameBoardManager.cheatResponseReceiver.receiveResponse(response);
+                GameBoardManager.getCheatResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted cheat message to GameBoardManager.");
                 break;
 
             case "disconnect":
-                MainMenu.responseReceiver.receiveResponse(response);
+                MainMenu.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to MainMenu.");
                 break;
             default:
