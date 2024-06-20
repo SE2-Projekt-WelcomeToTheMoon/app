@@ -218,8 +218,8 @@ public class GameBoardManager {
 
     private void updateIndex() {
         floorIndex = gameBoardView.getLastAccessedFloorIndex();
-        chamberIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
-        fieldIndex = GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
+        chamberIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamberIndex();
+        fieldIndex = gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedFieldIndex();
     }
 
     public Field getLastAccessedField(GameBoard gameBoard) {
@@ -227,7 +227,10 @@ public class GameBoardManager {
             Log.e(TAG_GAMEBOARDMANAGER, "GameBoard is null");
             return null;
         }
-        return GameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
+        return gameBoardView.getLastAccessedFloor().getLastAccessedChamber().getLastAccessedField();
+    }
+    public void setLastAccessedFloor(Floor floor) {
+        gameBoardView.setLastAccessedFloor(floor);
     }
 
     public int getNumberOfUsers() {

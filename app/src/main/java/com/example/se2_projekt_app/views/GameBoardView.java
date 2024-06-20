@@ -14,10 +14,13 @@ import androidx.annotation.NonNull;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.game.CardController;
 import com.example.se2_projekt_app.game.Field;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.Floor;
 import com.example.se2_projekt_app.game.GameBoard;
+import com.example.se2_projekt_app.game.GameBoardManager;
+import com.example.se2_projekt_app.screens.GameScreen;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,12 +39,14 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     private GameBoard gameboard = new GameBoard();
     private ScaleGestureDetector scaleGestureDetector;
     @Getter
-    private static Floor lastAccessedFloor = null;
+    private Floor lastAccessedFloor = null;
     @Getter
     private int lastAccessedFloorIndex = -1;
     @Setter
     @Getter
     private CardCombination currentSelection;
+    private GameBoardManager gameBoardManager;
+    private CardDrawView cardDrawView;
 
     /**
      * Constructs the game board view with necessary context and attributes.
@@ -57,6 +62,8 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
 
         //prevent crashing
         this.currentSelection = new CardCombination(FieldCategory.PLANT, FieldCategory.PLANT, FieldValue.ONE);
+        cardDrawView = new CardDrawView(context, attrs);
+        gameBoardManager = new GameBoardManager(this, new CardController(cardDrawView, new GameScreen()));
     }
 
     public void setGameBoard(GameBoard gameBoard) {
@@ -185,6 +192,7 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
             if (floor.handleClick(adjustedX, adjustedY, this, currentSelection.getCurrentNumber())) {
                 lastAccessedFloorIndex = i;
                 lastAccessedFloor = floor;
+                gameBoardManager.setLastAccessedFloor(floor);
                 break;
             }
         }
@@ -206,5 +214,9 @@ public class GameBoardView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onScaleEnd(@NonNull ScaleGestureDetector detector) {
         // empty because I had to implement it and don't need it yet
+    }
+
+    public void setLastAccessedFloor(Floor floor) {
+        this.lastAccessedFloor = floor;
     }
 }
