@@ -210,6 +210,7 @@ public class GameBoardManager {
         JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
 
+        checkMissions(user);
 
         Log.d(TAG_GAMEBOARDMANAGER, "Payload: " + payload);
         return true;

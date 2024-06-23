@@ -254,10 +254,22 @@ public class GameScreen extends Activity {
                     });
                     break;
                 case "initialMissionCards":
-                    setupInitialMissionCards(new JSONArray(message));
+                    try {
+                        JSONArray missionCardsArray = response.getJSONArray("missionCards");
+                        Log.d(TAG, "Mission Cards received: " + missionCardsArray.toString());
+                        runOnUiThread(() -> setupInitialMissionCards(missionCardsArray));
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing initial mission cards: " + e.getMessage());
+                    }
                     break;
                 case "missionFlipped":
-                    handleMissionFlipped(new JSONObject(message));
+                    try {
+                        MissionType missionType = MissionType.valueOf(response.getString("missionType"));
+                        boolean isFlipped = response.getBoolean("flipped");
+                        runOnUiThread(() -> updateMissionCardImage(missionType, isFlipped));
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing mission flipped message: " + e.getMessage());
+                    }
                     break;
                 default:
                     Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
