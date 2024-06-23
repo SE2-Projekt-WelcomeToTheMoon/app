@@ -254,22 +254,10 @@ public class GameScreen extends Activity {
                     });
                     break;
                 case "initialMissionCards":
-                    try {
-                        JSONArray missionCardsArray = response.getJSONArray("missionCards");
-                        Log.d(TAG, "Mission Cards received: " + missionCardsArray.toString());
-                        runOnUiThread(() -> setupInitialMissionCards(missionCardsArray));
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error parsing initial mission cards: " + e.getMessage());
-                    }
+                    setupInitialMissionCards(new JSONArray(message));
                     break;
                 case "missionFlipped":
-                    try {
-                        MissionType missionType = MissionType.valueOf(response.getString("missionType"));
-                        boolean isFlipped = response.getBoolean("flipped");
-                        runOnUiThread(() -> updateMissionCardImage(missionType, isFlipped));
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error parsing mission flipped message: " + e.getMessage());
-                    }
+                    handleMissionFlipped(new JSONObject(message));
                     break;
                 default:
                     Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
@@ -306,20 +294,32 @@ public class GameScreen extends Activity {
         gameBoardManager.updateChamberOutline();
     }
 
-    public void setupInitialMissionCards(JSONArray missionCardsArray) {
+    private void setupInitialMissionCards(JSONArray missionCardsArray) {
         for (int i = 0; i < missionCardsArray.length(); i++) {
             try {
                 JSONObject cardJson = missionCardsArray.getJSONObject(i);
-                MissionType missionType = MissionType.valueOf(cardJson.getString("missionType").toUpperCase());
+                MissionType missionType = MissionType.valueOf(cardJson.getString("missionType"));
                 boolean isFlipped = cardJson.getBoolean("flipped");
                 updateMissionCardImage(missionType, isFlipped);
-            } catch (JSONException | IllegalArgumentException e) {
-                Log.e(TAG, "Error setting up initial mission cards: " + e.getMessage());
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing initial mission cards: " + e.getMessage());
             }
         }
     }
 
-    public void updateMissionCardImage(MissionType missionType, boolean isFlipped) {
+
+    private void handleMissionFlipped(JSONObject missionJson) {
+        try {
+            MissionType missionType = MissionType.valueOf(missionJson.getString("missionType"));
+            boolean isFlipped = missionJson.getBoolean("flipped");
+            updateMissionCardImage(missionType, isFlipped);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing mission flipped message: " + e.getMessage());
+        }
+    }
+
+
+    private void updateMissionCardImage(MissionType missionType, boolean isFlipped) {
         int resourceId;
         int imageViewId;
 
@@ -340,7 +340,7 @@ public class GameScreen extends Activity {
                 imageViewId = R.id.mission_card_c;
                 break;
             default:
-                Log.e(TAG, INVALID_MISSION_TYPE + missionType);
+                Log.e(TAG, "Invalid mission type: " + missionType);
                 return;
         }
 
@@ -355,7 +355,7 @@ public class GameScreen extends Activity {
             case B2: return R.drawable.b2_back;
             case C1: return R.drawable.c1_back;
             case C2: return R.drawable.c2_back;
-            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
+            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
         }
     }
 
@@ -367,13 +367,14 @@ public class GameScreen extends Activity {
             case B2: return R.drawable.b2;
             case C1: return R.drawable.c1;
             case C2: return R.drawable.c2;
-            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
+            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
         }
     }
 
     private void updateImageView(int imageViewId, int resourceId) {
         ImageView imageView = findViewById(imageViewId);
         if (imageView != null && resourceId != 0) {
+            Log.e(TAG, "Whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" + imageViewId + resourceId);
             imageView.setImageResource(resourceId);
         } else {
             Log.e(TAG, "Failed to update mission card image. ImageView or Resource not found.");

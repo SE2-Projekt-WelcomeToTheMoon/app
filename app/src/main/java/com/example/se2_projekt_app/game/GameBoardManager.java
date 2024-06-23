@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.MissionType;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
@@ -16,10 +17,14 @@ import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,6 +64,10 @@ public class GameBoardManager {
     private static final String TAG_NO_USER_OR_GAMEBOARD = "User does not exist or has no GameBoard";
     private static final String TAG_NO_USER_EXISTS = "User does not exist: ";
     private static final String TAG_UPDATE_GAMEBOARD = "Updating game board for User: ";
+    private static final String TAG = "Mission Cards in GameBoardManager";
+
+    private EnumMap<MissionType, Boolean> missionCardFlipped = new EnumMap<>(MissionType.class);
+    private EnumMap<MissionType, Integer> missionCardRewards = new EnumMap<>(MissionType.class);
 
 
     public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
@@ -200,6 +209,8 @@ public class GameBoardManager {
         String payload = createPayload(field);
         JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
+
+        checkMissions(user);
 
         Log.d(TAG_GAMEBOARDMANAGER, "Payload: " + payload);
         return true;
@@ -422,5 +433,109 @@ public class GameBoardManager {
                 }
             }
         }
+    }
+
+    // Initialize the mission cards at the start of the game
+    public void initializeMissionCards() {
+        List<MissionType> missions = Arrays.asList(MissionType.values());
+        Collections.shuffle(missions); // Shuffle to randomly select mission cards
+
+        // Select one of each set (A, B, C)
+        MissionType missionA = missions.stream().filter(m -> m.name().startsWith("A")).findFirst().get();
+        MissionType missionB = missions.stream().filter(m -> m.name().startsWith("B")).findFirst().get();
+        MissionType missionC = missions.stream().filter(m -> m.name().startsWith("C")).findFirst().get();
+
+        // Initialize the cards as not flipped and set initial rewards
+        initializeMissionCard(missionA);
+        initializeMissionCard(missionB);
+        initializeMissionCard(missionC);
+
+        // Send initial mission cards to the server (or clients)
+        sendInitialMissionCardsToClients(missionA, missionB, missionC);
+    }
+
+    private void initializeMissionCard(MissionType mission) {
+        missionCardFlipped.put(mission, false);
+        missionCardRewards.put(mission, 3);
+    }
+
+    private void sendInitialMissionCardsToClients(MissionType... missions) {
+        // Create JSON and send to clients
+        JSONArray missionCardsArray = new JSONArray();
+        for (MissionType mission : missions) {
+            JSONObject cardJson = new JSONObject();
+            try {
+                cardJson.put("missionType", mission.name());
+                cardJson.put("flipped", false);
+                missionCardsArray.put(cardJson);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error creating initial mission cards JSON: " + e.getMessage());
+            }
+        }
+        JSONObject message = JSONService.generateJSONObject("initialMissionCards", localUsername, true, missionCardsArray.toString(), "");
+        SendMessageService.sendMessage(message);
+    }
+
+    // Check missions at the end of each round
+    public void checkMissions(User user) {
+        for (MissionType mission : missionCardFlipped.keySet()) {
+            boolean fulfilled = isMissionFulfilled(user.getGameBoard(), mission);
+            if (fulfilled) {
+                int reward = missionCardRewards.get(mission);
+                user.getGameBoard().addRockets(reward);
+                if (!missionCardFlipped.get(mission)) {
+                    missionCardFlipped.put(mission, true);
+                    missionCardRewards.put(mission, reward - 1);
+                    updateMissionCardFlipState(mission, true);
+                }
+            }
+        }
+    }
+
+    private boolean isMissionFulfilled(GameBoard gameBoard, MissionType mission) {
+        switch (mission) {
+            case A1:
+                return isRowFilled(gameBoard, FieldCategory.SPACESUIT) && isRowFilled(gameBoard, FieldCategory.WATER);
+            case A2:
+                return isRowFilled(gameBoard, FieldCategory.ROBOT) && isRowFilled(gameBoard, FieldCategory.PLANNING);
+            case B1:
+                return isRowFilled(gameBoard, FieldCategory.ENERGY);
+            case B2:
+                return isRowFilled(gameBoard, FieldCategory.PLANT) && isRowFilled(gameBoard, FieldCategory.WILDCARD);
+            case C1:
+                return gameBoard.getSysError() >= 5;
+            case C2:
+                return gameBoard.getSysError() >= 6;
+            default:
+                return false;
+        }
+    }
+
+    private boolean isRowFilled(GameBoard gameBoard, FieldCategory category) {
+        // Implement logic to check if a row of a specific category is filled with numbers
+        for (Floor floor : gameBoard.getFloors()) {
+            if (floor.getCategory() == category) {
+                for (Chamber chamber : floor.getChambers()) {
+                    for (Field field : chamber.getFields()) {
+                        if (field.getNumber() == FieldValue.NONE) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateMissionCardFlipState(MissionType mission, boolean flipped) {
+        JSONObject message = JSONService.generateJSONObject("missionFlipped", localUsername, true, "", "");
+        try {
+            message.put("missionType", mission.name());
+            message.put("flipped", flipped);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating mission flipped JSON: " + e.getMessage());
+        }
+        SendMessageService.sendMessage(message);
     }
 }
