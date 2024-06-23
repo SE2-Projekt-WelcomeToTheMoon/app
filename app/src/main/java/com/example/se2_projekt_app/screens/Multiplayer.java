@@ -78,9 +78,9 @@ public class Multiplayer extends Activity {
 
         startGameButton.setOnClickListener(v -> {
             String username = Username.user.getUsername();
-            JSONObject msg = JSONService.generateJSONObject(
+            JSONObject msg = new JSONService(
                     ActionValues.STARTGAME.getValue(), username, null, "",
-                    "");
+                    "").generateJSONObject();
             SendMessageService.sendMessage(msg);
             Multiplayer.responseReceiver = response -> {
                 boolean success = response.getBoolean(SUCCESS);
@@ -135,7 +135,7 @@ public class Multiplayer extends Activity {
     @SuppressLint("NotifyDataSetChanged")
     public void updateLobby() {
         String username = Username.user.getUsername();
-        JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("requestLobbyUser", username, true, "", "");
+        JSONObject requestLobbyUsersMsg = new JSONService("requestLobbyUser", username, true, "", "").generateJSONObject();
         SendMessageService.sendMessage(requestLobbyUsersMsg);
 
         responseReceiver = response -> {
@@ -157,18 +157,18 @@ public class Multiplayer extends Activity {
     private void joinLobby() {
         Log.d(TAG, "Joining lobby (Shake)");
         String username = Username.user.getUsername();
-        JSONObject msg = JSONService.generateJSONObject(
+        JSONObject msg = new JSONService(
                 ActionValues.JOINLOBBY.getValue(), username, null, "",
-                "");
+                "").generateJSONObject();
         SendMessageService.sendMessage(msg);
         Log.d(TAG, "Joined lobby, MSG sent" + msg);
     }
 
     private void leaveLobby() {
         String username = Username.user.getUsername();
-        JSONObject msg = JSONService.generateJSONObject(
+        JSONObject msg = new JSONService(
                 ActionValues.LEAVELOBBY.getValue(), username, null, "",
-                "");
+                "").generateJSONObject();
         SendMessageService.sendMessage(msg);
     }
 

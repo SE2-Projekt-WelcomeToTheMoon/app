@@ -48,7 +48,7 @@ public class WebSocketClient implements Runnable{
             throw new IllegalArgumentException("A message handler is required.");
         }
 
-        final String WEBSOCKET_URL = "ws://10.0.2.2:8080/welcome-to-the-moon";
+        final String WEBSOCKET_URL = "ws://se2-demo.aau.at:53205/welcome-to-the-moon";
 
         OkHttpClient client = new OkHttpClient();
 
@@ -174,9 +174,9 @@ public class WebSocketClient implements Runnable{
 
     private boolean reconnectToServer(){
         Username.webSocketClient.connectToServer(responseHandler);
-        JSONObject message = JSONService.generateJSONObject(
+        JSONObject message = new JSONService(
                 JSONKeys.RECONNECT.getValue(), Username.user.getUsername(),
-                true, "", "");
+                true, "", "").generateJSONObject();
         SendMessageService.sendMessage(message);
         response = msg -> {
             boolean success = msg.getBoolean(JSONKeys.SUCCESS.getValue());

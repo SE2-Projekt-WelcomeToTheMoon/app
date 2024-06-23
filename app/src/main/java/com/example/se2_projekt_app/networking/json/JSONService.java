@@ -4,41 +4,59 @@ import org.json.JSONObject;
 
 import lombok.SneakyThrows;
 
+
 public class JSONService {
 
-    private JSONService(){}
+    private String action;
+    private String username;
+    private Boolean success = false;
+    private String message;
+    private String error;
 
     /**
-     * Method to generate a JSON O
-     * object
-     *
-     * @param action   Action to be run by backend
-     * @param username Username of client
-     * @param success  If action was successfully run or not
-     * @param message  Every possible message
-     * @param error    Error message
+     * @param action    Aktion die ausgeführt werden soll
+     * @param username  Benutzername
+     * @param success   Aktion erfolgreich oder nicht
+     * @param message   Nachricht
+     * @param error     Fehlermeldung
+     */
+    public JSONService(String action, String username, Boolean success, String message, String error){
+        this.action = action;
+        this.username = username;
+        this.success = success;
+        this.message = message;
+        this.error = error;
+    }
+
+    /**
+     * Method to generate a JSON Object
      * @return JSONObject
      */
-
     @SneakyThrows
-    public static JSONObject generateJSONObject(String action, String username, Boolean success, String message, String error) {
+    public JSONObject generateJSONObject() {
         JSONObject response = new JSONObject();
-        if (action != null) {
-            response.put("action", action);
+
+        if (this.action != null) {
+            response.put("action", this.action);
         }
-        if (username != null) {
-            response.put("username", username);
+
+        if (this.username != null) {
+            response.put("username", this.username);
         }
-        if (success != null) {
-            response.put("success", success);
+
+        if(this.success != null){
+            response.put("success", this.success);
         }
+
         //nur wenn String leer ist
-        if (message != null && !message.isEmpty()) {
-            response.put("message", message);
+        if (this.message != null && !message.isEmpty()) {
+            response.put("message", this.message);
         }
-        if (error != null && !error.isEmpty()) {
-            response.put("error", error);
+
+        if (this.error != null && !error.isEmpty()) {
+            response.put("error", this.error);
         }
+
         return response;
     }
 }

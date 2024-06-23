@@ -90,6 +90,7 @@ dependencies {
     implementation libs.android
     implementation libs.core
     implementation libs.androidx.drawerlayout
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
     testImplementation libs.junit
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
