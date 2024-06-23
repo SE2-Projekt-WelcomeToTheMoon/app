@@ -37,8 +37,8 @@ public class MainMenu extends Activity{
             // Exit the game
             // Closing connection to server
             WebSocketClient.setDisconPurpously(true);
-            JSONObject sendMessage = JSONService.generateJSONObject(JSONKeys.DISCONNECT.getValue(),
-                    Username.user.getUsername(),true, "", "");
+            JSONObject sendMessage = new JSONService(JSONKeys.DISCONNECT.getValue(),
+                    Username.user.getUsername(),true, "", "").generateJSONObject();
             SendMessageService.sendMessage(sendMessage);
 
             setResponseReceiver(response -> {

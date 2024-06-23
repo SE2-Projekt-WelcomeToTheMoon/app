@@ -198,7 +198,7 @@ public class GameBoardManager {
         Log.d(TAG_GAMEBOARDMANAGER, "Field finalized: " + floorIndex + " " + chamberIndex + " " + fieldIndex + " " + field.getNumber());
 
         String payload = createPayload(field);
-        JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
+        JSONObject jsonObject = new JSONService("makeMove", localUsername, true, payload, "").generateJSONObject();
         SendMessageService.sendMessage(jsonObject);
 
         Log.d(TAG_GAMEBOARDMANAGER, "Payload: " + payload);
@@ -249,7 +249,7 @@ public class GameBoardManager {
      * Updates Current Card draw
      */
     public void updateCurrentCardDraw() {
-        JSONObject jsonObject = JSONService.generateJSONObject("updateCurrentCards", localUsername, true, "", "");
+        JSONObject jsonObject = new JSONService("updateCurrentCards", localUsername, true, "", "").generateJSONObject();
         SendMessageService.sendMessage(jsonObject);
     }
 
@@ -259,9 +259,9 @@ public class GameBoardManager {
 
     public void cheat() {
         String username = Username.user.getUsername();
-        JSONObject msg = JSONService.generateJSONObject(
+        JSONObject msg = new JSONService(
                 ActionValues.CHEAT.getValue(), username, null, "",
-                "");
+                "").generateJSONObject();
         SendMessageService.sendMessage(msg);
 
         setCheatResponseReceiver(response -> {
@@ -351,9 +351,9 @@ public class GameBoardManager {
 
     public void detectCheat(String currentOwner) {
         String username = Username.user.getUsername();
-        JSONObject msg = JSONService.generateJSONObject(
+        JSONObject msg = new JSONService(
                 ActionValues.DETECTCHEAT.getValue(), username, null, currentOwner,
-                "");
+                "").generateJSONObject();
         SendMessageService.sendMessage(msg);
 
         setCheatDetectResponseReceiver(response -> {

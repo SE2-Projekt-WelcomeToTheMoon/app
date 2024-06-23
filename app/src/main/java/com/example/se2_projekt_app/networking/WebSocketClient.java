@@ -174,9 +174,9 @@ public class WebSocketClient implements Runnable{
 
     private boolean reconnectToServer(){
         Username.webSocketClient.connectToServer(responseHandler);
-        JSONObject message = JSONService.generateJSONObject(
+        JSONObject message = new JSONService(
                 JSONKeys.RECONNECT.getValue(), Username.user.getUsername(),
-                true, "", "");
+                true, "", "").generateJSONObject();
         SendMessageService.sendMessage(message);
         response = msg -> {
             boolean success = msg.getBoolean(JSONKeys.SUCCESS.getValue());

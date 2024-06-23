@@ -70,7 +70,7 @@ public class WinnerScreen extends Activity {
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     public void getPlayerWithPoints() {
         String username = Username.user.getUsername();
-        JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("winnerScreen", username, true, "", "");
+        JSONObject requestLobbyUsersMsg = new JSONService("winnerScreen", username, true, "", "").generateJSONObject();
         SendMessageService.sendMessage(requestLobbyUsersMsg);
 
         setResponseReceiver(response -> {

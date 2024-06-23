@@ -69,8 +69,8 @@ public class Username extends Activity {
             };
 
             // Generating JSONObject to send message to server
-            JSONObject msg = JSONService.generateJSONObject(ActionValues.REGISTERUSER.getValue(),
-                    inputText.getText().toString(), null,"", "");
+            JSONObject msg = new JSONService(ActionValues.REGISTERUSER.getValue(),
+                    inputText.getText().toString(), null,"", "").generateJSONObject();
 
             // Sending message to server to register user
             if(!SendMessageService.sendMessage(msg)){
