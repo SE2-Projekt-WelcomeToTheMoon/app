@@ -62,12 +62,6 @@ public class GameBoardManager {
     private static final String TAG_NO_USER_OR_GAMEBOARD = "User does not exist or has no GameBoard";
     private static final String TAG_NO_USER_EXISTS = "User does not exist: ";
     private static final String TAG_UPDATE_GAMEBOARD = "Updating game board for User: ";
-    private static final String TAG = "Mission Cards in GameBoardManager";
-
-    private EnumMap<MissionType, Boolean> missionCardFlipped = new EnumMap<>(MissionType.class);
-    private EnumMap<MissionType, Integer> missionCardRewards = new EnumMap<>(MissionType.class);
-
-    private List<CardCombination> missionCardCombinations;
 
 
     public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
@@ -209,8 +203,6 @@ public class GameBoardManager {
         String payload = createPayload(field);
         JSONObject jsonObject = JSONService.generateJSONObject("makeMove", localUsername, true, payload, "");
         SendMessageService.sendMessage(jsonObject);
-
-        checkMissions(user);
 
         Log.d(TAG_GAMEBOARDMANAGER, "Payload: " + payload);
         return true;
@@ -433,68 +425,5 @@ public class GameBoardManager {
                 }
             }
         }
-    }
-
-    // Check missions at the end of each round
-    public void checkMissions(User user) {
-        for (MissionType mission : missionCardFlipped.keySet()) {
-            boolean fulfilled = isMissionFulfilled(user.getGameBoard(), mission);
-            if (fulfilled) {
-                int reward = missionCardRewards.get(mission);
-                user.getGameBoard().addRockets(reward);
-                if (!missionCardFlipped.get(mission)) {
-                    missionCardFlipped.put(mission, true);
-                    missionCardRewards.put(mission, reward - 1);
-                    updateMissionCardFlipState(mission, true);
-                }
-            }
-        }
-    }
-
-    private boolean isMissionFulfilled(GameBoard gameBoard, MissionType mission) {
-        switch (mission) {
-            case A1:
-                return isRowFilled(gameBoard, FieldCategory.SPACESUIT) && isRowFilled(gameBoard, FieldCategory.WATER);
-            case A2:
-                return isRowFilled(gameBoard, FieldCategory.ROBOT) && isRowFilled(gameBoard, FieldCategory.PLANNING);
-            case B1:
-                return isRowFilled(gameBoard, FieldCategory.ENERGY);
-            case B2:
-                return isRowFilled(gameBoard, FieldCategory.PLANT) && isRowFilled(gameBoard, FieldCategory.WILDCARD);
-            case C1:
-                return gameBoard.getSysError() >= 5;
-            case C2:
-                return gameBoard.getSysError() >= 6;
-            default:
-                return false;
-        }
-    }
-
-    private boolean isRowFilled(GameBoard gameBoard, FieldCategory category) {
-        // Implement logic to check if a row of a specific category is filled with numbers
-        for (Floor floor : gameBoard.getFloors()) {
-            if (floor.getCategory() == category) {
-                for (Chamber chamber : floor.getChambers()) {
-                    for (Field field : chamber.getFields()) {
-                        if (field.getNumber() == FieldValue.NONE) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void updateMissionCardFlipState(MissionType mission, boolean flipped) {
-        JSONObject message = JSONService.generateJSONObject("missionFlipped", localUsername, true, "", "");
-        try {
-            message.put("missionType", mission.name());
-            message.put("flipped", flipped);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error creating mission flipped JSON: " + e.getMessage());
-        }
-        SendMessageService.sendMessage(message);
     }
 }
