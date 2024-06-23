@@ -1,5 +1,6 @@
 package com.example.se2_projekt_app.game;
 
+import android.content.Context;
 import android.graphics.Canvas;
 
 import java.util.ArrayList;
@@ -15,7 +16,9 @@ import lombok.Getter;
 public class Floor implements Clickable {
     private final int y;
     // cause we only move laterally, and don't need to store Y
+    @Getter
     private int nextX;
+    @Getter
     private final FieldCategory category;
     private final List<Chamber> chambers;
     int boxSize = 200;
@@ -44,6 +47,7 @@ public class Floor implements Clickable {
 
     /**
      * Just for Testing
+     *
      * @param chamber
      */
     public void addChamber(Chamber chamber) {
@@ -53,9 +57,9 @@ public class Floor implements Clickable {
     /**
      * @param canvas
      */
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, Context context) {
         for (Chamber chamber : chambers) {
-            chamber.draw(canvas);
+            chamber.draw(canvas, context);
         }
     }
 
@@ -66,13 +70,10 @@ public class Floor implements Clickable {
     public List<Chamber> getChambers() {
         return new ArrayList<>(this.chambers);
     }
-    public int getNextX() {
-        return this.nextX;
-    }
 
     @Override
     public boolean handleClick(float x, float y, GameBoardView boardView, FieldValue fieldValue) {
-        for (int i = 0 ; i < chambers.size() ; i++) {
+        for (int i = 0; i < chambers.size(); i++) {
             Chamber chamber = chambers.get(i);
             if (chamber.handleClick(x, y, boardView, fieldValue)) {
                 lastAccessedChamberIndex = i;
@@ -81,5 +82,20 @@ public class Floor implements Clickable {
             }
         }
         return false;
+    }
+
+    /**
+     * Each ArrayList of ArrayLists is for a chamber, each ArrayList of Rewards are the rewards in that chamber
+     *
+     * @param rewardList The Rewards to be injected
+     */
+    public void injectRewards(List<ArrayList<Reward>> rewardList) {
+        if (rewardList == null || rewardList.size() != chambers.size())
+            throw new IllegalArgumentException("Rewards size must be equal to chambers size");
+        int count = 0;
+        for (Chamber chamber : chambers) {
+            chamber.setRewards(rewardList.get(count));
+            count++;
+        }
     }
 }

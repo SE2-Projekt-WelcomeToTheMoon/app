@@ -15,8 +15,13 @@ import com.example.se2_projekt_app.networking.services.SendMessageService;
 
 import org.json.JSONObject;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class MainMenu extends Activity{
-    public static ResponseReceiver responseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver responseReceiver;
     private static final String TAG = "MainMenu";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +41,8 @@ public class MainMenu extends Activity{
                     Username.user.getUsername(),true, "", "");
             SendMessageService.sendMessage(sendMessage);
 
-            responseReceiver = exitResponse -> {
-                boolean success = exitResponse.getBoolean(JSONKeys.SUCCESS.getValue());
+            setResponseReceiver(response -> {
+                boolean success = response.getBoolean(JSONKeys.SUCCESS.getValue());
                 if(success){
                     Username.webSocketClient.disconnectFromServer();
                     this.finishAffinity();
@@ -45,7 +50,7 @@ public class MainMenu extends Activity{
                 }else{
                     Log.w(TAG, "Username couldn't disconnect.");
                 }
-            };
+            });
         });
         findViewById(R.id.debug).setOnClickListener(this::openDebug);
     }

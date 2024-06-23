@@ -9,7 +9,6 @@ import com.example.se2_projekt_app.screens.Multiplayer;
 import com.example.se2_projekt_app.screens.Username;
 import com.example.se2_projekt_app.screens.WinnerScreen;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.SneakyThrows;
@@ -28,7 +27,7 @@ public class PostOffice {
      * @param response Response to route.
      */
     @SneakyThrows
-    public void routeResponse(JSONObject response) throws JSONException {
+    public void routeResponse(JSONObject response) {
 
         String action = response.getString("action");
 
@@ -45,11 +44,11 @@ public class PostOffice {
                 Log.i(TAG, MULTIPLAYER);
                 break;
             case "winnerScreen":
-                WinnerScreen.responseReceiver.receiveResponse(response);
+                WinnerScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "endGame":
-                GameScreen.responseReceiver.receiveResponse(response);
+                GameScreen.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to WinnerScreen");
                 break;
             case "gameIsStarted":
@@ -69,22 +68,25 @@ public class PostOffice {
             case "playerDetectedCheatCorrect":
             case "systemError":
             case "playerDetectedCheatWrong":
-                GameScreen.responseReceiver.receiveResponse(response);
-                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was"+action);
+            case "addRocket":
+            case "addSystemError":
+            case "rewardChange":
+                GameScreen.getResponseReceiver().receiveResponse(response);
+                Log.i(TAG, "Rerouted message to GameScreen. Action rerouted was" + action);
                 break;
 
             case "cheat":
-                GameBoardManager.cheatResponseReceiver.receiveResponse(response);
+                GameBoardManager.getCheatResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted cheat message to GameBoardManager.");
                 break;
 
             case "disconnect":
-                MainMenu.responseReceiver.receiveResponse(response);
+                MainMenu.getResponseReceiver().receiveResponse(response);
                 Log.i(TAG, "Rerouted message to MainMenu.");
                 break;
             default:
                 Log.w(ERROR, "Server response has invalid or no sender. Response not routed.");
-                Log.w(ERROR,"Response Action from server: "+action);
+                Log.w(ERROR, "Response Action from server: " + action);
         }
     }
 }

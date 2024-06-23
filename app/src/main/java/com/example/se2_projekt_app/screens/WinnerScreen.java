@@ -22,15 +22,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class WinnerScreen extends Activity {
     private static final String TAG_USERS = "users";
     private static final String SUCCESS = JSONKeys.SUCCESS.getValue();
-    public static ResponseReceiver responseReceiver;
+    @Getter
+    @Setter
+    private static ResponseReceiver responseReceiver;
     List<User> newUserList = new ArrayList<>();
-    private TextView txtview_firstPlace;
-    private TextView txtview_secondPlace;
-    private TextView txtview_thirdPlace;
-    private TextView txtview_fourthPlace;
+    private TextView txtViewFirstPlace;
+    private TextView txtViewSecondPlace;
+    private TextView txtViewThirdPlace;
+    private TextView txtViewFourthPlace;
     private final Map<String, Integer> userMap = new HashMap<>();
 
 
@@ -40,25 +45,25 @@ public class WinnerScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.winner_screen);
 
-        Button btn_home = findViewById(R.id.btn_home);
-        Button btn_share = findViewById(R.id.btn_share);
-        txtview_firstPlace = findViewById(R.id.textView_1stPlace);
-        txtview_secondPlace = findViewById(R.id.textView_2ndPlace);
-        txtview_thirdPlace = findViewById(R.id.textView_3rdPlace);
-        txtview_fourthPlace = findViewById(R.id.textView_4thPlace);
+        Button btnHome = findViewById(R.id.btn_home);
+        Button btnShare = findViewById(R.id.btn_share);
+        txtViewFirstPlace = findViewById(R.id.textView_1stPlace);
+        txtViewSecondPlace = findViewById(R.id.textView_2ndPlace);
+        txtViewThirdPlace = findViewById(R.id.textView_3rdPlace);
+        txtViewFourthPlace = findViewById(R.id.textView_4thPlace);
 
         getPlayerWithPoints();
 
-        btn_home.setOnClickListener(v -> {
+        btnHome.setOnClickListener(v -> {
             Intent intent = new Intent(WinnerScreen.this, MainMenu.class);
             startActivity(intent);
         });
-        btn_share.setOnClickListener(v -> finish()); // ohne Funktion
+        btnShare.setOnClickListener(v -> finish()); // ohne Funktion
 
-        txtview_firstPlace.setText("");
-        txtview_secondPlace.setText("");
-        txtview_thirdPlace.setText("");
-        txtview_fourthPlace.setText("");
+        txtViewFirstPlace.setText("");
+        txtViewSecondPlace.setText("");
+        txtViewThirdPlace.setText("");
+        txtViewFourthPlace.setText("");
 
     }
 
@@ -68,12 +73,12 @@ public class WinnerScreen extends Activity {
         JSONObject requestLobbyUsersMsg = JSONService.generateJSONObject("winnerScreen", username, true, "", "");
         SendMessageService.sendMessage(requestLobbyUsersMsg);
 
-        responseReceiver = response -> {
+        setResponseReceiver(response -> {
             if (response.getBoolean(SUCCESS)) {
                 parseUsersAndPoints(response.getJSONArray(TAG_USERS));
                 runOnUiThread(this::updateUI);
             }
-        };
+        });
     }
 
     private void parseUsersAndPoints(JSONArray users) throws JSONException {
@@ -99,15 +104,15 @@ public class WinnerScreen extends Activity {
 
     private void updateUI() {
         try {
-            updateTextView(txtview_firstPlace, 0, "NO WINNER");
-            updateTextView(txtview_secondPlace, 1, "");
-            updateTextView(txtview_thirdPlace, 2, "");
-            updateTextView(txtview_fourthPlace, 3, "");
+            updateTextView(txtViewFirstPlace, 0, "NO WINNER");
+            updateTextView(txtViewSecondPlace, 1, "");
+            updateTextView(txtViewThirdPlace, 2, "");
+            updateTextView(txtViewFourthPlace, 3, "");
         } catch (IndexOutOfBoundsException e) {
-            txtview_firstPlace.setText("");
-            txtview_secondPlace.setText("");
-            txtview_thirdPlace.setText("");
-            txtview_fourthPlace.setText("");
+            txtViewFirstPlace.setText("");
+            txtViewSecondPlace.setText("");
+            txtViewThirdPlace.setText("");
+            txtViewFourthPlace.setText("");
         }
     }
 

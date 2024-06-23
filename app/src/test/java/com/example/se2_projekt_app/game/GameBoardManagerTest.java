@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.RewardCategory;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.services.SendMessageService;
 import com.example.se2_projekt_app.screens.User;
@@ -22,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.List;
 
 class GameBoardManagerTest {
     private GameBoardManager gameBoardManager;
@@ -42,7 +45,6 @@ class GameBoardManagerTest {
         when(mockUser.getUsername()).thenReturn("Player1");
         when(mockUser2.getUsername()).thenReturn("Player2");
         gameBoardManager = new GameBoardManager(mockGameBoardView, null);
-        gameBoardManager.setSendMessageService(mockSendMessageService);
         gameBoardManager.addUser(mockUser);
         doNothing().when(mockUser).setGameBoard(any(GameBoard.class));
     }
@@ -134,5 +136,13 @@ class GameBoardManagerTest {
             e.printStackTrace();
         }
         assertEquals(expected, gameBoardManager.createPayload(new Field(0, 0, 0, FieldCategory.ENERGY, FieldValue.FIVE)));
+    }
+
+    @Test
+    void testInjectGameBoard() {
+        GameBoard board = GameBoardService.createGameBoard();
+        List<Reward> rewards = board.getFloors().get(0).getChamber(0).getRewards();
+        assertEquals(RewardCategory.ROCKET, rewards.get(0).getCategory());
+        assertEquals(3, rewards.get(0).getNumberRockets());
     }
 }
