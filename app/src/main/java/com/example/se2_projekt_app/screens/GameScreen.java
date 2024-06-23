@@ -19,6 +19,7 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
+import com.example.se2_projekt_app.enums.MissionType;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
@@ -31,7 +32,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -50,17 +53,38 @@ public class GameScreen extends Activity {
     private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
     private DrawerLayout drawerLayout;
-
-    private ImageView mission_card_a;
-
-    private ImageView mission_card_b;
-
-    private ImageView mission_card_c;
     private static final String PLAYER_1 = "Player1";
     private static final String PLAYER_2 = "Player2";
     private static final String PLAYER_3 = "Player3";
     private static final String PLAYER_4 = "Player4";
     private static final String PLAYER_HAS_CHEATED = "Player {} has cheated";
+
+    private static final Map<MissionType, Integer> missionTypeToImageViewIdMap = new EnumMap<MissionType, Integer>(MissionType.class) {{
+        put(MissionType.A1, R.id.mission_card_a);
+        put(MissionType.A2, R.id.mission_card_a);
+        put(MissionType.B1, R.id.mission_card_b);
+        put(MissionType.B2, R.id.mission_card_b);
+        put(MissionType.C1, R.id.mission_card_c);
+        put(MissionType.C2, R.id.mission_card_c);
+    }};
+
+    private static final Map<MissionType, Integer> missionTypeToDrawableMap = new EnumMap<MissionType, Integer>(MissionType.class) {{
+        put(MissionType.A1, R.drawable.a1);
+        put(MissionType.A2, R.drawable.a2);
+        put(MissionType.B1, R.drawable.b1);
+        put(MissionType.B2, R.drawable.b2);
+        put(MissionType.C1, R.drawable.c1);
+        put(MissionType.C2, R.drawable.c2);
+    }};
+
+    private static final Map<MissionType, Integer> missionTypeToFlippedDrawableMap = new EnumMap<MissionType, Integer>(MissionType.class) {{
+        put(MissionType.A1, R.drawable.a1_back);
+        put(MissionType.A2, R.drawable.a2_back);
+        put(MissionType.B1, R.drawable.b1_back);
+        put(MissionType.B2, R.drawable.b2_back);
+        put(MissionType.C1, R.drawable.c1_back);
+        put(MissionType.C2, R.drawable.c2_back);
+    }};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +266,7 @@ public class GameScreen extends Activity {
                     break;
                 case "missionFlipped":
                     try {
-                        String missionType = response.getString("missionType");
+                        MissionType missionType = MissionType.valueOf(response.getString("missionType"));
                         runOnUiThread(() -> updateMissionCardImage(missionType, true));
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing mission flipped message: " + e.getMessage());
@@ -326,54 +350,28 @@ public class GameScreen extends Activity {
         for (int i = 0; i < missionCardsArray.length(); i++) {
             try {
                 JSONObject cardJson = missionCardsArray.getJSONObject(i);
-                String missionType = cardJson.getString("missionType");
+                MissionType missionType = MissionType.valueOf(cardJson.getString("missionType").toUpperCase());
                 boolean isFlipped = cardJson.getBoolean("flipped");
                 updateMissionCardImage(missionType, isFlipped);
-            } catch (JSONException e) {
+            } catch (JSONException | IllegalArgumentException e) {
                 Log.e(TAG, "Error setting up initial mission cards: " + e.getMessage());
             }
         }
     }
 
-    public void updateMissionCardImage(String missionType, boolean isFlipped) {
-        int resourceId = 0;
-        int imageViewId = 0;
+    public void updateMissionCardImage(MissionType missionType, boolean isFlipped) {
+        Integer imageViewId = missionTypeToImageViewIdMap.get(missionType);
+        Integer resourceId = isFlipped ? missionTypeToFlippedDrawableMap.get(missionType) : missionTypeToDrawableMap.get(missionType);
 
-        switch (missionType.toLowerCase()) {
-            case "a1":
-                resourceId = isFlipped ? R.drawable.a1_back : R.drawable.a1;
-                imageViewId = R.id.mission_card_a;
-                break;
-            case "a2":
-                resourceId = isFlipped ? R.drawable.a2_back : R.drawable.a2;
-                imageViewId = R.id.mission_card_a;
-                break;
-            case "b1":
-                resourceId = isFlipped ? R.drawable.b1_back : R.drawable.b1;
-                imageViewId = R.id.mission_card_b;
-                break;
-            case "b2":
-                resourceId = isFlipped ? R.drawable.b2_back : R.drawable.b2;
-                imageViewId = R.id.mission_card_b;
-                break;
-            case "c1":
-                resourceId = isFlipped ? R.drawable.c1_back : R.drawable.c1;
-                imageViewId = R.id.mission_card_c;
-                break;
-            case "c2":
-                resourceId = isFlipped ? R.drawable.c2_back : R.drawable.c2;
-                imageViewId = R.id.mission_card_c;
-                break;
-            default:
-                Log.e(TAG, "Invalid mission type: " + missionType);
-                return;
-        }
-
-        ImageView imageView = findViewById(imageViewId);
-        if (imageView != null && resourceId != 0) {
-            imageView.setImageResource(resourceId);
+        if (imageViewId != null && resourceId != null) {
+            ImageView imageView = findViewById(imageViewId);
+            if (imageView != null) {
+                imageView.setImageResource(resourceId);
+            } else {
+                Log.e(TAG, "Failed to update mission card image. ImageView not found.");
+            }
         } else {
-            Log.e(TAG, "Failed to update mission card image. ImageView or Resource not found.");
+            Log.e(TAG, "Invalid mission type: " + missionType);
         }
     }
 }
