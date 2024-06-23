@@ -140,7 +140,30 @@ public class GameScreen extends Activity {
             }
         });
 
-        setupDrawer();
+        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Translate the button with the drawer slide
+                toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
+                toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
+            }
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                toggleDrawerButton.setVisibility(View.INVISIBLE);
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                toggleDrawerButton.setVisibility(View.VISIBLE);
+            }
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                // Not used
+            }
+        });
+
+        setResponseReceiver(this::handleResponse);
+        gameBoardManager.updateCurrentCardDraw();
     }
 
     private void setupCheatButton(String localUser) {
@@ -281,45 +304,6 @@ public class GameScreen extends Activity {
 
     public void updateChamberOutline() {
         gameBoardManager.updateChamberOutline();
-    }
-
-    private void setupDrawer() {
-        drawerLayout = findViewById(R.id.drawer_layout);
-        Button toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
-        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
-
-        toggleDrawerButton.setOnClickListener(v -> {
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
-        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
-
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
-                toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                toggleDrawerButton.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                toggleDrawerButton.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                // Not used
-            }
-        });
     }
 
     public void setupInitialMissionCards(JSONArray missionCardsArray) {
