@@ -340,7 +340,7 @@ public class GameScreen extends Activity {
                 imageViewId = R.id.mission_card_c;
                 break;
             default:
-                Log.e(TAG, "Invalid mission type: " + missionType);
+                Log.e(TAG, INVALID_MISSION_TYPE + missionType);
                 return;
         }
 
@@ -355,7 +355,7 @@ public class GameScreen extends Activity {
             case B2: return R.drawable.b2_back;
             case C1: return R.drawable.c1_back;
             case C2: return R.drawable.c2_back;
-            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
+            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
         }
     }
 
@@ -367,7 +367,7 @@ public class GameScreen extends Activity {
             case B2: return R.drawable.b2;
             case C1: return R.drawable.c1;
             case C2: return R.drawable.c2;
-            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
+            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
         }
     }
 

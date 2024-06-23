@@ -17,13 +17,11 @@ import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +66,8 @@ public class GameBoardManager {
 
     private EnumMap<MissionType, Boolean> missionCardFlipped = new EnumMap<>(MissionType.class);
     private EnumMap<MissionType, Integer> missionCardRewards = new EnumMap<>(MissionType.class);
+
+    private List<CardCombination> missionCardCombinations;
 
 
     public GameBoardManager(GameBoardView gameBoardView, CardController cardController) {
@@ -433,47 +433,6 @@ public class GameBoardManager {
                 }
             }
         }
-    }
-
-    // Initialize the mission cards at the start of the game
-    public void initializeMissionCards() {
-        List<MissionType> missions = Arrays.asList(MissionType.values());
-        Collections.shuffle(missions); // Shuffle to randomly select mission cards
-
-        // Select one of each set (A, B, C)
-        MissionType missionA = missions.stream().filter(m -> m.name().startsWith("A")).findFirst().get();
-        MissionType missionB = missions.stream().filter(m -> m.name().startsWith("B")).findFirst().get();
-        MissionType missionC = missions.stream().filter(m -> m.name().startsWith("C")).findFirst().get();
-
-        // Initialize the cards as not flipped and set initial rewards
-        initializeMissionCard(missionA);
-        initializeMissionCard(missionB);
-        initializeMissionCard(missionC);
-
-        // Send initial mission cards to the server (or clients)
-        sendInitialMissionCardsToClients(missionA, missionB, missionC);
-    }
-
-    private void initializeMissionCard(MissionType mission) {
-        missionCardFlipped.put(mission, false);
-        missionCardRewards.put(mission, 3);
-    }
-
-    private void sendInitialMissionCardsToClients(MissionType... missions) {
-        // Create JSON and send to clients
-        JSONArray missionCardsArray = new JSONArray();
-        for (MissionType mission : missions) {
-            JSONObject cardJson = new JSONObject();
-            try {
-                cardJson.put("missionType", mission.name());
-                cardJson.put("flipped", false);
-                missionCardsArray.put(cardJson);
-            } catch (JSONException e) {
-                Log.e(TAG, "Error creating initial mission cards JSON: " + e.getMessage());
-            }
-        }
-        JSONObject message = JSONService.generateJSONObject("initialMissionCards", localUsername, true, missionCardsArray.toString(), "");
-        SendMessageService.sendMessage(message);
     }
 
     // Check missions at the end of each round
