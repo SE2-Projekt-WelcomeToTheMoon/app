@@ -232,6 +232,7 @@ public class GameScreen extends Activity {
                 case "initialMissionCards":
                     try {
                         JSONArray missionCardsArray = response.getJSONArray("missionCards");
+                        Log.d(TAG, "Mission Cards received: " + missionCardsArray.toString());
                         runOnUiThread(() -> setupInitialMissionCards(missionCardsArray));
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing initial mission cards: " + e.getMessage());
@@ -240,7 +241,8 @@ public class GameScreen extends Activity {
                 case "missionFlipped":
                     try {
                         MissionType missionType = MissionType.valueOf(response.getString("missionType"));
-                        runOnUiThread(() -> updateMissionCardImage(missionType, true));
+                        boolean isFlipped = response.getBoolean("flipped");
+                        runOnUiThread(() -> updateMissionCardImage(missionType, isFlipped));
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing mission flipped message: " + e.getMessage());
                     }
@@ -333,32 +335,23 @@ public class GameScreen extends Activity {
     }
 
     public void updateMissionCardImage(MissionType missionType, boolean isFlipped) {
-        int resourceId = 0;
-        int imageViewId = 0;
+        int resourceId;
+        int imageViewId;
 
         switch (missionType) {
             case A1:
-                resourceId = isFlipped ? R.drawable.a1_back : R.drawable.a1;
-                imageViewId = R.id.mission_card_a;
-                break;
             case A2:
-                resourceId = isFlipped ? R.drawable.a2_back : R.drawable.a2;
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
                 imageViewId = R.id.mission_card_a;
                 break;
             case B1:
-                resourceId = isFlipped ? R.drawable.b1_back : R.drawable.b1;
-                imageViewId = R.id.mission_card_b;
-                break;
             case B2:
-                resourceId = isFlipped ? R.drawable.b2_back : R.drawable.b2;
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
                 imageViewId = R.id.mission_card_b;
                 break;
             case C1:
-                resourceId = isFlipped ? R.drawable.c1_back : R.drawable.c1;
-                imageViewId = R.id.mission_card_c;
-                break;
             case C2:
-                resourceId = isFlipped ? R.drawable.c2_back : R.drawable.c2;
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
                 imageViewId = R.id.mission_card_c;
                 break;
             default:
@@ -366,6 +359,34 @@ public class GameScreen extends Activity {
                 return;
         }
 
+        updateImageView(imageViewId, resourceId);
+    }
+
+    private int getBackResourceId(MissionType missionType) {
+        switch (missionType) {
+            case A1: return R.drawable.a1_back;
+            case A2: return R.drawable.a2_back;
+            case B1: return R.drawable.b1_back;
+            case B2: return R.drawable.b2_back;
+            case C1: return R.drawable.c1_back;
+            case C2: return R.drawable.c2_back;
+            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
+        }
+    }
+
+    private int getFrontResourceId(MissionType missionType) {
+        switch (missionType) {
+            case A1: return R.drawable.a1;
+            case A2: return R.drawable.a2;
+            case B1: return R.drawable.b1;
+            case B2: return R.drawable.b2;
+            case C1: return R.drawable.c1;
+            case C2: return R.drawable.c2;
+            default: throw new IllegalArgumentException("Invalid mission type: " + missionType);
+        }
+    }
+
+    private void updateImageView(int imageViewId, int resourceId) {
         ImageView imageView = findViewById(imageViewId);
         if (imageView != null && resourceId != 0) {
             imageView.setImageResource(resourceId);
