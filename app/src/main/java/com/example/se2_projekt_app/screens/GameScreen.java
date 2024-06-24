@@ -53,7 +53,6 @@ public class GameScreen extends Activity {
     private static final String TAG_USERNAME = "username";
     private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
-    private DrawerLayout drawerLayout;
     private static final String PLAYER_1 = "Player1";
     private static final String PLAYER_2 = "Player2";
     private static final String PLAYER_3 = "Player3";
@@ -129,20 +128,6 @@ public class GameScreen extends Activity {
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
-        Button closeDrawerButton = findViewById(R.id.close_drawer_button);
-
-        toggleDrawerButton.setOnClickListener(v -> {
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
-        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
-
         setupDrawer();
 
         setResponseReceiver(this::handleResponse);
@@ -165,9 +150,20 @@ public class GameScreen extends Activity {
     }
 
     private void setupDrawer() {
+
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
+
+        toggleDrawerButton.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
         toggleDrawerButton.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
