@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import com.example.se2_projekt_app.R;
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
 import com.example.se2_projekt_app.enums.GameState;
+import com.example.se2_projekt_app.enums.MissionType;
 import com.example.se2_projekt_app.game.CardCombination;
 import com.example.se2_projekt_app.game.GameBoardManager;
 import com.example.se2_projekt_app.game.CardController;
@@ -25,11 +27,14 @@ import com.example.se2_projekt_app.networking.responsehandler.ResponseReceiver;
 import com.example.se2_projekt_app.views.CardDrawView;
 import com.example.se2_projekt_app.views.GameBoardView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +49,7 @@ public class GameScreen extends Activity {
     private GameBoardManager gameBoardManager;
     private HashMap<String, String> playerMap;
     private static final String TAG = "GameScreen";
+    private static final String TAG_MISSION = "MissionCards";
     private static final String TAG_USERNAME = "username";
     private GameState gameState = GameState.INITIAL;
     private String currentOwner = "";
@@ -52,10 +58,10 @@ public class GameScreen extends Activity {
     private static final String PLAYER_3 = "Player3";
     private static final String PLAYER_4 = "Player4";
     private static final String PLAYER_HAS_CHEATED = "Player {} has cheated";
+    private static final String INVALID_MISSION_TYPE = "Invalid mission type: ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DrawerLayout drawerLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_screen);
 
@@ -122,7 +128,30 @@ public class GameScreen extends Activity {
         // insert draw on touch values
         findViewById(R.id.game_screen_random_field_button).setOnClickListener(v -> gameBoardView.setCurrentSelection(new CardCombination(FieldCategory.ENERGY, FieldCategory.PLANNING, FieldValue.getRandomFieldValue())));
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        setupDrawer();
+
+        setResponseReceiver(this::handleResponse);
+        gameBoardManager.updateCurrentCardDraw();
+    }
+
+    private void setupCheatButton(String localUser) {
+        findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
+            Log.e(TAG, String.valueOf(currentOwner));
+            if (currentOwner.equals(localUser)) {
+                Log.i(TAG, "Cheat");
+                gameBoardManager.cheat();
+            } else {
+                if (!currentOwner.isEmpty()) {
+                    Log.i(TAG, "Detect cheat");
+                    gameBoardManager.detectCheat(currentOwner);
+                }
+            }
+        });
+    }
+
+    private void setupDrawer() {
+
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         toggleDrawerButton = findViewById(R.id.toggle_drawer_button);
         Button closeDrawerButton = findViewById(R.id.close_drawer_button);
 
@@ -136,11 +165,18 @@ public class GameScreen extends Activity {
 
         closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
+        toggleDrawerButton.setOnClickListener(v -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        closeDrawerButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
-
                 // Translate the button with the drawer slide
                 toggleDrawerButton.setTranslationX(slideOffset * drawerView.getWidth());
                 toggleDrawerButton.setVisibility(slideOffset == 0 ? View.VISIBLE : View.INVISIBLE);
@@ -159,26 +195,6 @@ public class GameScreen extends Activity {
             @Override
             public void onDrawerStateChanged(int newState) {
                 // Not used
-            }
-        });
-        setResponseReceiver(this::handleResponse);
-        gameBoardManager.updateCurrentCardDraw();
-
-    }
-
-
-
-    private void setupCheatButton(String localUser) {
-        findViewById(R.id.game_screen_cheat_button).setOnClickListener(v -> {
-            Log.e(TAG, String.valueOf(currentOwner));
-            if (currentOwner.equals(localUser)) {
-                Log.i(TAG, "Cheat");
-                gameBoardManager.cheat();
-            } else {
-                if (!currentOwner.isEmpty()) {
-                    Log.i(TAG, "Detect cheat");
-                    gameBoardManager.detectCheat(currentOwner);
-                }
             }
         });
     }
@@ -255,6 +271,21 @@ public class GameScreen extends Activity {
                         Log.i(TAG, "GameScreen case SystemError errichet!: " + username + " " + sysError);
                     });
                     break;
+                case "initializeMissionCards":
+                    Log.d(TAG_MISSION, "Received initializeMissionCards message: " + message);
+                    JSONArray missionCardsArray = new JSONArray(message);
+                    // Adding a delay to ensure the client is ready
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> setupInitialMissionCards(missionCardsArray), 1000);
+                    break;
+                case "missionFlipped":
+                    Log.d(TAG_MISSION, "Received missionFlipped message: " + message);
+                    handleMissionFlipped(new JSONObject(message));
+                    break;
+                case "requestMissionCards":
+                    Log.d(TAG_MISSION, "Received requestMissionCards message: " + message);
+                    missionCardsArray = new JSONArray(message);
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> setupInitialMissionCards(missionCardsArray), 1000);
+                    break;
                 default:
                     Log.w(TAG, "Server response has invalid or no sender. Response not routed.");
             }
@@ -288,5 +319,100 @@ public class GameScreen extends Activity {
 
     public void updateChamberOutline() {
         gameBoardManager.updateChamberOutline();
+    }
+
+    private void setupInitialMissionCards(JSONArray missionCardsArray) {
+        for (int i = 0; i < missionCardsArray.length(); i++) {
+            try {
+                JSONObject cardJson = missionCardsArray.getJSONObject(i);
+                MissionType missionType = MissionType.valueOf(cardJson.getString("missionType"));
+                boolean isFlipped = cardJson.getBoolean("flipped");
+                updateMissionCardImage(missionType, isFlipped);
+            } catch (JSONException e) {
+                Log.e(TAG_MISSION, "Error parsing initial mission cards: " + e.getMessage());
+            }
+        }
+    }
+    private void handleMissionFlipped(JSONObject missionJson) {
+        try {
+            MissionType missionType = MissionType.valueOf(missionJson.getString("missionType"));
+            boolean isFlipped = missionJson.getBoolean("flipped");
+            updateMissionCardImage(missionType, isFlipped);
+        } catch (JSONException e) {
+            Log.e(TAG_MISSION, "Error parsing mission flipped message: " + e.getMessage());
+        }
+    }
+    private void updateMissionCardImage(MissionType missionType, boolean isFlipped) {
+        Log.d(TAG_MISSION, "Updating mission card: " + missionType + ", isFlipped: " + isFlipped);
+
+        int resourceId;
+        int imageViewId;
+
+        switch (missionType) {
+            case A1:
+            case A2:
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
+                imageViewId = R.id.mission_card_a;
+                break;
+            case B1:
+            case B2:
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
+                imageViewId = R.id.mission_card_b;
+                break;
+            case C1:
+            case C2:
+                resourceId = isFlipped ? getBackResourceId(missionType) : getFrontResourceId(missionType);
+                imageViewId = R.id.mission_card_c;
+                break;
+            default:
+                Log.e(TAG_MISSION, INVALID_MISSION_TYPE + missionType);
+                return;
+        }
+
+        Log.d(TAG_MISSION, "Updating ImageView: " + imageViewId + " with resource: " + resourceId);
+        updateImageView(imageViewId, resourceId);
+    }
+
+    private int getBackResourceId(MissionType missionType) {
+        int resourceId;
+        switch (missionType) {
+            case A1: resourceId = R.drawable.a1_back; break;
+            case A2: resourceId = R.drawable.a2_back; break;
+            case B1: resourceId = R.drawable.b1_back; break;
+            case B2: resourceId = R.drawable.b2_back; break;
+            case C1: resourceId = R.drawable.c1_back; break;
+            case C2: resourceId = R.drawable.c2_back; break;
+            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
+        }
+        Log.d(TAG_MISSION, "Back resource ID for " + missionType + ": " + resourceId);
+        return resourceId;
+    }
+
+    private int getFrontResourceId(MissionType missionType) {
+        int resourceId;
+        switch (missionType) {
+            case A1: resourceId = R.drawable.a1; break;
+            case A2: resourceId = R.drawable.a2; break;
+            case B1: resourceId = R.drawable.b1; break;
+            case B2: resourceId = R.drawable.b2; break;
+            case C1: resourceId = R.drawable.c1; break;
+            case C2: resourceId = R.drawable.c2; break;
+            default: throw new IllegalArgumentException(INVALID_MISSION_TYPE + missionType);
+        }
+        Log.d(TAG_MISSION, "Front resource ID for " + missionType + ": " + resourceId);
+        return resourceId;
+    }
+
+    private void updateImageView(int imageViewId, int resourceId) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Log.d(TAG_MISSION, "Attempting to update ImageView with ID: " + imageViewId + " and resource ID: " + resourceId);
+            ImageView imageView = findViewById(imageViewId);
+            if (imageView != null) {
+                Log.d(TAG_MISSION, "Setting resource " + resourceId + " to ImageView " + imageViewId);
+                imageView.setImageResource(resourceId);
+            } else {
+                Log.e(TAG_MISSION, "Failed to update mission card image. ImageView not found for ID: " + imageViewId);
+            }
+        });
     }
 }

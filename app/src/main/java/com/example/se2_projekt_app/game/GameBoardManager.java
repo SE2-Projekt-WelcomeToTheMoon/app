@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.se2_projekt_app.enums.FieldCategory;
 import com.example.se2_projekt_app.enums.FieldValue;
+import com.example.se2_projekt_app.enums.MissionType;
 import com.example.se2_projekt_app.networking.json.ActionValues;
 import com.example.se2_projekt_app.networking.json.FieldUpdateMessage;
 import com.example.se2_projekt_app.networking.json.JSONKeys;
@@ -16,10 +17,12 @@ import com.example.se2_projekt_app.views.GameBoardView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
